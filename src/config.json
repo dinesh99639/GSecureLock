@@ -1,0 +1,9 @@
+{
+    "CLIENT_ID": "YOUR CLIENT_ID HERE",
+    "SCOPES": [
+        "https://www.googleapis.com/auth/drive",
+        "https://www.googleapis.com/auth/drive.file",
+        "https://www.googleapis.com/auth/drive.appdata",
+        "profile"
+    ]
+}
