@@ -1,4 +1,11 @@
-// Get files from app data
+exports.getUserData = async () => {
+    return await window.gapi.client.request({
+        'path': '/drive/v3/about?fields=user',
+        'method': 'GET'
+    }).then((res) => res.result);
+}
+
+
 exports.getAllFiles = async () => {
     return await window.gapi.client.drive.files.list({
         spaces: 'appDataFolder',
