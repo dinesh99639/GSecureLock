@@ -5,9 +5,12 @@ import { getUserData } from '../api/drive';
 import { AppBar, Box, Toolbar, IconButton, Typography, Avatar } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
+import './Header.css';
 
-const Header = () => {
+const Header = (props) => {
     let [user, setUser] = useState({
         name: '',
         email: '',
@@ -29,7 +32,7 @@ const Header = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" style={{ backgroundColor: "black" }} >
+            <AppBar position="static" className="main-header" >
                 <Toolbar style={{ minHeight: 36 }} >
                     <IconButton
                         size="large"
@@ -42,8 +45,15 @@ const Header = () => {
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} >GRISP</Typography>
 
-                    <Box>
-                        <Avatar alt={user.name} src={user.image} />
+                    <Box style={{ display: "flex" }}>
+                        <IconButton size="large" onClick={props.toggleTheme} >
+                            {(props.theme === "light")?
+                                <DarkModeIcon style={{ margin: "0 10px" }} />:
+                                <LightModeIcon style={{ margin: "0 10px", color: "white" }} />
+                            }
+                            
+                        </IconButton>
+                        <Avatar alt={user.name} src={user.image} sx={{ width: 30, height: 30, margin: "auto" }} />
                     </Box>
                 </Toolbar>
             </AppBar>

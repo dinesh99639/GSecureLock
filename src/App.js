@@ -1,14 +1,25 @@
 import { useEffect, useState } from "react";
+import { Route, Switch, useHistory } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 
-import { Backdrop, CircularProgress } from '@mui/material';
+import { lightTheme, darkTheme } from './Theme';
+import { GlobalStyles } from './GolbalStyles';
 
 import { getAllFiles, createFile, downloadFile } from './api/drive';
 import initApp from './api/init';
 
+
+import { Backdrop, CircularProgress } from '@mui/material';
+
+
 import Header from './Components/Header';
+import Dashboard from "./Components/Dashboard";
 
 
-function App() {
+function App(props) {
+    let history = useHistory();
+
+    const [theme, setTheme] = useState(localStorage.getItem('theme'));
     const [state, setState] = useState({
         isLoggedIn: null,
         dataFileId: null,
@@ -45,27 +56,51 @@ function App() {
             dataFileId: null,
             data: ''
         })
-        localStorage.clear();
+        localStorage.removeItem('dataFileId');
     }
 
-    const auth = { login, logout }
+    const toggleTheme = () => {
+        let changedTheme = (theme === "light") ? "dark" : "light";
+        setTheme(changedTheme)
+        localStorage.setItem("theme", changedTheme);
+    }
+
+    const auth = { isLoggedIn: state.isLoggedIn, login, logout }
 
     useEffect(() => {
+        if (localStorage.getItem('theme') === null) {
+            localStorage.setItem('theme', 'light');
+            setTheme('light');
+        }
+        
         initApp(setState)
     }, []);
 
-    return (<>
-        <Backdrop
-            sx={{ color: '#fff' }}
-            open={state.isLoggedIn === null}
-        >
-            <CircularProgress color="inherit" />
-        </Backdrop>
+    // useEffect(() => {
+    //     if (state.isLoggedIn) history.push('/dashboard');
+    //     else history.push('/');
+    // }, [state.isLoggedIn]);
 
-        {(state.isLoggedIn !== null) && (
-            <Header />
-        )}
+    return (<>
+        <ThemeProvider theme={(theme === "light") ? lightTheme : darkTheme}>
+            <GlobalStyles />
+
+            <Backdrop
+                sx={{ color: '#fff' }}
+                open={state.isLoggedIn === null}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
+            {(state.isLoggedIn !== null) && (<>
+                <Header theme={theme} toggleTheme={toggleTheme} auth={auth} />
+
+                <Switch>
+                    <Route path="/dashboard" ><Dashboard /></Route>
+                </Switch>
+            </>)}
+        </ThemeProvider>
     </>);
 }
 
-export default App
+export default App;
