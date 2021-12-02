@@ -1,0 +1,116 @@
+import { useState, useEffect } from 'react';
+import { Typography, IconButton, Paper, Divider, Box } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
+const RemainingProgress = (props) => {
+    let { lockTime, lock } = props;
+
+    let lockTimeSeconds = lockTime.m * 60 + lockTime.s;
+    let lockSeconds = lock.value * 60;
+
+    let totalHeight = 0;
+
+    if (lockTimeSeconds > lockSeconds) totalHeight = 100;
+    else if ((lockTimeSeconds <= lockSeconds) && (lockTimeSeconds >= (lockSeconds - 300))) {
+        totalHeight = parseInt((lockTimeSeconds - lockSeconds + 300) / 3);
+    }
+
+    return (<>
+        <Box
+            style={{
+                position: "absolute",
+                top: 0,
+                width: "100%",
+                height: totalHeight + "%",
+                backgroundColor: "#0088fd"
+            }}
+        ></Box>
+    </>);
+}
+
+function Timebar(props) {
+    const [lockTime, updateLockTime] = useState({ m: 5, s: 0 });
+
+    const updateLockType = (m) => {
+        if (m > 0) updateLockTime({ m, s: 0 });
+        else {
+            updateLockTime({ m: 0, s: 0 });
+        }
+    }
+
+    const lockTypes = [
+        { name: "5m", value: 5 },
+        { name: "10m", value: 10 },
+        { name: "15m", value: 15 },
+    ];
+
+    useEffect(
+        () => {
+            if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
+                console.log("Locked");
+                return;
+            }
+            const id = setInterval(() => updateLockTime((lockTime) => {
+                let m = lockTime.m;
+                let s = lockTime.s;
+
+                s--;
+                if (s < 0) {
+                    m--;
+                    s = 59;
+                }
+
+                return { m, s }
+            }), 10);
+            return () => clearInterval(id);
+        },
+        [lockTime]
+    );
+
+    return (<>
+        <Paper elevation={5} className="timebar" style={{ height: "100%" }}>
+            <IconButton size="medium" style={{ color: "inherit" }} >
+                <AccessTimeIcon />
+            </IconButton>
+            <Typography style={{ fontSize: "12px", opacity: "76%" }} >Locks in</Typography>
+            <Typography style={{ fontSize: "12px" }} >{lockTime.m}m {lockTime.s}s</Typography>
+
+            <Divider light={true} variant='fullWidth' style={{ borderColor: "inherit", margin: "5px 0 0 0" }} />
+
+            <List style={{ padding: 0 }}>
+                {lockTypes.map((lock) => {
+                    return <ListItem
+                        key={lock.name}
+                        style={{ padding: "0", borderBottom: "1px solid" }}
+                    >
+                        <RemainingProgress
+                            lockTime={lockTime}
+                            lock={lock}
+                        />
+                        <ListItemButton style={{ padding: "7px 0" }} onClick={() => updateLockType(lock.value)} >
+                            <ListItemText
+                                align="center"
+                                primary={lock.name}
+                                style={{ color: (lockTime.m >= lock.value && lockTime.m >= (lock.value - 5)) ? "white" : "inherit" }}
+                            />
+                        </ListItemButton>
+                    </ListItem>
+                })}
+
+                <ListItem style={{ padding: "0", borderBottom: "1px solid" }} >
+                    <ListItemButton
+                        style={{ padding: "7px 0", display: "block", textAlign: "center" }}
+                        onClick={() => updateLockType(0)}
+                    >
+                        <LockOutlinedIcon />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+        </Paper>
+    </>);
+}
+
+export default Timebar;
