@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Button } from '@mui/material';
 
-import { getUserData, getAllFiles, createFile, removeAllFiles, updateFile, downloadFile } from './api/drive';
-import initApp from './api/init';
+import { getUserData, getAllFiles, createFile, removeAllFiles, updateFile, downloadFile } from '../api/drive';
+import initApp from '../api/init';
 
 
 function Test() {
@@ -50,7 +50,7 @@ function Test() {
     }, []);
 
     return (<>
-        <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+        <div style={{ height: "90vh", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
             <Button variant="contained" onClick={login}>Login</Button>
             <Button variant="contained" onClick={logout}>Logout</Button>
 
