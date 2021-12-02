@@ -5,7 +5,7 @@ const initDrive = (setState) => {
     window.gapi.client.load('drive', 'v3', async () => {
         let isLoggedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
         let dataFileId = null;
-        let data = '';
+        let encryptedData = '';
 
         if (isLoggedIn) {
             dataFileId = localStorage.getItem('dataFileId')
@@ -23,10 +23,10 @@ const initDrive = (setState) => {
             }
 
             let res = await downloadFile(dataFileId);
-            data = res.body;
+            encryptedData = res.body;
         }
 
-        setState({ isLoggedIn, dataFileId, data })
+        setState({ isLoggedIn, dataFileId, encryptedData })
     })
 }
 
