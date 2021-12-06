@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Typography, IconButton, Paper, Divider, Box } from '@mui/material';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
@@ -32,7 +32,7 @@ const RemainingProgress = (props) => {
 }
 
 function Timebar(props) {
-    const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
+    const {lockTime, updateLockTime} = props;
 
     const updateLockType = (m) => {
         if (m > 0) updateLockTime({ m, s: 0, lockAt: new Date().getTime() + m * 60000 });
@@ -48,7 +48,6 @@ function Timebar(props) {
     useEffect(
         () => {
             if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
-                console.log("Locked");
                 return;
             }
             const id = setInterval(() => updateLockTime((lockTime) => {
@@ -60,7 +59,7 @@ function Timebar(props) {
             }), 1000);
             return () => clearInterval(id);
         },
-        [lockTime]
+        [lockTime, updateLockTime]
     );
 
     return (<>

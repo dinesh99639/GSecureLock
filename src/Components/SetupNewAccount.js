@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { makeStyles } from "@mui/styles";
 
+import crypto from '../Utils/crypto';
 import { updateFile } from '../api/drive';
 
 import { TextField, Typography, Box, Button } from '@mui/material';
@@ -60,8 +61,11 @@ function SetupNewAccount(props) {
             credentials: []
         });
 
-        await updateFile(localStorage.getItem('dataFileId'), initData);
-        props.setState({ ...props.state, encryptedData: initData })
+        let encryptedData = crypto.encrypt(initData, passwords.password)
+
+        await updateFile(localStorage.getItem('dataFileId'), encryptedData);
+        props.setState({ ...props.state, encryptedData });
+        
         history.push('/dashboard');
         props.hideBackdrop();
     }

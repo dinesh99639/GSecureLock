@@ -112,6 +112,7 @@ function App(props) {
                     <Route path="/dashboard" >
                         <Dashboard 
                             state={state}
+                            showSnack={showSnack}
                         />
                     </Route>
                     <Route path="/setup_account" >
