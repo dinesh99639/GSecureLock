@@ -32,13 +32,11 @@ const RemainingProgress = (props) => {
 }
 
 function Timebar(props) {
-    const [lockTime, updateLockTime] = useState({ m: 5, s: 0 });
+    const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
 
     const updateLockType = (m) => {
-        if (m > 0) updateLockTime({ m, s: 0 });
-        else {
-            updateLockTime({ m: 0, s: 0 });
-        }
+        if (m > 0) updateLockTime({ m, s: 0, lockAt: new Date().getTime() + m * 60000 });
+        else updateLockTime({ m: 0, s: 0, lockAt: 0 });
     }
 
     const lockTypes = [
@@ -54,17 +52,12 @@ function Timebar(props) {
                 return;
             }
             const id = setInterval(() => updateLockTime((lockTime) => {
-                let m = lockTime.m;
-                let s = lockTime.s;
+                let timeLeft = parseInt((lockTime.lockAt - new Date().getTime()) / 1000);
+                let m = parseInt(timeLeft / 60);
+                let s = timeLeft % 60;
 
-                s--;
-                if (s < 0) {
-                    m--;
-                    s = 59;
-                }
-
-                return { m, s }
-            }), 10);
+                return { m, s, lockAt: lockTime.lockAt }
+            }), 1000);
             return () => clearInterval(id);
         },
         [lockTime]
