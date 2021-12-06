@@ -12,7 +12,7 @@ export const lightTheme = {
         backgroundColor: "rgba(0, 0, 0, 0)"
     },
 
-    unlock: {
+    lockScreen: {
         backgroundColor: 'white',
         color: 'black'
     },
@@ -38,7 +38,7 @@ export const darkTheme = {
         backgroundColor: "#3e3e3e"
     },
 
-    unlock: {
+    lockScreen: {
         backgroundColor: '#303030',
         color: 'white',
     },

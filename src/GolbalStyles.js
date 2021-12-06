@@ -25,9 +25,9 @@ export const GlobalStyles = createGlobalStyle`
         text-align: center;
     }
     
-    .unlock {
-        color: ${({ theme }) => theme.unlock.color};
-        background-color: ${({ theme }) => theme.unlock.backgroundColor};
+    .lockScreen {
+        color: ${({ theme }) => theme.lockScreen.color};
+        background-color: ${({ theme }) => theme.lockScreen.backgroundColor};
     }
 
     .borderRight {
