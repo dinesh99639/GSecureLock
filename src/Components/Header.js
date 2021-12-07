@@ -54,6 +54,7 @@ const Header = (props) => {
                     email: res.user.emailAddress,
                     image: res.user.photoLink
                 });
+                setPath("/dashboard");
             }
         }
         init();
