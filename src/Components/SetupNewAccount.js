@@ -58,7 +58,26 @@ function SetupNewAccount(props) {
                 ],
                 labels: []
             }],
-            credentials: []
+            credentials: [
+                {
+                    id: "C1",
+                    name: "Credentials 1",
+                    data: {
+                        user: "user1",
+                        password: "user1 password",
+                        website: "https://samplesite.com"
+                    }
+                },
+                {
+                    id: "C2",
+                    name: "Credentials 2",
+                    data: {
+                        user: "user2",
+                        password: "user2 password",
+                        website: "https://samplesite.com"
+                    }
+                }
+            ]
         });
 
         let encryptedData = crypto.encrypt(initData, passwords.password)
