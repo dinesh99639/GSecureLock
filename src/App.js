@@ -112,6 +112,7 @@ function App(props) {
                     <Route path="/dashboard" >
                         <Dashboard 
                             state={state}
+                            setState={setState}
                             showSnack={showSnack}
                         />
                     </Route>

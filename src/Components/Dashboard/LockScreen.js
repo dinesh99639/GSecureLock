@@ -25,7 +25,8 @@ function LockScreen(props) {
 
     const unlock = () => {
         try {
-            crypto.decrypt(props.state.encryptedData, password);
+            let data = JSON.parse(crypto.decrypt(props.state.encryptedData, password));
+            props.setState({ ...props.state, data });
             props.updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 })
         }
         catch {

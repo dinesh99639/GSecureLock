@@ -1,6 +1,6 @@
-import { createRef } from "react";
+import { createRef, useEffect } from "react";
 
-import { Box, IconButton, InputBase } from "@mui/material";
+import { Box, IconButton, InputBase, Typography } from "@mui/material";
 
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
@@ -8,6 +8,10 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
+
+    useEffect(() => {
+        console.log(props.state.data)
+    }, [props.state.data])
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
@@ -26,6 +30,15 @@ function CredentialsList(props) {
                     />
                 </Box>
                 <IconButton size="small" style={{ color: "inherit" }} ><FilterAltOutlinedIcon /></IconButton>
+            </Box>
+
+            <Box className="borderBottom" style={{ textAlign: "center", padding: "5px 0" }} >Credentials</Box>
+            
+            <Box>
+                <Box className="borderBottom" style={{ padding: "5px 10px", cursor: "pointer" }} >
+                    <Typography style={{ fontSize: "16px" }} >Name</Typography>
+                    <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@user</Typography>
+                </Box>
             </Box>
         </Box>
     </>);
