@@ -15,7 +15,7 @@ const RemainingProgress = (props) => {
 
     if (lockTimeSeconds > lockSeconds) totalHeight = 100;
     else if ((lockTimeSeconds <= lockSeconds) && (lockTimeSeconds >= (lockSeconds - 300))) {
-        totalHeight = parseInt((lockTimeSeconds - lockSeconds + 300) / 3);
+        totalHeight = ((lockTimeSeconds - lockSeconds + 300) / 3).toFixed(2);
     }
 
     return (<>
