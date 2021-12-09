@@ -1,4 +1,4 @@
-import { createRef, useEffect } from "react";
+import { createRef, useEffect, useState } from "react";
 
 import { Box, IconButton, InputBase, Typography } from "@mui/material";
 
@@ -8,19 +8,43 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
+    const { selectedCategory, filteredEntries, updateFilteredEntries, selectedEntryId, updateSelectedEntryId } = props
+
+    const [entries, updateEntries] = useState({ credentials: [], templates: [] });
+
+    // useEffect(() => {
+    //     if (filteredEntries.length) {
+
+    //     }
+    //     else {
+    //         let data = props.state.data;
+
+    //         if (data) updateEntries({ credentials: data.credentials, templates: data.templates });
+    //         else updateEntries({ credentials: [], templates: [] })
+    //     }
+    // }, [filteredEntries, props.state.data]);
 
     useEffect(() => {
-        console.log(props.state.data)
-    }, [props.state.data])
+        let data = props.state.data;
+
+        if (data) {
+            if (selectedCategory === 'All') updateEntries({ credentials: data.credentials, templates: data.templates });
+            else {
+                let credentials = data.credentials.filter((item) => item.category === selectedCategory);
+                updateEntries({ credentials, templates: data.templates });
+            }
+        }
+        else updateEntries({ credentials: [], templates: [] })
+    }, [selectedCategory, props.state.data]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
             <Box className="borderBottom" style={{ display: "flex", padding: "0 5px" }} >
                 <IconButton size="small" style={{ color: "inherit" }} ><AddCircleOutlineRoundedIcon /></IconButton>
                 <Box className="searchBox" style={{ display: "flex", flex: 1, borderRadius: "4px" }} >
-                    <IconButton 
-                        size="small" 
-                        style={{ color: "inherit", padding: "0 0 0 5px" }} 
+                    <IconButton
+                        size="small"
+                        style={{ color: "inherit", padding: "0 0 0 5px" }}
                         onClick={() => searchRef.current.click()}
                     ><SearchOutlinedIcon /></IconButton>
                     <InputBase
@@ -32,13 +56,27 @@ function CredentialsList(props) {
                 <IconButton size="small" style={{ color: "inherit" }} ><FilterAltOutlinedIcon /></IconButton>
             </Box>
 
-            <Box className="borderBottom" style={{ textAlign: "center", padding: "5px 0" }} >Credentials</Box>
-            
             <Box>
-                <Box className="borderBottom" style={{ padding: "5px 10px", cursor: "pointer" }} >
-                    <Typography style={{ fontSize: "16px" }} >Name</Typography>
-                    <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@user</Typography>
-                </Box>
+                {
+                    entries.credentials.map((entry) => {
+                        return <Box
+                            key={entry.id}
+                            className="borderBottom"
+                            style={{
+                                margin: "0 2px",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                                borderRadius: "4px",
+                                backgroundColor: (selectedEntryId === entry.id) ? "rgb(0, 136, 253)" : null,
+                                color: (selectedEntryId === entry.id) ? "white" : "inherit",
+                            }}
+                            onClick={() => updateSelectedEntryId(entry.id)}
+                        >
+                            <Typography style={{ fontSize: "16px" }} >{entry.name}</Typography>
+                            <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@{entry.data.user}</Typography>
+                        </Box>
+                    })
+                }
             </Box>
         </Box>
     </>);
