@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 // import crypto from '../../Utils/crypto';
 
-import { Grid } from '@mui/material';
+import { Grid, Box, Typography } from '@mui/material';
 
 import Timebar from './Timebar';
 import Categories from './Categories';
@@ -20,10 +20,17 @@ function Dashboard(props) {
     const [selectedCategory, updateSelectedCategory] = useState('All');
     const [selectedEntryId, updateSelectedEntryId] = useState('');
 
+    const [categories, updateCategories] = useState({});
     const [categoriesCount, updateCategoriesCount] = useState([]);
 
-    const [entriesById, updateEntriesById] = useState({});
-    const [filteredEntries, updateFilteredEntries] = useState([]);
+    const [entriesById, updateEntriesById] = useState(null);
+
+    useEffect(() => {
+        // if (lockTime.m > 0 && lockTime.s > 0) 
+        document.addEventListener("keydown", (e) => {
+            if (e.keyCode === 27) updateSelectedEntryId('')
+        }, false);
+    }, []);
 
     useEffect(() => {
         if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
@@ -33,7 +40,7 @@ function Dashboard(props) {
 
     useEffect(() => {
         let data = state.data;
-        
+
         if (data) {
             let credentialsById = {};
             let categoriesCountObj = {};
@@ -47,6 +54,7 @@ function Dashboard(props) {
 
                 totalEntries++;
             });
+            updateCategories({ ...categoriesCountObj });
 
             categoriesCountArr.push({ name: 'All', count: totalEntries });
             ['Passwords', 'API Keys', 'Cards', 'Coupons'].forEach((category) => {
@@ -56,43 +64,25 @@ function Dashboard(props) {
                 delete categoriesCountObj[category];
             })
 
-            for (let category in  categoriesCountObj) categoriesCountArr.push({ name: category, count: categoriesCountObj[category] });
+            for (let category in categoriesCountObj) categoriesCountArr.push({ name: category, count: categoriesCountObj[category] });
 
             updateCategoriesCount(categoriesCountArr)
             updateEntriesById(credentialsById);
         }
-        else updateEntriesById({});
+        else updateEntriesById(null);
 
     }, [state.data]);
 
 
     return (<>
         {(isDesktop) ? <>
-            {/* <Grid container style={{ display: "flex", flex: 1 }} >
-                <Grid item xs={0.55} ><Timebar
-                    lockTime={lockTime}
-                    updateLockTime={updateLockTime}
-                /></Grid>
-                <Grid item xs={3} >
-                    <CredentialsList 
-                        state={props.state} 
-                        filteredEntries={filteredEntries}
-                        updateFilteredEntries={updateFilteredEntries}
-                        selectedEntryId={selectedEntryId}
-                        updateSelectedEntryId={updateSelectedEntryId}
+            <Grid container style={{ display: "flex", flex: 1 }} >
+                <Grid item xs={0.46} >
+                    <Timebar
+                        lockTime={lockTime}
+                        updateLockTime={updateLockTime}
                     />
                 </Grid>
-                <Grid item xs={5.5} ><CredentialData
-                    entriesById={entriesById}
-                /></Grid>
-                <Grid item xs={2.95} ></Grid>
-            </Grid> */}
-
-            <Grid container style={{ display: "flex", flex: 1 }} >
-                <Grid item xs={0.46} ><Timebar
-                    lockTime={lockTime}
-                    updateLockTime={updateLockTime}
-                /></Grid>
                 <Grid item xs={1.7} >
                     <Categories
                         categoriesCount={categoriesCount}
@@ -104,12 +94,37 @@ function Dashboard(props) {
                     <CredentialsList
                         state={props.state}
                         selectedCategory={selectedCategory}
-                        filteredEntries={filteredEntries}
-                        updateFilteredEntries={updateFilteredEntries}
                         selectedEntryId={selectedEntryId}
                         updateSelectedEntryId={updateSelectedEntryId}
                     />
                 </Grid>
+
+                {(selectedEntryId !== '' && entriesById) ? <>
+                    <Grid item xs={4} >
+                        <CredentialData
+                            entriesById={entriesById}
+                            selectedEntryId={selectedEntryId}
+                            entryData={entriesById[selectedEntryId]}
+
+                            categories={categories}
+                        />
+                    </Grid>
+                </> : <>
+                    <Grid item xs={7.34} >
+                        <Box
+                            style={{
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}
+                        >
+                            <Typography style={{ fontSize: "25px" }} >GSecurePass</Typography>
+                            <Typography style={{ fontSize: "15px" }} >A secure password manager</Typography>
+                        </Box>
+                    </Grid>
+                </>}
             </Grid>
         </> : <>
             Mobile View
