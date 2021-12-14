@@ -1,59 +1,63 @@
 import { createRef, useEffect, useState } from "react";
 
-import { Box, IconButton, InputBase, Typography } from "@mui/material";
+import { Box, IconButton, InputBase, Typography, Tooltip } from "@mui/material";
 
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
-    const { selectedCategory, filteredEntries, updateFilteredEntries, selectedEntryId, updateSelectedEntryId } = props
+    const { selectedCategory, selectedEntryId, updateSelectedEntryId } = props
 
+    const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
-
-    // useEffect(() => {
-    //     if (filteredEntries.length) {
-
-    //     }
-    //     else {
-    //         let data = props.state.data;
-
-    //         if (data) updateEntries({ credentials: data.credentials, templates: data.templates });
-    //         else updateEntries({ credentials: [], templates: [] })
-    //     }
-    // }, [filteredEntries, props.state.data]);
 
     useEffect(() => {
         let data = props.state.data;
 
         if (data) {
-            if (selectedCategory === 'All') updateEntries({ credentials: data.credentials, templates: data.templates });
+            let credentials = data.credentials;
+
+            if (searchString !== '') {
+                credentials = credentials.filter((item) => item.name.toLowerCase().includes(searchString));
+            }
+            
+            if (selectedCategory === 'All') updateEntries({ credentials, templates: data.templates });
             else {
-                let credentials = data.credentials.filter((item) => item.category === selectedCategory);
-                updateEntries({ credentials, templates: data.templates });
+                let credentialsByCategory = credentials.filter((item) => item.category === selectedCategory);
+                updateEntries({ credentials: credentialsByCategory, templates: data.templates });
             }
         }
-        else updateEntries({ credentials: [], templates: [] })
-    }, [selectedCategory, props.state.data]);
+        else updateEntries({ credentials: [], templates: [] });
+
+    }, [searchString, selectedCategory, props.state.data]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
             <Box className="borderBottom" style={{ display: "flex", padding: "0 5px" }} >
-                <IconButton size="small" style={{ color: "inherit" }} ><AddCircleOutlineRoundedIcon /></IconButton>
+                <Tooltip title="Add">
+                    <IconButton size="small" style={{ color: "inherit" }} ><AddCircleOutlineRoundedIcon /></IconButton>
+                </Tooltip>
                 <Box className="searchBox" style={{ display: "flex", flex: 1, borderRadius: "4px" }} >
+
                     <IconButton
                         size="small"
                         style={{ color: "inherit", padding: "0 0 0 5px" }}
                         onClick={() => searchRef.current.click()}
                     ><SearchOutlinedIcon /></IconButton>
+
                     <InputBase
                         ref={searchRef}
                         placeholder="Search"
                         sx={{ ml: 1, flex: 1, color: "inherit" }}
+                        onChange={(e) => updateSearchString(e.target.value.trim().toLowerCase())}
                     />
                 </Box>
-                <IconButton size="small" style={{ color: "inherit" }} ><FilterAltOutlinedIcon /></IconButton>
+
+                <Tooltip title="Templates">
+                    <IconButton size="small" style={{ color: "inherit" }} ><HorizontalSplitIcon /></IconButton>
+                </Tooltip>
             </Box>
 
             <Box>
@@ -73,7 +77,7 @@ function CredentialsList(props) {
                             onClick={() => updateSelectedEntryId(entry.id)}
                         >
                             <Typography style={{ fontSize: "16px" }} >{entry.name}</Typography>
-                            <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@{entry.data.user}</Typography>
+                            <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@{entry.user}</Typography>
                         </Box>
                     })
                 }
