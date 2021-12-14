@@ -61,43 +61,47 @@ function SetupNewAccount(props) {
             credentials: [
                 {
                     id: "C1",
+                    user: "user1",
                     name: "Credentials 1",
                     category: "Passwords",
-                    data: {
-                        user: "user1",
-                        password: "user1 password",
-                        website: "https://samplesite.com"
-                    }
+                    data: [
+                        { name: "Password", value: "user1 password" },
+                        { name: "Website", value: "https://samplesite.com" }
+                    ]
                 },
                 {
                     id: "C2",
+                    user: "user2",
                     name: "Credentials 2",
                     category: "Passwords",
-                    data: {
-                        user: "user2",
-                        password: "user2 password",
-                        website: "https://samplesite.com"
-                    }
+                    data: [
+                        { name: "Password", value: "user2 password" },
+                        { name: "Website", value: "https://samplesite.com" }
+                    ]
                 },
                 {
                     id: "C3",
+                    user: "user1",
                     name: "Card 1",
                     category: "Cards",
                     data: {
-                        user: "user1",
-                        password: "user1 Card",
-                        website: "https://samplesite.com"
+                        network: "VISA",
+                        cardName: "Bamk Card",
+                        cardType: "Debit Card",
+                        cardNo: "0000 0000 0000 0000",
+                        validThru: "10/2031",
+                        accountHolderName: "Firstname Lastname"
                     }
                 },
                 {
                     id: "C4",
+                    user: "user1",
                     name: "Testing 1",
                     category: "Testing",
-                    data: {
-                        user: "user1",
-                        password: "user1 Testing",
-                        website: "https://samplesite.com"
-                    }
+                    data: [
+                        { name: "Password", value: "user1 Testing" },
+                        { name: "Website", value: "https://samplesite.com" }
+                    ]
                 }
             ]
         });
