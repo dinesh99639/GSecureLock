@@ -33,7 +33,7 @@ const Header = (props) => {
         if (!props.auth.isLoggedIn) {
             await props.auth.login();
             
-            if (props.encryptedData.length === 0) {
+            if (localStorage.getItem('encryptedData').length === 0) {
                 history.push("/setup_account");
                 redirectToDashboard = false;
             }
@@ -46,17 +46,35 @@ const Header = (props) => {
     }
 
     useEffect(() => {
-        const init = async () => {
+        const loadUserData = async () => {
+            let userData = {
+                name: "",
+                email: "",
+                image: ""
+            };
+
             if (props.auth.isLoggedIn) {
-                let res = await getUserData();
-                setUser({
-                    name: res.user.displayName,
-                    email: res.user.emailAddress,
-                    image: res.user.photoLink
-                });
+                userData = localStorage.getItem('userData');
+
+                if (userData) {
+                    userData = JSON.parse(userData);
+                }
+                else {
+                    let res = await getUserData();
+    
+                    userData = {
+                        name: res.user.displayName,
+                        email: res.user.emailAddress,
+                        image: res.user.photoLink
+                    }
+    
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                }
             }
+            
+            setUser(userData);
         }
-        init();
+        loadUserData();
     }, [props.auth.isLoggedIn]);
 
     return (

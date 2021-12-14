@@ -6,7 +6,7 @@ const initDrive = (setState) => {
         let isLoggedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
         let dataFileId = null;
         let encryptedData = '';
-
+        
         if (isLoggedIn) {
             dataFileId = localStorage.getItem('dataFileId')
 
@@ -24,9 +24,10 @@ const initDrive = (setState) => {
 
             let res = await downloadFile(dataFileId);
             encryptedData = res.body;
+            localStorage.setItem('encryptedData', encryptedData);
         }
-
-        setState({ isLoggedIn, dataFileId, encryptedData })
+        
+        setState({ isLoggedIn, dataFileId, encryptedData });
     })
 }
 
@@ -40,8 +41,8 @@ const initClient = async (setState) => {
 }
 
 const loadGoogleApi = async (setState) => {
-    var scr = document.createElement('script'),
-        head = document.head || document.getElementsByTagName('head')[0];
+    var scr = document.createElement('script');
+    var head = document.head || document.getElementsByTagName('head')[0];
     scr.src = 'https://apis.google.com/js/api.js';
 
     head.insertBefore(scr, head.firstChild);

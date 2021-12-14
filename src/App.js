@@ -54,6 +54,7 @@ function App(props) {
         encryptedData = res.body;
 
         setState({ isLoggedIn, dataFileId, encryptedData });
+        localStorage.setItem('encryptedData', encryptedData);
         hideBackdrop()
     }
 
@@ -87,14 +88,32 @@ function App(props) {
             setTheme('light');
         }
 
-        initApp(setState)
+        let encryptedData = localStorage.getItem('encryptedData');
+
+        if (encryptedData) {
+            setState({
+                isLoggedIn: true,
+                dataFileId: localStorage.getItem('dataFileId'),
+                encryptedData
+            })
+        }
+        else initApp(setState);
+
+        // const checkStorage = async () => {
+        //     console.log(await window.gapi.auth2.getAuthInstance().signIn())
+        //     if (localStorage.getItem('userData') === null && await window.gapi.auth2.getAuthInstance().signIn()) {
+        //         logout();
+        //     }
+        // }
+
+        // checkStorage()
     }, []);
 
     useEffect(() => {
         if (state.isLoggedIn === null) showBackdrop();
         else hideBackdrop();
     }, [state.isLoggedIn]);
-    
+
 
     return (<>
         <ThemeProvider theme={(theme === "light") ? lightTheme : darkTheme}>
@@ -110,14 +129,14 @@ function App(props) {
 
                 <Switch>
                     <Route path="/dashboard" >
-                        <Dashboard 
+                        <Dashboard
                             state={state}
                             setState={setState}
                             showSnack={showSnack}
                         />
                     </Route>
                     <Route path="/setup_account" >
-                        <SetupNewAccount 
+                        <SetupNewAccount
                             state={state}
                             setState={setState}
                             showBackdrop={showBackdrop}
@@ -129,9 +148,9 @@ function App(props) {
                 </Switch>
             </>)}
 
-            <Snackbar 
-                open={snack.open} 
-                anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+            <Snackbar
+                open={snack.open}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 autoHideDuration={5000}
                 transitionDuration={{ enter: 500, exit: 0 }}
                 onClose={hideSnack}
