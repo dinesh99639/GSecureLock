@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// import crypto from '../../Utils/crypto';
+import crypto from '../../Utils/crypto';
 
 import { Grid, Box, Typography } from '@mui/material';
 
@@ -12,18 +12,38 @@ import LockScreen from './LockScreen';
 
 function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
-    const { state, setState } = props;
+    const { theme, state, setState } = props;
 
     // const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
     const [lockTime, updateLockTime] = useState({ m: 0, s: 0, lockAt: 0 });
+    const [password, updatePassword] = useState('');
 
     const [selectedCategory, updateSelectedCategory] = useState('All');
-    const [selectedEntryId, updateSelectedEntryId] = useState('');
-
+    
     const [categories, updateCategories] = useState({});
     const [categoriesCount, updateCategoriesCount] = useState([]);
-
+    
     const [entriesById, updateEntriesById] = useState(null);
+    const [selectedEntryId, updateSelectedEntryId] = useState('');
+
+    const [selectedEntryIndex, updateSelectedEntryIndex] = useState(-1);
+    const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
+
+    const saveEntry = (entryData) => {
+        setState((prevState) => {
+            let newState = { ...prevState };
+            newState.data.credentials[selectedEntryIndex] = entryData;
+            
+            let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
+            newState.encryptedData = encryptedData;
+            localStorage.setItem("encryptedData", encryptedData);
+
+            return newState;
+        });
+        
+        updateEntriesById((entries) => ({ ...entries, [selectedEntryId]: entryData }))
+
+    }
 
     useEffect(() => {
         // if (lockTime.m > 0 && lockTime.s > 0) 
@@ -96,17 +116,23 @@ function Dashboard(props) {
                         selectedCategory={selectedCategory}
                         selectedEntryId={selectedEntryId}
                         updateSelectedEntryId={updateSelectedEntryId}
+                        updateSelectedEntryIndex={updateSelectedEntryIndex}
                     />
                 </Grid>
 
                 {(selectedEntryId !== '' && entriesById) ? <>
                     <Grid item xs={4} >
                         <CredentialData
+                            theme={theme}
                             entriesById={entriesById}
                             selectedEntryId={selectedEntryId}
                             entryData={entriesById[selectedEntryId]}
 
                             categories={categories}
+                            selectedFieldIndex={selectedFieldIndex}
+                            updateSelectedFieldIndex={updateSelectedFieldIndex}
+
+                            saveEntry={saveEntry}
                         />
                     </Grid>
                 </> : <>
@@ -135,6 +161,9 @@ function Dashboard(props) {
             setState={props.setState}
             updateLockTime={updateLockTime}
             showSnack={props.showSnack}
+
+            password={password}
+            updatePassword={updatePassword}
         />}
     </>);
 }

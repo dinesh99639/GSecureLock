@@ -8,7 +8,7 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
-    const { selectedCategory, selectedEntryId, updateSelectedEntryId } = props
+    const { selectedCategory, selectedEntryId, updateSelectedEntryId, updateSelectedEntryIndex } = props
 
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
@@ -62,7 +62,7 @@ function CredentialsList(props) {
 
             <Box>
                 {
-                    entries.credentials.map((entry) => {
+                    entries.credentials.map((entry, index) => {
                         return <Box
                             key={entry.id}
                             className="borderBottom"
@@ -74,7 +74,10 @@ function CredentialsList(props) {
                                 backgroundColor: (selectedEntryId === entry.id) ? "rgb(0, 136, 253)" : null,
                                 color: (selectedEntryId === entry.id) ? "white" : "inherit",
                             }}
-                            onClick={() => updateSelectedEntryId(entry.id)}
+                            onClick={() => {
+                                updateSelectedEntryId(entry.id);
+                                updateSelectedEntryIndex(index);
+                            }}
                         >
                             <Typography style={{ fontSize: "16px" }} >{entry.name}</Typography>
                             <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@{entry.user}</Typography>

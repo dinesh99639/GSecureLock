@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { makeStyles } from "@mui/styles";
 
 import crypto from '../../Utils/crypto';
@@ -20,8 +19,7 @@ const useStyles = makeStyles({
 
 function LockScreen(props) {
     const classes = useStyles();
-
-    const [password, updatePassword] = useState('');
+    const { password, updatePassword } = props;
 
     const unlock = () => {
         try {
