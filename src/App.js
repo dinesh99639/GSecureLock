@@ -130,6 +130,7 @@ function App(props) {
                 <Switch>
                     <Route path="/dashboard" >
                         <Dashboard
+                            theme={theme}
                             state={state}
                             setState={setState}
                             showSnack={showSnack}
