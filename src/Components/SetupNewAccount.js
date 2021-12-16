@@ -25,7 +25,7 @@ function SetupNewAccount(props) {
 
     const [haveAccess, updateAccess] = useState(true);
     const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
-    
+
     const handleInputChange = (e) => setPasswords({ ...passwords, [e.target.name]: e.target.value });
 
     const handleContinueBtnClick = async () => {
@@ -86,11 +86,12 @@ function SetupNewAccount(props) {
                     category: "Cards",
                     data: {
                         network: "VISA",
-                        cardName: "Bamk Card",
+                        cardName: "Bank Card",
                         cardType: "Debit Card",
                         cardNo: "0000 0000 0000 0000",
                         validThru: "10/2031",
-                        accountHolderName: "Firstname Lastname"
+                        cardHolderName: "Firstname Lastname",
+                        CVV: "000"
                     }
                 },
                 {
@@ -110,7 +111,7 @@ function SetupNewAccount(props) {
 
         await updateFile(localStorage.getItem('dataFileId'), encryptedData);
         props.setState({ ...props.state, encryptedData });
-        
+
         history.push('/dashboard');
         props.hideBackdrop();
     }
