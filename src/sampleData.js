@@ -1,20 +1,89 @@
+const crypto =  require('crypto');
+
+const cipher = {
+    encrypt: (text, key) => {
+        let cipher = crypto.createCipher('aes-256-cbc', key);
+        let encrypted = cipher.update(text, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+        return encrypted;
+    },
+
+    decrypt: (text, key) => {
+        var decipher = crypto.createDecipher('aes-256-cbc', key)
+        var encrypted = decipher.update(text, 'hex', 'utf8')
+        encrypted += decipher.final('utf8');
+        return encrypted;
+    }
+}
+
+const { encrypt } = cipher;
+
 const data = {
     config: {
-        theme: "",
-        timer: "",
+        timer: 5,
     },
     templates: [{
-        id: "",
-        name: "",
+        id: "t1",
+        name: "Default",
         data: [
-            { name, value, hide }
-        ]
+            { user: "", password: "", website: "" }
+        ],
+        labels: []
     }],
-    credentials: [{
-        id: "",
-        name: "",
-        data: [
-            { user }
-        ]
-    }]
+    credentials: [
+        {
+            id: "C1",
+            user: "user1",
+            name: "Credentials 1",
+            category: "Passwords",
+            data: [
+                { name: "Password", value: "user1 password" },
+                { name: "Website", value: "https://samplesite.com" }
+            ]
+        },
+        {
+            id: "C2",
+            user: "user2",
+            name: "Credentials 2",
+            category: "Passwords",
+            data: [
+                { name: "Password", value: "user2 password" },
+                { name: "Website", value: "https://samplesite.com" }
+            ]
+        },
+        {
+            id: "C3",
+            user: "user1",
+            name: "Card 1",
+            category: "Cards",
+            data: {
+                network: "VISA",
+                cardName: "Bank Card",
+                cardType: "Debit Card",
+                cardNo: "0000 0000 0000 0000",
+                validThru: "10/2031",
+                cardHolderName: "Firstname Lastname",
+                CVV: "000"
+            }
+        },
+        {
+            id: "C4",
+            user: "user1",
+            name: "Testing 1",
+            category: "Testing",
+            data: [
+                { name: "Password", value: "user1 Testing" },
+                { name: "Website", value: "https://samplesite.com" }
+            ]
+        }
+    ]
 }
+
+let jsonData = JSON.stringify(data);
+let encryptedData = encrypt(jsonData, process.argv[2]);
+
+// node sampleData.js <password>
+
+console.log("\'\'\'\n");
+console.log(encryptedData);
+console.log("\n\n\'\'\'");
