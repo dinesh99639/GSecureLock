@@ -15,7 +15,7 @@ function CredentialsList(props) {
 
     useEffect(() => {
         let data = props.state.data;
-
+        
         if (data) {
             let credentials = data.credentials;
 
@@ -31,7 +31,7 @@ function CredentialsList(props) {
         }
         else updateEntries({ credentials: [], templates: [] });
 
-    }, [searchString, selectedCategory, props.state.data]);
+    }, [searchString, selectedCategory, props.state]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
