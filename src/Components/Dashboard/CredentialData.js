@@ -13,6 +13,9 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 const useInputStyles = makeStyles({
@@ -107,10 +110,12 @@ function SelectCategory({ name, categories, entryData, onChange, theme }) {
 function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
-    const { theme, selectedEntryId, categories, selectedFieldIndex, updateSelectedFieldIndex, saveEntry } = props;
+    const { theme, selectedEntryId, categories, selectedFieldIndex, updateSelectedFieldIndex, showSnack } = props;
 
     const [isEditMode, updateEditModeStatus] = useState(false);
     const [entryData, updateEntryData] = useState(props.entryData);
+
+    const [is_CVV_Visible, update_CVV_VisibleState] = useState(false);
 
     const updateMetaInput = (e) => updateEntryData((state) => ({ ...state, [e.target.name]: e.target.value }))
     const updateFieldInput = (e, idx) => updateEntryData((state) => {
@@ -139,15 +144,133 @@ function CredentialData(props) {
         updateSelectedFieldIndex(entryData.data.length);
     }
 
+    const copyText = (text) => {
+        navigator.clipboard.writeText(text);
+        showSnack("info", "Text Copied");
+    }
+    const openLink = (link) => {
+        window.open(link);
+    }
+
+    const saveEntry = (entryData) => {
+        props.saveEntry(entryData);
+        updateEditModeStatus(false);
+    }
+
     useEffect(() => {
         console.log(entryData);
     }, [entryData])
 
     useEffect(() => {
-        updateEditModeStatus(true);
+        updateEditModeStatus(false);
         updateEntryData(props.entryData)
         updateSelectedFieldIndex(0);
     }, [props.entryData, selectedEntryId, updateSelectedFieldIndex])
+
+    const cardThemes = {
+        blackPurple: {
+            background: "linear-gradient(90deg, rgba(0,19,36,1) 0%, rgba(67,9,121,1) 50%, rgba(191,0,255,1) 100%)",
+            color: "white"
+        },
+        blue: {
+            background: "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)",
+            color: "white"
+        },
+        blackOrange: {
+            background: "linear-gradient(90deg, rgba(0,19,36,1) 0%, rgba(142,93,2,1) 72%, rgba(255,174,0,1) 100%)",
+            color: "white"
+        },
+        purpleOrange: {
+            background: "linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%)",
+            color: "white"
+        },
+        orangeBlue: {
+            background: "linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%)",
+            color: "white"
+        },
+        black: {
+            background: "linear-gradient(to right, #000000, #434343)",
+            color: "white"
+        },
+        purple: {
+            background: "linear-gradient(to right, #6a3093, #a044ff)",
+            color: "white"
+        },
+        orange: {
+            background: "linear-gradient(to right, #f46b45, #eea849)",
+            color: "white"
+        },
+        instagram: {
+            background: "linear-gradient(to right, #833ab4, #fd1d1d, #fcb045)",
+            color: "white"
+        },
+        violet: {
+            background: "linear-gradient(to right, #6441a5, #2a0845)",
+            color: "white"
+        },
+        greenBlue: {
+            background: "linear-gradient(to right, #43cea2, #185a9d)",
+            color: "white"
+        },
+        greenBlack: {
+            background: "linear-gradient(to right, #52c234, #061700)",
+            color: "white"
+        },
+        facebook: {
+            background: "linear-gradient(to right, #00c6ff, #0072ff)",
+            color: "white"
+        },
+        skyBlue: {
+            background: "linear-gradient(to right, #00d2ff, #3a7bd5)",
+            color: "white"
+        },
+        pink: {
+            background: "linear-gradient(to right, #f857a6, #ff5858)",
+            color: "white"
+        },
+        dark: {
+            background: "linear-gradient(to right, #232526, #414345)",
+            color: "white"
+        },
+        bluePurple: {
+            background: "linear-gradient(to right, #4776e6, #8e54e9)",
+            color: "white"
+        },
+        purePurple: {
+            background: "linear-gradient(to right, #da22ff, #9733ee)",
+            color: "white"
+        },
+        greenBluePurple: {
+            background: "linear-gradient(155deg, #52c234 0%, rgba(0,212,255,1) 50%,  #9733ee 75%)",
+            color: "white"
+        },
+        color: {
+            background: "linear-gradient(to right, #da22ff, #9733ee)",
+            color: "white"
+        },
+    }
+
+    // const [cardThemesArr, updatecardThemesArr] = useState([]);
+    // useEffect(() => {
+    //     let tmp = []
+    //     for (let i in cardThemes) {
+    //         tmp.push(i)
+    //     }
+    //     console.log(tmp)
+    //     updatecardThemesArr(tmp)
+    // }, [])
+
+    // const [currentCardTheme, updateCurrentCardTheme] = useState(cardThemes.color);
+    // const [cardColorIndex, updatecardColorIndex] = useState(0);
+
+    // useEffect(() => {
+    //     console.log()
+    //     const id = setInterval(() => {
+    //         updateCurrentCardTheme(cardThemes[cardThemesArr[cardColorIndex%19]])
+    //         updatecardColorIndex(cardColorIndex + 1)
+    //     }, 1000);
+    //     return () => clearInterval(id);
+    // }, [cardColorIndex, cardThemesArr, cardThemes]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%", width: "100%" }} >
@@ -236,9 +359,9 @@ function CredentialData(props) {
                                             name="cardType"
                                             value={entryData.data.cardType}
                                             className={classes.root}
-                                            style={{ 
-                                                width: "100%", 
-                                                backgroundColor: "inherit", 
+                                            style={{
+                                                width: "100%",
+                                                backgroundColor: "inherit",
                                                 color: "inherit"
                                             }}
                                             MenuProps={{
@@ -349,7 +472,7 @@ function CredentialData(props) {
                         <Box style={{ padding: "15px", display: "flex", justifyContent: "center" }} >
                             <Button
                                 variant="standard"
-                                style={{ backgroundColor: "#0088fd", margin: "0 10px", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
+                                style={{ backgroundColor: "#0088fd", color: "white", margin: "0 10px", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
                                 onClick={() => saveEntry(entryData)}
                             >Save</Button>
                         </Box>
@@ -415,13 +538,13 @@ function CredentialData(props) {
                         <Box style={{ padding: "15px", display: "flex", justifyContent: "center" }} >
                             <Button
                                 variant="standard"
-                                style={{ backgroundColor: "#0088fd", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
+                                style={{ backgroundColor: "#0088fd", color: "white", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
                                 onClick={addField}
                             >Add Entry</Button>
 
                             <Button
                                 variant="standard"
-                                style={{ backgroundColor: "#0088fd", margin: "0 10px", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
+                                style={{ backgroundColor: "#0088fd", color: "white", margin: "0 10px", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
                                 onClick={() => saveEntry(entryData)}
                             >Save</Button>
                         </Box>
@@ -435,6 +558,129 @@ function CredentialData(props) {
                         <IconButton size="small" style={{ color: "#009dcd", margin: "0 5px", padding: 0 }} onClick={() => updateEditModeStatus(true)} ><EditOutlinedIcon /></IconButton>
                         <IconButton size="small" style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
                     </Box>
+                </Box>
+
+                <Box style={{ padding: "10px 0" }} >
+                    {(entryData.category === "Cards") ? <>
+                        <Paper
+                            style={{
+                                // ...currentCardTheme,
+                                // ...cardThemes.color,
+                                ...cardThemes.bluePurple,
+                                position: "relative",
+                                width: "76%",
+                                padding: "20%",
+                                boxSizing: "border-box",
+                                borderRadius: "10px",
+                                margin: "0 auto",
+                            }}
+                        >
+                            <Box
+                                style={{
+                                    color: "white",
+                                    padding: "8px 14px",
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    height: "100%",
+                                    width: "100%"
+                                }}
+                            >
+                                <Box style={{ display: "flex" }} >
+                                    <Typography style={{ flexGrow: 1, fontSize: "1.1vw" }} >{entryData.data.cardName}</Typography>
+                                    <Typography style={{ fontSize: "1.1vw", fontWeight: "bold" }} >{entryData.data.network}</Typography>
+                                </Box>
+
+                                <Grid container style={{ marginTop: "4.5vw" }} >
+                                    <Grid item xs={9} >
+                                        <Typography style={{ fontSize: "1.5vw" }} >{entryData.data.cardNo}</Typography>
+
+                                        <Typography style={{ fontSize: "0.9vw" }} >Valid Thru: {entryData.data.validThru}</Typography>
+                                        <Typography style={{ fontSize: "1.3vw" }} >{entryData.data.cardHolderName}</Typography>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={3}
+                                        style={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: "flex-start",
+                                            alignItems: "flex-end",
+                                            padding: "10px 0"
+                                        }}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="3.1vw" viewBox="0 0 193 138"><path d="M13.2 2.1C8.6 3.5 2.3 10.1 1 14.9c-.7 2.8-1 21-.8 56.4l.3 52.3 2.7 4.1c1.5 2.2 4.4 5.1 6.5 6.4l3.8 2.4h166l3.8-2.4c2.1-1.3 5-4.2 6.5-6.4l2.7-4.1V14.5l-2.4-3.8c-1.3-2.1-4.2-5-6.4-6.5l-4.1-2.7-81.5-.2c-49.7-.1-82.9.2-84.9.8zM72 27.5V48H5.9l.3-15.9c.3-14.3.5-16.3 2.4-18.8C13 7.3 14.8 7 44.8 7H72v20.5zm40 6.5v27H79V7h33v27zm66.9-25.2c6.9 3.4 7.6 5.5 7.9 23.3l.3 15.9H152V32h-9v16h-25V7h28.8c25.3 0 29.1.2 32.1 1.8zM72 69.5V83H39V64h-9v19H6V56h66v13.5zm71 0V83h-25V56h25v13.5zm44 0V83h-36V56h36v13.5zM112 90v20H79V70h33v20zm-40 21v20H44.8c-30 0-31.8-.3-36.2-6.3-1.9-2.5-2.1-4.5-2.4-18.3L5.9 91H72v20zm114.8-4.6c-.3 13.8-.5 15.8-2.4 18.3-4.4 6-6 6.3-37.6 6.3H118V91h69.1l-.3 15.4zM112 124.5v6.5H79v-13h33v6.5z" fill="gold" /></svg>
+                                        <Typography style={{ fontSize: "0.9vw" }} >{entryData.data.cardType}</Typography>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Paper>
+
+                        <Box style={{ marginTop: "15px", display: "flex", justifyContent: "center" }} >
+                            <IconButton
+                                style={{ color: "inherit", padding: "0 5px" }}
+                                onMouseDown={() => update_CVV_VisibleState(true)}
+                                onMouseUp={() => update_CVV_VisibleState(false)}
+                            >
+                                <VisibilityIcon style={{ fontSize: "1.2vw" }} />
+                            </IconButton>
+                            <Typography style={{ letterSpacing: 1.5, fontSize: "1vw", margin: "0 0 0 3px" }} >CVV: </Typography>
+                            <Typography style={{ letterSpacing: 1.5, fontSize: "1vw", width: "2vw", margin: "0 3px 0 0" }} >&nbsp;{(is_CVV_Visible) ? entryData.data.CVV : "***"}</Typography>
+                            <IconButton style={{ color: "inherit", padding: "0 5px" }} onClick={() => copyText(entryData.data.CVV)} >
+                                <ContentCopyIcon style={{ fontSize: "1.2vw" }} />
+                            </IconButton>
+                        </Box>
+                    </> : <>
+                        <Table className={tableStyles.table} >
+                            <TableBody>
+                                {entryData.data?.map((field, index) => {
+                                    return <TableRow
+                                        key={index}
+                                        className={tableStyles.tableRow}
+                                        onClick={() => updateSelectedFieldIndex(index)}
+                                    >
+                                        <TableCell style={{ width: "38%" }} className={tableStyles.tableCell}>{field.name}</TableCell>
+                                        <TableCell style={{ width: "56%" }} className={tableStyles.tableCell}>
+                                            <Button
+                                                style={{ padding: 0 }}
+                                                sx={{
+                                                    "& .MuiTouchRipple-root": {
+                                                        color: (theme === "dark") ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.3)"
+                                                    }
+                                                }}
+                                            >
+                                                <Input
+                                                    readOnly
+                                                    disabled
+                                                    value={field.value}
+                                                    InputProps={{ className: classes.input }}
+                                                    sx={{
+                                                        "& .Mui-disabled": {
+                                                            cursor: "pointer",
+                                                            textFillColor: (theme === "dark") ? "white" : "black",
+                                                        }
+                                                    }}
+                                                    onClick={() => copyText(field.value)}
+                                                />
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell style={{ width: "6%" }} className={tableStyles.tableCell} >
+                                            {(field.type === "password" || field.type === "text") &&
+                                                <IconButton style={{ color: "inherit" }} onClick={() => copyText(field.value)} >
+                                                    <ContentCopyIcon style={{ fontSize: "17px" }} />
+                                                </IconButton>
+                                            }
+                                            {(field.type === "link") &&
+                                                <IconButton style={{ color: "inherit" }} onClick={() => openLink(field.value)} >
+                                                    <OpenInNewIcon style={{ fontSize: "17px" }} />
+                                                </IconButton>
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                })}
+                            </TableBody>
+                        </Table>
+                    </>}
                 </Box>
             </>}
         </Box>
