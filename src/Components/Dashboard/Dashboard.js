@@ -32,6 +32,22 @@ function Dashboard(props) {
     const saveEntry = (entryData) => {
         setState((prevState) => {
             let newState = { ...prevState };
+
+            if (newState.data.credentials[selectedEntryIndex].category !== entryData.category) {
+                updateCategoriesCount((counts) => {
+                    let newCounts = [...counts];
+                    let prevCategory = newState.data.credentials[selectedEntryIndex].category;
+                    let currCategory = entryData.category;
+
+                    counts.forEach((count, index) => {
+                        if (count.name === prevCategory) newCounts[index].count--;
+                        if (count.name === currCategory) newCounts[index].count++;
+                    })
+
+                    return newCounts;
+                })
+            }
+
             newState.data.credentials[selectedEntryIndex] = entryData;
             
             let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
@@ -133,6 +149,7 @@ function Dashboard(props) {
                             updateSelectedFieldIndex={updateSelectedFieldIndex}
 
                             saveEntry={saveEntry}
+                            showSnack={props.showSnack}
                         />
                     </Grid>
                 </> : <>
