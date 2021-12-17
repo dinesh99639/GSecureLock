@@ -65,8 +65,8 @@ function SetupNewAccount(props) {
                     name: "Credentials 1",
                     category: "Passwords",
                     data: [
-                        { name: "Password", value: "user1 password" },
-                        { name: "Website", value: "https://samplesite.com" }
+                        { name: "Password", value: "user1 password", type: "password" },
+                        { name: "Website", value: "https://samplesite.com", type: "link" }
                     ]
                 },
                 {
@@ -75,8 +75,8 @@ function SetupNewAccount(props) {
                     name: "Credentials 2",
                     category: "Passwords",
                     data: [
-                        { name: "Password", value: "user2 password" },
-                        { name: "Website", value: "https://samplesite.com" }
+                        { name: "Password", value: "user2 password", type: "password" },
+                        { name: "Website", value: "https://samplesite.com", type: "link" }
                     ]
                 },
                 {
@@ -100,8 +100,8 @@ function SetupNewAccount(props) {
                     name: "Testing 1",
                     category: "Testing",
                     data: [
-                        { name: "Password", value: "user1 Testing" },
-                        { name: "Website", value: "https://samplesite.com" }
+                        { name: "Password", value: "user1 Testing", type: "password" },
+                        { name: "Website", value: "https://samplesite.com", type: "link" }
                     ]
                 }
             ]
