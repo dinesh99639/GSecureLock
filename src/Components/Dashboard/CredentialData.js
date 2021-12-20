@@ -515,6 +515,7 @@ function CredentialData(props) {
                                                             </TableCell>
                                                             <TableCell style={{ width: "53%" }} className={tableStyles.tableCell}>
                                                                 <Input
+                                                                    type={(field.type !== "hidden") ? field.type : "text" }
                                                                     name="value"
                                                                     value={field.value}
                                                                     InputProps={{ className: classes.input }}
@@ -656,6 +657,8 @@ function CredentialData(props) {
                         <Table className={tableStyles.table} >
                             <TableBody>
                                 {entryData.data?.map((field, index) => {
+                                    if (field.type === "hidden") return null;
+
                                     return <TableRow
                                         key={index}
                                         className={tableStyles.tableRow}
@@ -674,6 +677,7 @@ function CredentialData(props) {
                                                 <Input
                                                     readOnly
                                                     disabled
+                                                    type={field.type}
                                                     value={field.value}
                                                     InputProps={{ className: classes.input }}
                                                     sx={{
