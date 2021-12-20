@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import { darkTheme } from '../../Theme';
+import initData from '../../initData';
 
 import { makeStyles } from "@mui/styles";
 import { Box, IconButton, TextField, Typography, Autocomplete, Paper, Grid, TableCell, Checkbox, Button } from "@mui/material";
@@ -117,7 +118,22 @@ function CredentialData(props) {
 
     const [is_CVV_Visible, update_CVV_VisibleState] = useState(false);
 
-    const updateMetaInput = (e) => updateEntryData((state) => ({ ...state, [e.target.name]: e.target.value }))
+    const updateMetaInput = (e) => updateEntryData((state) => {
+        let data = state.data;
+
+        if (e.target.name === "category") {
+            if (state.category === "Cards") { // If previous state category is Cards
+                if (props.entryData.category !== "Cards") data = props.entryData.data;
+                else data = [];
+            }
+            if (e.target.value === "Cards") { // If current state category is Cards
+                if (props.entryData.category === "Cards") data = props.entryData.data;
+                else data = initData.cardData;
+            }
+        }
+        
+        return { ...state, data, [e.target.name]: e.target.value }
+    })
     const updateFieldInput = (e, idx) => updateEntryData((state) => {
         let data = [...state.data];
         data[idx][e.target.name] = e.target.value;
@@ -515,7 +531,7 @@ function CredentialData(props) {
                                                             </TableCell>
                                                             <TableCell style={{ width: "53%" }} className={tableStyles.tableCell}>
                                                                 <Input
-                                                                    type={(field.type !== "hidden") ? field.type : "text" }
+                                                                    type={(field.type !== "hidden") ? field.type : "text"}
                                                                     name="value"
                                                                     value={field.value}
                                                                     InputProps={{ className: classes.input }}
@@ -594,28 +610,28 @@ function CredentialData(props) {
                                 }}
                             >
                                 <Box style={{ display: "flex" }} >
-                                    <Typography 
-                                        style={{ flexGrow: 1, fontSize: "1.1vw", cursor: "pointer" }} 
+                                    <Typography
+                                        style={{ flexGrow: 1, fontSize: "1.1vw", cursor: "pointer" }}
                                         onClick={() => copyText("cardName", entryData.data.cardName)}
                                     >{entryData.data.cardName}</Typography>
-                                    <Typography 
-                                        style={{ fontSize: "1.1vw", fontWeight: "bold", cursor: "pointer" }} 
-                                        onClick={() => copyText("network", entryData.data.network)}    
+                                    <Typography
+                                        style={{ fontSize: "1.1vw", fontWeight: "bold", cursor: "pointer" }}
+                                        onClick={() => copyText("network", entryData.data.network)}
                                     >{entryData.data.network}</Typography>
                                 </Box>
 
                                 <Grid container style={{ marginTop: "4.5vw" }} >
                                     <Grid item xs={9} >
-                                        <Typography 
-                                            style={{ fontSize: "1.5vw", cursor: "pointer" }} 
+                                        <Typography
+                                            style={{ fontSize: "1.5vw", cursor: "pointer" }}
                                             onClick={() => copyText("cardNo", entryData.data.cardNo)}
                                         >{entryData.data.cardNo}</Typography>
 
-                                        <Typography 
-                                            style={{ fontSize: "0.9vw", cursor: "pointer" }} 
+                                        <Typography
+                                            style={{ fontSize: "0.9vw", cursor: "pointer" }}
                                             onClick={() => copyText("validThru", entryData.data.validThru)}
                                         >Valid Thru: {entryData.data.validThru}</Typography>
-                                        <Typography 
+                                        <Typography
                                             style={{ fontSize: "1.3vw", cursor: "pointer" }}
                                             onClick={() => copyText("cardHolderName", entryData.data.cardHolderName)}
                                         >{entryData.data.cardHolderName}</Typography>
@@ -630,8 +646,8 @@ function CredentialData(props) {
                                         }}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="3.1vw" viewBox="0 0 193 138"><path d="M13.2 2.1C8.6 3.5 2.3 10.1 1 14.9c-.7 2.8-1 21-.8 56.4l.3 52.3 2.7 4.1c1.5 2.2 4.4 5.1 6.5 6.4l3.8 2.4h166l3.8-2.4c2.1-1.3 5-4.2 6.5-6.4l2.7-4.1V14.5l-2.4-3.8c-1.3-2.1-4.2-5-6.4-6.5l-4.1-2.7-81.5-.2c-49.7-.1-82.9.2-84.9.8zM72 27.5V48H5.9l.3-15.9c.3-14.3.5-16.3 2.4-18.8C13 7.3 14.8 7 44.8 7H72v20.5zm40 6.5v27H79V7h33v27zm66.9-25.2c6.9 3.4 7.6 5.5 7.9 23.3l.3 15.9H152V32h-9v16h-25V7h28.8c25.3 0 29.1.2 32.1 1.8zM72 69.5V83H39V64h-9v19H6V56h66v13.5zm71 0V83h-25V56h25v13.5zm44 0V83h-36V56h36v13.5zM112 90v20H79V70h33v20zm-40 21v20H44.8c-30 0-31.8-.3-36.2-6.3-1.9-2.5-2.1-4.5-2.4-18.3L5.9 91H72v20zm114.8-4.6c-.3 13.8-.5 15.8-2.4 18.3-4.4 6-6 6.3-37.6 6.3H118V91h69.1l-.3 15.4zM112 124.5v6.5H79v-13h33v6.5z" fill="gold" /></svg>
-                                        <Typography 
-                                            style={{ fontSize: "0.9vw", cursor: "pointer" }} 
+                                        <Typography
+                                            style={{ fontSize: "0.9vw", cursor: "pointer" }}
                                             onClick={() => copyText("cardType", entryData.data.cardType)}
                                         >{entryData.data.cardType}</Typography>
                                     </Grid>
