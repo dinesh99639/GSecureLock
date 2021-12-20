@@ -66,7 +66,8 @@ function SetupNewAccount(props) {
                     category: "Passwords",
                     data: [
                         { name: "Password", value: "user1 password", type: "password" },
-                        { name: "Website", value: "https://samplesite.com", type: "link" }
+                        { name: "Website", value: "https://samplesite.com", type: "link" },
+                        { name: "Temporary Key", value: "sd8h677ifsc67e6", type: "hidden" },
                     ]
                 },
                 {
