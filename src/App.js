@@ -79,7 +79,7 @@ function App(props) {
     const showBackdrop = () => updateLoadingStatus(true);
     const hideBackdrop = () => updateLoadingStatus(false);
 
-    const showSnack = (type, message) => updateSnack({ open: true, type, message });
+    const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
     const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }): null;
 
     useEffect(() => {
@@ -150,6 +150,7 @@ function App(props) {
             </>)}
 
             <Snackbar
+                key={snack.key}
                 open={snack.open}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 autoHideDuration={3000}
