@@ -80,7 +80,7 @@ function App(props) {
     const hideBackdrop = () => updateLoadingStatus(false);
 
     const showSnack = (type, message) => updateSnack({ open: true, type, message });
-    const hideSnack = () => updateSnack({ open: false });
+    const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }): null;
 
     useEffect(() => {
         if (localStorage.getItem('theme') === null) {
@@ -152,7 +152,7 @@ function App(props) {
             <Snackbar
                 open={snack.open}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                autoHideDuration={5000}
+                autoHideDuration={3000}
                 transitionDuration={{ enter: 500, exit: 0 }}
                 onClose={hideSnack}
             >
