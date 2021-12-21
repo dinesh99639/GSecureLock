@@ -8,7 +8,7 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
-    const { selectedCategory, selectedEntryId, updateSelectedEntryId, updateSelectedEntryIndex } = props
+    const { selectedCategory, selectedEntryId, updateSelectedEntryId, updateSelectedEntryIndex, addNewEntry } = props
 
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
@@ -37,7 +37,11 @@ function CredentialsList(props) {
         <Box className="borderRight" style={{ height: "100%" }} >
             <Box className="borderBottom" style={{ display: "flex", padding: "0 5px" }} >
                 <Tooltip title="Add">
-                    <IconButton size="small" style={{ color: "inherit" }} ><AddCircleOutlineRoundedIcon /></IconButton>
+                    <IconButton 
+                        size="small" 
+                        style={{ color: "inherit" }} 
+                        onClick={addNewEntry}
+                    ><AddCircleOutlineRoundedIcon /></IconButton>
                 </Tooltip>
                 <Box className="searchBox" style={{ display: "flex", flex: 1, borderRadius: "4px" }} >
 

@@ -29,6 +29,26 @@ function Dashboard(props) {
     const [selectedEntryIndex, updateSelectedEntryIndex] = useState(-1);
     const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
 
+    const addNewEntry = () => {
+        setState((state) => {
+            let data = {
+                id: "C" + new Date().getTime(),
+                user: "",
+                name: "Untitled",
+                category: "Passwords",
+                data: []
+            }
+
+            return { 
+                ...state, 
+                data: { 
+                    ...state.data,
+                    credentials: [ ...state.data.credentials, data ]
+                } 
+            };
+        })
+    }
+
     const saveEntry = (entryData) => {
         setState((prevState) => {
             let newState = { ...prevState };
@@ -133,6 +153,7 @@ function Dashboard(props) {
                         selectedEntryId={selectedEntryId}
                         updateSelectedEntryId={updateSelectedEntryId}
                         updateSelectedEntryIndex={updateSelectedEntryIndex}
+                        addNewEntry={addNewEntry}
                     />
                 </Grid>
 
