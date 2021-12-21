@@ -131,7 +131,7 @@ function CredentialData(props) {
                 else data = initData.cardData;
             }
         }
-        
+
         return { ...state, data, [e.target.name]: e.target.value }
     })
     const updateFieldInput = (e, idx) => updateEntryData((state) => {
@@ -624,8 +624,8 @@ function CredentialData(props) {
                                     <Grid item xs={9} >
                                         <Typography
                                             style={{ fontSize: "1.5vw", cursor: "pointer" }}
-                                            onClick={() => copyText("cardNo", entryData.data.cardNo)}
-                                        >{entryData.data.cardNo}</Typography>
+                                            onClick={() => copyText("cardNo", entryData.data.cardNo.replace(/\s/g,''))}
+                                        >{entryData.data.cardNo.replace(/\s/g,'').match(/.{1,4}/g).join(' ')}</Typography>
 
                                         <Typography
                                             style={{ fontSize: "0.9vw", cursor: "pointer" }}
