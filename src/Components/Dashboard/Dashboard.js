@@ -7,7 +7,7 @@ import { Grid, Box, Typography } from '@mui/material';
 import Timebar from './Timebar';
 import Categories from './Categories';
 import CredentialsList from './CredentialsList';
-import CredentialData from './CredentialData';
+import CredentialData from './CredentialData/CredentialData';
 import LockScreen from './LockScreen';
 
 function Dashboard(props) {
