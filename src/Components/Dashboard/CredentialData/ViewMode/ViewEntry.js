@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button, IconButton } from "@mui/material";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
@@ -24,6 +24,8 @@ function ViewEntry(props) {
             return ({ ...entryDataObj, data });
         })
     }
+
+    useEffect(() => {updateEntryData(props.entryData)}, [props.entryData]);
 
     return (<>
         <Table className={tableStyles.table} >
