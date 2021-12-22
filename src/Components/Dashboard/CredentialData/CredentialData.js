@@ -10,7 +10,7 @@ import ViewCard from './ViewMode/ViewCard';
 import ViewEntry from './ViewMode/ViewEntry';
 
 import { makeStyles } from "@mui/styles";
-import { Box, IconButton, TextField, Typography, Autocomplete, Paper, Grid, Tooltip } from "@mui/material";
+import { Box, IconButton, TextField, Typography, Autocomplete, Paper, Grid, Tooltip, Modal, Button } from "@mui/material";
 
 import SaveIcon from '@mui/icons-material/Save';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -108,11 +108,10 @@ function SelectCategory({ name, categories, entryData, onChange, theme }) {
 function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
-    const { theme, selectedEntryId, categories, selectedFieldIndex, updateSelectedFieldIndex, showSnack } = props;
+    const { theme, selectedEntryId, categories, selectedFieldIndex, selectedEntryIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
 
     const [isEditMode, updateEditModeStatus] = useState(false);
     const [entryData, updateEntryData] = useState(props.entryData);
-
 
     const updateMetaInput = (e) => updateEntryData((state) => {
         let data = state.data;
@@ -175,6 +174,26 @@ function CredentialData(props) {
         updateEditModeStatus(false);
     }
 
+    const [deleteConfirmModal, updateDeleteConfirmModal] = useState({
+        open: false,
+        entryName: "",
+        callback: null
+    });
+    const openDeleteConfirmationModal = (entryName, callback) => {
+        updateDeleteConfirmModal({
+            open: true,
+            entryName,
+            callback
+        })
+    }
+    const closeDeleteConfirmationModal = () => {
+        updateDeleteConfirmModal({
+            open: false,
+            entryName: "",
+            callback: null
+        })
+    }
+
     useEffect(() => {
         console.log(entryData);
     }, [entryData]);
@@ -215,6 +234,7 @@ function CredentialData(props) {
                                 margin: "0 5px",
                                 padding: 0
                             }}
+                            onClick={() => openDeleteConfirmationModal(entryData.name, deleteEntry)}
                         ><DeleteOutlinedIcon /></IconButton>
                     </Box>
                 </Box>
@@ -281,7 +301,7 @@ function CredentialData(props) {
                     </Tooltip>
                     <Box>
                         <IconButton size="small" style={{ color: "#009dcd", margin: "0 5px", padding: 0 }} onClick={() => updateEditModeStatus(true)} ><EditOutlinedIcon /></IconButton>
-                        <IconButton size="small" style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
+                        <IconButton size="small" onClick={() => openDeleteConfirmationModal(entryData.name, deleteEntry)} style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
                     </Box>
                 </Box>
 
@@ -307,6 +327,58 @@ function CredentialData(props) {
                 </Box>
             </>}
         </Box>
+
+        <Modal
+            open={deleteConfirmModal.open}
+            onClose={closeDeleteConfirmationModal}
+        >
+            <Paper
+                elevation={5}
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : "",
+                    color: "inherit",
+                    outline: "none",
+                    borderRadius: "7px",
+                    padding: "5px"
+
+                }}
+            >
+                <Typography style={{ textAlign: "center" }} >
+                    Confirm
+                </Typography>
+                <Typography style={{ textAlign: "center", margin: "10px" }} >
+                    Are you sure you want to delete this "Bank Card" entry?
+                </Typography>
+                <Box style={{ display: "flex", justifyContent: "space-evenly", marginTop: "20px" }} >
+                    <Button 
+                        variant="contained" 
+                        style={{ 
+                            fontSize: "14px", 
+                            padding: "3px 0", 
+                            width: "100px", 
+                            textTransform: 'none' 
+                        }}
+                        onClick={closeDeleteConfirmationModal} 
+                    >Cancel</Button>
+                    <Button 
+                        variant="contained" 
+                        style={{ 
+                            backgroundColor: "red", 
+                            fontSize: "14px", 
+                            padding: "3px 0", 
+                            width: "100px", 
+                            textTransform: 'none' 
+                        }}
+                        onClick={() => deleteEntry(selectedEntryIndex, closeDeleteConfirmationModal)} 
+                    >Confirm</Button>
+                </Box>
+            </Paper>
+        </Modal>
     </>);
 }
 

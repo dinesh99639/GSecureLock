@@ -19,10 +19,10 @@ function Dashboard(props) {
     const [password, updatePassword] = useState('');
 
     const [selectedCategory, updateSelectedCategory] = useState('All');
-    
+
     const [categories, updateCategories] = useState({});
     const [categoriesCount, updateCategoriesCount] = useState([]);
-    
+
     const [entriesById, updateEntriesById] = useState(null);
     const [selectedEntryId, updateSelectedEntryId] = useState('');
 
@@ -39,13 +39,27 @@ function Dashboard(props) {
                 data: []
             }
 
-            return { 
-                ...state, 
-                data: { 
+            return {
+                ...state,
+                data: {
                     ...state.data,
-                    credentials: [ ...state.data.credentials, data ]
-                } 
+                    credentials: [...state.data.credentials, data]
+                }
             };
+        })
+    }
+
+    const deleteEntry = (selectedEntryIndex, closeDeleteConfirmationModal) => {
+        setState((prevState) => {
+            let newState = { ...prevState };
+            newState.data.credentials.splice(selectedEntryIndex, 1);
+
+            let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
+            newState.encryptedData = encryptedData;
+            localStorage.setItem("encryptedData", encryptedData);
+
+            closeDeleteConfirmationModal();
+            return newState;
         })
     }
 
@@ -69,14 +83,14 @@ function Dashboard(props) {
             }
 
             newState.data.credentials[selectedEntryIndex] = entryData;
-            
+
             let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
             newState.encryptedData = encryptedData;
             localStorage.setItem("encryptedData", encryptedData);
 
             return newState;
         });
-        
+
         updateEntriesById((entries) => ({ ...entries, [selectedEntryId]: entryData }))
 
     }
@@ -167,9 +181,11 @@ function Dashboard(props) {
 
                             categories={categories}
                             selectedFieldIndex={selectedFieldIndex}
+                            selectedEntryIndex={selectedEntryIndex}
                             updateSelectedFieldIndex={updateSelectedFieldIndex}
 
                             saveEntry={saveEntry}
+                            deleteEntry={deleteEntry}
                             showSnack={props.showSnack}
                         />
                     </Grid>

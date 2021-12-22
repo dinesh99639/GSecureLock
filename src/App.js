@@ -80,7 +80,7 @@ function App(props) {
     const hideBackdrop = () => updateLoadingStatus(false);
 
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
-    const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }): null;
+    const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }) : null;
 
     useEffect(() => {
         if (localStorage.getItem('theme') === null) {
