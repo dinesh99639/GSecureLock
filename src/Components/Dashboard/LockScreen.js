@@ -3,6 +3,7 @@ import { makeStyles } from "@mui/styles";
 import crypto from '../../Utils/crypto';
 
 import { Box, Typography, TextField, Button } from '@mui/material';
+import { useEffect } from "react";
 
 const useStyles = makeStyles({
     root: {
@@ -31,6 +32,10 @@ function LockScreen(props) {
             props.showSnack("error", "Wrong password");
         }
     }
+
+    useEffect(() => {
+        updatePassword("");
+    }, [])
 
     return (<>
         <Box className="lockScreen" style={{ position: "absolute", top: "6.5vh", width: "100%", height: "93.5vh" }} >
