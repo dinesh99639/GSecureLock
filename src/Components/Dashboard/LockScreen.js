@@ -35,7 +35,7 @@ function LockScreen(props) {
 
     useEffect(() => {
         updatePassword("");
-    }, [])
+    }, [updatePassword])
 
     return (<>
         <Box className="lockScreen" style={{ position: "absolute", top: "6.5vh", width: "100%", height: "93.5vh" }} >
