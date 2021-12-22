@@ -37,6 +37,7 @@ const data = {
             name: "Credentials 1",
             category: "Passwords",
             data: [
+                { name: "User", value: "user1", type: "text" },
                 { name: "Password", value: "user1 password", type: "password" },
                 { name: "Website", value: "https://samplesite.com", type: "link" },
                 { name: "Temporary Key", value: "sd8h677ifsc67e6", type: "hidden" },
@@ -73,8 +74,8 @@ const data = {
             name: "Testing 1",
             category: "Testing",
             data: [
-                { name: "Password", value: "user1 Testing", type: "password" },
-                { name: "Website", value: "https://samplesite.com", type: "link" }
+                { name: "Password", value: "Testing Password", type: "password" },
+                { name: "Website", value: "https://test.com", type: "link" }
             ]
         }
     ]
