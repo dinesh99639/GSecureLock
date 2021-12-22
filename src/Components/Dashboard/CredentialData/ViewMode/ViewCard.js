@@ -12,9 +12,32 @@ function ViewCard(props) {
 
     const [is_CVV_Visible, update_CVV_VisibleState] = useState(false);
 
+    // const [cardThemesArr, updatecardThemesArr] = useState([]);
+    // useEffect(() => {
+    //     let tmp = []
+    //     for (let i in cardThemes) {
+    //         tmp.push(i)
+    //     }
+    //     console.log(tmp)
+    //     updatecardThemesArr(tmp)
+    // }, [])
+
+    // const [currentCardTheme, updateCurrentCardTheme] = useState(cardThemes.color);
+    // const [cardColorIndex, updatecardColorIndex] = useState(0);
+
+    // useEffect(() => {
+    //     console.log()
+    //     const id = setInterval(() => {
+    //         updateCurrentCardTheme(cardThemes[cardThemesArr[cardColorIndex%19]])
+    //         updatecardColorIndex(cardColorIndex + 1)
+    //     }, 1000);
+    //     return () => clearInterval(id);
+    // }, [cardColorIndex, cardThemesArr, cardThemes]);
+
     return (<>
         <Paper
             style={{
+                // ...currentCardTheme,
                 // ...cardThemes.color,
                 ...cardThemes.bluePurple,
                 position: "relative",

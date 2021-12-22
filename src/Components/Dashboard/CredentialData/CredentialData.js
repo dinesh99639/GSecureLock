@@ -177,35 +177,13 @@ function CredentialData(props) {
 
     useEffect(() => {
         console.log(entryData);
-    }, [entryData])
+    }, [entryData]);
 
     useEffect(() => {
         updateEditModeStatus(false);
         updateEntryData(props.entryData)
         updateSelectedFieldIndex(0);
-    }, [props.entryData, selectedEntryId, updateSelectedFieldIndex])
-
-    // const [cardThemesArr, updatecardThemesArr] = useState([]);
-    // useEffect(() => {
-    //     let tmp = []
-    //     for (let i in cardThemes) {
-    //         tmp.push(i)
-    //     }
-    //     console.log(tmp)
-    //     updatecardThemesArr(tmp)
-    // }, [])
-
-    // const [currentCardTheme, updateCurrentCardTheme] = useState(cardThemes.color);
-    // const [cardColorIndex, updatecardColorIndex] = useState(0);
-
-    // useEffect(() => {
-    //     console.log()
-    //     const id = setInterval(() => {
-    //         updateCurrentCardTheme(cardThemes[cardThemesArr[cardColorIndex%19]])
-    //         updatecardColorIndex(cardColorIndex + 1)
-    //     }, 1000);
-    //     return () => clearInterval(id);
-    // }, [cardColorIndex, cardThemesArr, cardThemes]);
+    }, [props.entryData, selectedEntryId, updateSelectedFieldIndex]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%", width: "100%" }} >
