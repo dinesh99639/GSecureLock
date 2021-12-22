@@ -12,6 +12,12 @@ export const GlobalStyles = createGlobalStyle`
         color: ${({ theme }) => theme.color};
         transition: all 0.3s ease-in-out;
     }
+
+    .noOverflow {
+        overflow:hidden; 
+        white-space:nowrap; 
+        text-overflow: ellipsis;
+    }
     
     :root {
         --headerBackgroundColor: ${({ theme }) => theme.header.backgroundColor};

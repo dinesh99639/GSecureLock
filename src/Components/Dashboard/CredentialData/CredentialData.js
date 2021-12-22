@@ -10,7 +10,7 @@ import ViewCard from './ViewMode/ViewCard';
 import ViewEntry from './ViewMode/ViewEntry';
 
 import { makeStyles } from "@mui/styles";
-import { Box, IconButton, TextField, Typography, Autocomplete, Paper, Grid } from "@mui/material";
+import { Box, IconButton, TextField, Typography, Autocomplete, Paper, Grid, Tooltip } from "@mui/material";
 
 import SaveIcon from '@mui/icons-material/Save';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -152,7 +152,7 @@ function CredentialData(props) {
     };
 
     const addField = () => {
-        updateEntryData((entryDataObj) => ({ ...entryDataObj, data: [...entryDataObj.data, { name: '', value: '' }] }));
+        updateEntryData((entryDataObj) => ({ ...entryDataObj, data: [...entryDataObj.data, { name: '', value: '', type: "text" }] }));
         updateSelectedFieldIndex(entryData.data.length);
     }
 
@@ -276,7 +276,9 @@ function CredentialData(props) {
 
             </> : <>
                 <Box className="borderBottom" style={{ padding: "5px 10px", display: "flex", justifyContent: "space-between" }} >
-                    <Typography style={{ fontWeight: "bold" }} >{entryData.name}</Typography>
+                    <Tooltip title={entryData.name} placement="top-start" >
+                        <Typography className="noOverflow" style={{ fontWeight: "bold", flex: 1 }} >{entryData.name}</Typography>
+                    </Tooltip>
                     <Box>
                         <IconButton size="small" style={{ color: "#009dcd", margin: "0 5px", padding: 0 }} onClick={() => updateEditModeStatus(true)} ><EditOutlinedIcon /></IconButton>
                         <IconButton size="small" style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>

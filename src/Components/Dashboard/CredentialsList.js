@@ -83,7 +83,7 @@ function CredentialsList(props) {
                                 updateSelectedEntryIndex(index);
                             }}
                         >
-                            <Typography style={{ fontSize: "16px" }} >{entry.name}</Typography>
+                            <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
                             <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@{entry.user}</Typography>
                         </Box>
                     })
