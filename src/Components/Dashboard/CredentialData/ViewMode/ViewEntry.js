@@ -1,15 +1,29 @@
+import { useState } from "react";
 
 import { Button, IconButton } from "@mui/material";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 function ViewEntry(props) {
     const { classes, tableStyles } = props;
+    const { theme, Input, updateSelectedFieldIndex, copyText, openLink } = props;
 
-    const { theme, Input, entryData, updateSelectedFieldIndex, copyText, openLink } = props;
+    const [entryData, updateEntryData] = useState(props.entryData);
+
+    const setPasswordVisible = (idx, visibility) => {
+        updateEntryData((entryDataObj) => {
+            let data = entryDataObj.data;
+
+            if (visibility) data[idx].showPassaword = true;
+            else data[idx].showPassaword = false;
+
+            return ({ ...entryDataObj, data });
+        })
+    }
 
     return (<>
         <Table className={tableStyles.table} >
@@ -35,7 +49,11 @@ function ViewEntry(props) {
                                 <Input
                                     readOnly
                                     disabled
-                                    type={field.type}
+                                    type={
+                                        (field.type === "password") ? 
+                                        (field.showPassaword) ? "text" : "password" : 
+                                        field.type
+                                    }
                                     value={field.value}
                                     InputProps={{ className: classes.input }}
                                     sx={{
@@ -49,16 +67,26 @@ function ViewEntry(props) {
                             </Button>
                         </TableCell>
                         <TableCell style={{ width: "6%" }} className={tableStyles.tableCell} >
-                            {(field.type === "password" || field.type === "text") &&
-                                <IconButton style={{ color: "inherit" }} onClick={() => copyText(field.name, field.value)} >
+                            {(field.type === "text") ? <>
+                                <IconButton
+                                    style={{ color: "inherit" }}
+                                    onClick={() => copyText(field.type, field.value)}
+                                >
                                     <ContentCopyIcon style={{ fontSize: "17px" }} />
                                 </IconButton>
-                            }
-                            {(field.type === "link") &&
+                            </> : (field.type === "password" || field.type === "text") ? <>
+                                <IconButton
+                                    style={{ color: "inherit" }}
+                                    onMouseDown={() => setPasswordVisible(index, true)}
+                                    onMouseUp={() => setPasswordVisible(index, false)}
+                                >
+                                    <VisibilityIcon style={{ fontSize: "17px" }} />
+                                </IconButton>
+                            </> : (field.type === "link") ? <>
                                 <IconButton style={{ color: "inherit" }} onClick={() => openLink(field.value)} >
                                     <OpenInNewIcon style={{ fontSize: "17px" }} />
                                 </IconButton>
-                            }
+                            </> : null}
                         </TableCell>
                     </TableRow>
                 })}
