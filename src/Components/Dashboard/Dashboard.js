@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import crypto from '../../Utils/crypto';
+import initData from '../../initData';
 
 import { Grid, Box, Typography } from '@mui/material';
 
@@ -44,13 +45,14 @@ function Dashboard(props) {
     const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
 
     const addNewEntry = () => {
+        console.log(selectedCategory)
         setState((state) => {
             let data = {
                 id: "C" + new Date().getTime(),
                 user: "",
                 name: "Untitled",
-                category: "Passwords",
-                data: []
+                category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
+                data: (selectedCategory === "Cards") ? initData.cardData : []
             }
 
             return {
