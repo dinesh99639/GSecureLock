@@ -108,7 +108,7 @@ function SelectCategory({ name, categories, entryData, onChange, theme }) {
 function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
-    const { theme, selectedEntryId, categories, selectedFieldIndex, selectedEntryIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
+    const { theme, selectedEntryId, categories, selectedFieldIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
 
     const [isEditMode, updateEditModeStatus] = useState(false);
     const [entryData, updateEntryData] = useState(props.entryData);
@@ -374,7 +374,7 @@ function CredentialData(props) {
                             width: "100px", 
                             textTransform: 'none' 
                         }}
-                        onClick={() => deleteEntry(selectedEntryIndex, closeDeleteConfirmationModal)} 
+                        onClick={() => deleteEntry(entryData.id, closeDeleteConfirmationModal)} 
                     >Confirm</Button>
                 </Box>
             </Paper>

@@ -10,6 +10,21 @@ import CredentialsList from './CredentialsList';
 import CredentialData from './CredentialData/CredentialData';
 import LockScreen from './LockScreen';
 
+
+const getEntryIndexById = (credentials, id) => {
+    let index = null;
+
+    credentials.every((entry, idx) => {
+        if (entry.id === id) {
+            index = idx;
+            return false;
+        }
+        return true;
+    })
+
+    return index;
+}
+
 function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
     const { theme, state, setState } = props;
@@ -26,7 +41,6 @@ function Dashboard(props) {
     const [entriesById, updateEntriesById] = useState(null);
     const [selectedEntryId, updateSelectedEntryId] = useState('');
 
-    const [selectedEntryIndex, updateSelectedEntryIndex] = useState(-1);
     const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
 
     const addNewEntry = () => {
@@ -49,40 +63,81 @@ function Dashboard(props) {
         })
     }
 
-    const deleteEntry = (selectedEntryIndex, closeDeleteConfirmationModal) => {
+    const deleteEntry = (id, closeDeleteConfirmationModal) => {
         setState((prevState) => {
             let newState = { ...prevState };
-            newState.data.credentials.splice(selectedEntryIndex, 1);
+
+            let index = getEntryIndexById(newState.data.credentials, id);
+
+
+            updateCategoriesCount((counts) => {
+                let newCounts = [...counts];
+                let prevCategory = newState.data.credentials[index].category;
+
+                counts.forEach((count, index) => {
+                    if (count.name === prevCategory) {
+                        newCounts[0].count--;
+                        newCounts[index].count--;
+                        if (newCounts[index].count === 0) newCounts.splice(index, 1);
+                    }
+                });
+
+                return newCounts;
+            })
+
+            newState.data.credentials.splice(index, 1);
 
             let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
             newState.encryptedData = encryptedData;
             localStorage.setItem("encryptedData", encryptedData);
 
+            updateSelectedEntryId('');
             closeDeleteConfirmationModal();
             return newState;
         })
     }
 
     const saveEntry = (entryData) => {
+        
         setState((prevState) => {
             let newState = { ...prevState };
+            
+            let id = entryData.id;
+            let index = getEntryIndexById(newState.data.credentials, id);
 
-            if (newState.data.credentials[selectedEntryIndex].category !== entryData.category) {
+            if (newState.data.credentials[index].category !== entryData.category) {
                 updateCategoriesCount((counts) => {
                     let newCounts = [...counts];
-                    let prevCategory = newState.data.credentials[selectedEntryIndex].category;
+                    let prevCategory = newState.data.credentials[index].category;
                     let currCategory = entryData.category;
 
+                    let isNewCategoryFound = false;
+
                     counts.forEach((count, index) => {
-                        if (count.name === prevCategory) newCounts[index].count--;
-                        if (count.name === currCategory) newCounts[index].count++;
-                    })
+                        if (count.name === prevCategory) {
+                            newCounts[0].count--;
+                            newCounts[index].count--;
+                            if (newCounts[index].count === 0) newCounts.splice(index, 1);
+                        }
+                        if (count.name === currCategory) {
+                            newCounts[0].count++;
+                            newCounts[index].count++;
+                            isNewCategoryFound = true;
+                        }
+                    });
+
+                    if (!isNewCategoryFound) {
+                        newCounts[0].count++;
+                        newCounts.push({ name: currCategory, count: 1 })
+                    }
 
                     return newCounts;
                 })
             }
 
-            newState.data.credentials[selectedEntryIndex] = entryData;
+            // if (!categories[entryData.category])
+
+            newState.data.credentials[index] = entryData;
 
             let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
             newState.encryptedData = encryptedData;
@@ -166,7 +221,6 @@ function Dashboard(props) {
                         selectedCategory={selectedCategory}
                         selectedEntryId={selectedEntryId}
                         updateSelectedEntryId={updateSelectedEntryId}
-                        updateSelectedEntryIndex={updateSelectedEntryIndex}
                         addNewEntry={addNewEntry}
                     />
                 </Grid>
@@ -181,7 +235,6 @@ function Dashboard(props) {
 
                             categories={categories}
                             selectedFieldIndex={selectedFieldIndex}
-                            selectedEntryIndex={selectedEntryIndex}
                             updateSelectedFieldIndex={updateSelectedFieldIndex}
 
                             saveEntry={saveEntry}
