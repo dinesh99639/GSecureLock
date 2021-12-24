@@ -33,6 +33,7 @@ function Dashboard(props) {
     // const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
     const [lockTime, updateLockTime] = useState({ m: 0, s: 0, lockAt: 0 });
     const [password, updatePassword] = useState('');
+    const [isEditMode, updateEditModeStatus] = useState(false);
 
     const [selectedCategory, updateSelectedCategory] = useState('All');
 
@@ -41,14 +42,16 @@ function Dashboard(props) {
 
     const [entriesById, updateEntriesById] = useState(null);
     const [selectedEntryId, updateSelectedEntryId] = useState('');
+    const [newEntryId, updateNewEntryId] = useState('');
 
     const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
 
     const addNewEntry = () => {
-        console.log(selectedCategory)
+        let id = "C" + new Date().getTime();
+
         setState((state) => {
             let data = {
-                id: "C" + new Date().getTime(),
+                id,
                 user: "",
                 name: "Untitled",
                 category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
@@ -62,7 +65,10 @@ function Dashboard(props) {
                     credentials: [...state.data.credentials, data]
                 }
             };
-        })
+        });
+
+        updateNewEntryId(id);
+        updateEditModeStatus(true);
     }
 
     const deleteEntry = (id, closeDeleteConfirmationModal) => {
@@ -195,10 +201,14 @@ function Dashboard(props) {
 
             updateCategoriesCount(categoriesCountArr)
             updateEntriesById(credentialsById);
+
+            if (newEntryId !== '') {
+                updateSelectedEntryId(newEntryId);
+            }
         }
         else updateEntriesById(null);
 
-    }, [state.data]);
+    }, [newEntryId, state.data]);
 
 
     return (<>
@@ -223,6 +233,7 @@ function Dashboard(props) {
                         selectedCategory={selectedCategory}
                         selectedEntryId={selectedEntryId}
                         updateSelectedEntryId={updateSelectedEntryId}
+                        updateEditModeStatus={updateEditModeStatus}
                         addNewEntry={addNewEntry}
                     />
                 </Grid>
@@ -231,13 +242,20 @@ function Dashboard(props) {
                     <Grid item xs={4} >
                         <CredentialData
                             theme={theme}
+                            
+                            isEditMode={isEditMode}
+                            updateEditModeStatus={updateEditModeStatus}
+                            
                             entriesById={entriesById}
                             selectedEntryId={selectedEntryId}
                             entryData={entriesById[selectedEntryId]}
-
+                            
                             categories={categories}
                             selectedFieldIndex={selectedFieldIndex}
                             updateSelectedFieldIndex={updateSelectedFieldIndex}
+                            
+                            newEntryId={newEntryId}
+                            updateNewEntryId={updateNewEntryId}
 
                             saveEntry={saveEntry}
                             deleteEntry={deleteEntry}
