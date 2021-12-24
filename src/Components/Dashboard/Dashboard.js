@@ -204,6 +204,7 @@ function Dashboard(props) {
 
             if (newEntryId !== '') {
                 updateSelectedEntryId(newEntryId);
+                updateNewEntryId('');
             }
         }
         else updateEntriesById(null);
