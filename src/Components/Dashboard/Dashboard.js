@@ -86,7 +86,15 @@ function Dashboard(props) {
                     if (count.name === prevCategory) {
                         newCounts[0].count--;
                         newCounts[index].count--;
-                        if (newCounts[index].count === 0) newCounts.splice(index, 1);
+                        if (newCounts[index].count === 0) {
+                            let isStaticCategory = false;
+
+                            for (var i in initData.staticCategories) {
+                                if (initData.staticCategories[i] === newCounts[index].name)
+                                    isStaticCategory = true;
+                            }
+                            if (!isStaticCategory) newCounts.splice(index, 1);
+                        }
                     }
                 });
 
@@ -190,7 +198,7 @@ function Dashboard(props) {
             updateCategories({ ...categoriesCountObj });
 
             categoriesCountArr.push({ name: 'All', count: totalEntries });
-            ['Passwords', 'API Keys', 'Cards', 'Coupons'].forEach((category) => {
+            initData.staticCategories.forEach((category) => {
                 if (categoriesCountObj[category]) categoriesCountArr.push({ name: category, count: categoriesCountObj[category] });
                 else categoriesCountArr.push({ name: category, count: 0 });
 

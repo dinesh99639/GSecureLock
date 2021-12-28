@@ -1,5 +1,7 @@
 let exports = {};
 
+exports.staticCategories =  ['Passwords', 'API Keys', 'Cards', 'Coupons'];
+
 exports.newAccountData = {
     config: {
         timer: 5,
