@@ -300,6 +300,8 @@ function Dashboard(props) {
 
             password={password}
             updatePassword={updatePassword}
+
+            updateSelectedEntryId={updateSelectedEntryId}
         />}
     </>);
 }

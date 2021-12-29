@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 
 function LockScreen(props) {
     const classes = useStyles();
-    const { password, updatePassword } = props;
+    const { password, updatePassword, updateSelectedEntryId } = props;
 
     const unlock = () => {
         try {
@@ -35,7 +35,8 @@ function LockScreen(props) {
 
     useEffect(() => {
         updatePassword("");
-    }, [updatePassword])
+        updateSelectedEntryId('');
+    }, [updatePassword, updateSelectedEntryId])
 
     return (<>
         <Box className="lockScreen" style={{ position: "absolute", top: "6.5vh", width: "100%", height: "93.5vh" }} >
