@@ -41,7 +41,10 @@ const data = {
                 { name: "Password", value: "user1 password", type: "password" },
                 { name: "Website", value: "https://samplesite.com", type: "link" },
                 { name: "Temporary Key", value: "sd8h677ifsc67e6", type: "hidden" },
-            ]
+            ],
+            
+            createdAt: "Thu Dec 30 2021 22:52:56",
+            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
         },
         {
             id: "C2",
@@ -51,7 +54,10 @@ const data = {
             data: [
                 { name: "Password", value: "user2 password", type: "password" },
                 { name: "Website", value: "https://samplesite.com", type: "link" }
-            ]
+            ],
+
+            createdAt: "Thu Dec 30 2021 22:52:56",
+            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
         },
         {
             id: "C3",
@@ -66,7 +72,10 @@ const data = {
                 validThru: "10/2031",
                 cardHolderName: "Firstname Lastname",
                 CVV: "000"
-            }
+            },
+
+            createdAt: "Thu Dec 30 2021 22:52:56",
+            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
         },
         {
             id: "C4",
@@ -76,7 +85,10 @@ const data = {
             data: [
                 { name: "Password", value: "Testing Password", type: "password" },
                 { name: "Website", value: "https://test.com", type: "link" }
-            ]
+            ],
+
+            createdAt: "Thu Dec 30 2021 22:52:56",
+            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
         }
     ]
 }
