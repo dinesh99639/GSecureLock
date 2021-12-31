@@ -274,7 +274,9 @@ function Dashboard(props) {
                         />
                     </Grid>
                     <Grid item xs={3.34} >
-                        <EntryOptions />
+                        <EntryOptions 
+                            isEditMode={isEditMode}
+                        />
                     </Grid>
                 </> : <>
                     <Grid item xs={7.34} >

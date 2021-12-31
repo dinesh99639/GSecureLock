@@ -1,9 +1,12 @@
 import { Box } from "@mui/material";
 
 import EntryInfo from './EntryInfo';
+import FieldOptions from "./FieldOptions";
 import Suggestions from './Suggestions';
 
 function EntryOptions(props) {
+    const { isEditMode } = props;
+
     return (<>
         <Box
             className="borderBottom"
@@ -13,7 +16,11 @@ function EntryOptions(props) {
                 height: "50%"
             }} 
         >
-            <EntryInfo />
+            {(isEditMode) ? <>
+                <FieldOptions />
+            </> : <>
+                <EntryInfo />
+            </>}
         </Box>
 
         <Box
