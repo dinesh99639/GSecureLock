@@ -116,10 +116,10 @@ function Dashboard(props) {
     }
 
     const saveEntry = (entryData) => {
-        
+
         setState((prevState) => {
             let newState = { ...prevState };
-            
+
             let id = entryData.id;
             let index = getEntryIndexById(newState.data.credentials, id);
 
@@ -253,18 +253,18 @@ function Dashboard(props) {
                     <Grid item xs={4} >
                         <CredentialData
                             theme={theme}
-                            
+
                             isEditMode={isEditMode}
                             updateEditModeStatus={updateEditModeStatus}
-                            
+
                             entriesById={entriesById}
                             selectedEntryId={selectedEntryId}
                             entryData={entriesById[selectedEntryId]}
-                            
+
                             categories={categories}
                             selectedFieldIndex={selectedFieldIndex}
                             updateSelectedFieldIndex={updateSelectedFieldIndex}
-                            
+
                             newEntryId={newEntryId}
                             updateNewEntryId={updateNewEntryId}
 
@@ -274,8 +274,12 @@ function Dashboard(props) {
                         />
                     </Grid>
                     <Grid item xs={3.34} >
-                        <EntryOptions 
+                        <EntryOptions
+                            theme={theme}
                             isEditMode={isEditMode}
+
+                            selectedFieldIndex={selectedFieldIndex}
+                            entryData={entriesById[selectedEntryId]}
                         />
                     </Grid>
                 </> : <>
