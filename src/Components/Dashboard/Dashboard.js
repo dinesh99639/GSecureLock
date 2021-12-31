@@ -9,6 +9,8 @@ import Timebar from './Timebar';
 import Categories from './Categories';
 import CredentialsList from './CredentialsList';
 import CredentialData from './CredentialData/CredentialData';
+import EntryOptions from './EntryOptions/EntryOptions';
+
 import LockScreen from './LockScreen';
 
 
@@ -270,6 +272,9 @@ function Dashboard(props) {
                             deleteEntry={deleteEntry}
                             showSnack={props.showSnack}
                         />
+                    </Grid>
+                    <Grid item xs={3.34} >
+                        <EntryOptions />
                     </Grid>
                 </> : <>
                     <Grid item xs={7.34} >
