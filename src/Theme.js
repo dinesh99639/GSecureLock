@@ -1,20 +1,20 @@
 export const lightTheme = {
     backgroundColor: 'white',
-    color: 'black',
-    border: "1px solid rgba(0, 0, 0, 0.3)",
+    color: '#696969',
+    border: "1px solid rgba(0, 0, 0, 0.25)",
 
     header: {
         backgroundColor: "#1976d2"
     },
 
     timebar: {
-        color: "black",
+        color: "#636363",
         backgroundColor: "rgba(0, 0, 0, 0)"
     },
 
     lockScreen: {
         backgroundColor: 'white',
-        color: 'black'
+        color: '#636363'
     },
 
     searchBox: {
