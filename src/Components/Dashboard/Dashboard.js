@@ -8,8 +8,8 @@ import { Grid, Box, Typography } from '@mui/material';
 import Timebar from './Timebar';
 import Categories from './Categories';
 import CredentialsList from './CredentialsList';
-import CredentialData from './CredentialData/CredentialData';
-import EntryOptions from './EntryOptions/EntryOptions';
+import CredentialData from './CredentialDetails/CredentialData/CredentialData';
+import EntryOptions from './CredentialDetails/EntryOptions/EntryOptions';
 
 import LockScreen from './LockScreen';
 

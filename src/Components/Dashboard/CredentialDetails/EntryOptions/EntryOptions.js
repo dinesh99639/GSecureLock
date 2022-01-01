@@ -1,5 +1,3 @@
-
-
 import { Box } from "@mui/material";
 
 import EntryInfo from './EntryInfo';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { darkTheme } from '../../../Theme';
-import initData from '../../../initData';
+import { darkTheme } from '../../../../Theme';
+import initData from '../../../../initData';
 
 import EditCard from './EditMode/EditCard';
 import EditEntry from './EditMode/EditEntry';
