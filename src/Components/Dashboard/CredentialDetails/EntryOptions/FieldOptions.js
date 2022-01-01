@@ -49,6 +49,8 @@ function FieldOptions(props) {
     const generatePasswordBtnStyles = useGeneratePasswordBtn();
     const removeFieldBtnStyles = useRemoveFieldBtn();
 
+    console.log(entryData.data[selectedFieldIndex].type)
+
     return (<>
         <Box
             style={{

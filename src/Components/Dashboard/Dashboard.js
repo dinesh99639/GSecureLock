@@ -8,8 +8,7 @@ import { Grid, Box, Typography } from '@mui/material';
 import Timebar from './Timebar';
 import Categories from './Categories';
 import CredentialsList from './CredentialsList';
-import CredentialData from './CredentialDetails/CredentialData/CredentialData';
-import EntryOptions from './CredentialDetails/EntryOptions/EntryOptions';
+import CredentialDetails from './CredentialDetails/CredentialDetails';
 
 import LockScreen from './LockScreen';
 
@@ -249,41 +248,26 @@ function Dashboard(props) {
                     />
                 </Grid>
 
-                {(selectedEntryId !== '' && entriesById) ? <>
-                    <Grid item xs={4} >
-                        <CredentialData
+                <Grid item xs={7.34} >
+                    {(selectedEntryId !== '' && entriesById) ? <>
+                        <CredentialDetails 
                             theme={theme}
-
                             isEditMode={isEditMode}
                             updateEditModeStatus={updateEditModeStatus}
-
                             entriesById={entriesById}
                             selectedEntryId={selectedEntryId}
-                            entryData={entriesById[selectedEntryId]}
-
+                            entriesById={entriesById}
+                            selectedEntryId={selectedEntryId}
                             categories={categories}
                             selectedFieldIndex={selectedFieldIndex}
                             updateSelectedFieldIndex={updateSelectedFieldIndex}
-
                             newEntryId={newEntryId}
                             updateNewEntryId={updateNewEntryId}
-
                             saveEntry={saveEntry}
                             deleteEntry={deleteEntry}
                             showSnack={props.showSnack}
                         />
-                    </Grid>
-                    <Grid item xs={3.34} >
-                        <EntryOptions
-                            theme={theme}
-                            isEditMode={isEditMode}
-
-                            selectedFieldIndex={selectedFieldIndex}
-                            entryData={entriesById[selectedEntryId]}
-                        />
-                    </Grid>
-                </> : <>
-                    <Grid item xs={7.34} >
+                    </> : <>
                         <Box
                             style={{
                                 height: "100%",
@@ -296,8 +280,9 @@ function Dashboard(props) {
                             <Typography style={{ fontSize: "25px" }} >GSecurePass</Typography>
                             <Typography style={{ fontSize: "15px" }} >A secure password manager</Typography>
                         </Box>
-                    </Grid>
-                </>}
+                    </>}
+                </Grid>
+
             </Grid>
         </> : <>
             Mobile View
