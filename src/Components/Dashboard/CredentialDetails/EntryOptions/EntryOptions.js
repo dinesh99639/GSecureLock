@@ -16,7 +16,7 @@ function EntryOptions(props) {
                 height: "50%"
             }}
         >
-            {(isEditMode) ? <>
+            {(isEditMode && (entryData.category !== "Cards")) ? <>
                 <FieldOptions
                     theme={theme}
                     selectedFieldIndex={selectedFieldIndex}

@@ -49,8 +49,6 @@ function FieldOptions(props) {
     const generatePasswordBtnStyles = useGeneratePasswordBtn();
     const removeFieldBtnStyles = useRemoveFieldBtn();
 
-    console.log(entryData.data[selectedFieldIndex].type)
-
     return (<>
         <Box
             style={{
@@ -59,56 +57,69 @@ function FieldOptions(props) {
                 flexDirection: "column"
             }}
         >
-            <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Field Options</Box>
-            <Box style={{ padding: "5px 10px" }} >
-                <Typography style={{ fontSize: "14px" }} >Field Type</Typography>
-                <Select
-                    fullWidth
-                    labelId="fieldType"
-                    variant="standard"
-                    value={entryData.data[selectedFieldIndex].type}
-                    MenuProps={{
-                        classes: {
-                            paper: selectStyles.paper
-                        }
-                    }}
-                    inputProps={{
-                        classes: {
-                            icon: selectStyles.icon,
-                        }
-                    }}
-                    sx={{
-                        color: "inherit",
-                        backgroundColor: "inherit",
-                        borderBottom: "1px solid gray"
+            {(entryData.data.length) ? <>
+                <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Field Options</Box>
+                <Box style={{ padding: "5px 10px" }} >
+                    <Typography style={{ fontSize: "14px" }} >Field Type</Typography>
+                    <Select
+                        fullWidth
+                        labelId="fieldType"
+                        variant="standard"
+                        value={entryData.data[selectedFieldIndex].type}
+                        MenuProps={{
+                            classes: {
+                                paper: selectStyles.paper
+                            }
+                        }}
+                        inputProps={{
+                            classes: {
+                                icon: selectStyles.icon,
+                            }
+                        }}
+                        sx={{
+                            color: "inherit",
+                            backgroundColor: "inherit",
+                            borderBottom: "1px solid gray"
+                        }}
+                    >
+                        <MenuItem value={"text"}>Text</MenuItem>
+                        <MenuItem value={"password"}>Password</MenuItem>
+                        <MenuItem value={"hidden"}>Hidden</MenuItem>
+                        <MenuItem value={"link"}>Link</MenuItem>
+                    </Select>
+                </Box>
+
+                <Box
+                    style={{
+                        height: "100%",
+                        display: "flex",
+                        flexFlow: "column",
+                        alignItems: "center",
+                        justifyContent: "space-evenly"
                     }}
                 >
-                    <MenuItem value={"text"}>Text</MenuItem>
-                    <MenuItem value={"password"}>Password</MenuItem>
-                    <MenuItem value={"hidden"}>Hidden</MenuItem>
-                    <MenuItem value={"link"}>Link</MenuItem>
-                </Select>
-            </Box>
+                    {(entryData.data[selectedFieldIndex].type === "password") ? <>
+                        <Button
+                            className={generatePasswordBtnStyles.root}
+                        >Generate Password</Button>
+                    </> : null}
 
-            <Box
-                style={{
-                    height: "100%",
-                    display: "flex",
-                    flexFlow: "column",
-                    alignItems: "center",
-                    justifyContent: "space-evenly"
-                }}
-            >
-                {(entryData.data[selectedFieldIndex].type === "password") ? <>
                     <Button
-                        className={generatePasswordBtnStyles.root}
-                    >Generate Password</Button>
-                </> : null}
-
-                <Button
-                    className={removeFieldBtnStyles.root}
-                >Remove Field</Button>
-            </Box>
+                        className={removeFieldBtnStyles.root}
+                    >Remove Field</Button>
+                </Box>
+            </> : <>
+                <Box
+                    style={{
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}
+                >
+                    No Field Selected
+                </Box>
+            </>}
         </Box>
     </>);
 }

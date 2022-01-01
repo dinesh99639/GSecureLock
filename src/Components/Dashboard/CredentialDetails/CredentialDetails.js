@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Grid } from "@mui/material";
 
 import CredentialData from './CredentialData/CredentialData';
@@ -19,6 +21,12 @@ function CredentialDetails(props) {
         deleteEntry,
     } = props;
 
+    const [entryData, updateEntryData] = useState(entriesById[selectedEntryId]);
+
+    useEffect(() => {
+        updateEntryData(entriesById[selectedEntryId])
+    }, [entriesById, selectedEntryId])
+
     return (<>
         <Grid container style={{ height: "100%" }} >
             <Grid item xs={6.54}>
@@ -30,7 +38,8 @@ function CredentialDetails(props) {
 
                     entriesById={entriesById}
                     selectedEntryId={selectedEntryId}
-                    entryData={entriesById[selectedEntryId]}
+                    entryData={entryData}
+                    updateEntryData={updateEntryData}
 
                     categories={categories}
                     selectedFieldIndex={selectedFieldIndex}
@@ -42,6 +51,7 @@ function CredentialDetails(props) {
                     saveEntry={saveEntry}
                     deleteEntry={deleteEntry}
                     showSnack={props.showSnack}
+                    
                 />
             </Grid>
             <Grid item xs={5.46}>
@@ -50,7 +60,7 @@ function CredentialDetails(props) {
                     isEditMode={isEditMode}
 
                     selectedFieldIndex={selectedFieldIndex}
-                    entryData={entriesById[selectedEntryId]}
+                    entryData={entryData}
                 />
             </Grid>
         </Grid>

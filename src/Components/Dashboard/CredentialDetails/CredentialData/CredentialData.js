@@ -108,9 +108,7 @@ function SelectCategory({ name, categories, entryData, onChange, theme }) {
 function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
-    const { theme, isEditMode, updateEditModeStatus, selectedEntryId, categories, selectedFieldIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
-
-    const [entryData, updateEntryData] = useState(props.entryData);
+    const { theme, isEditMode, entryData, updateEntryData, updateEditModeStatus, selectedEntryId, categories, selectedFieldIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
 
     const updateMetaInput = (e) => updateEntryData((state) => {
         let data = state.data;

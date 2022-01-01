@@ -56,7 +56,10 @@ function Dashboard(props) {
                 user: "",
                 name: "Untitled",
                 category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
-                data: (selectedCategory === "Cards") ? initData.cardData : []
+                data: (selectedCategory === "Cards") ? initData.cardData : [],
+
+                createdAt: new Date().toString().substring(0, 24),
+                lastModifiedAt: new Date().toString().substring(0, 24)
             }
 
             return {
