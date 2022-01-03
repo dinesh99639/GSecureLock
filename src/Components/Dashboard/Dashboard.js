@@ -118,6 +118,7 @@ function Dashboard(props) {
     }
 
     const saveEntry = (entryData) => {
+        entryData.lastModifiedAt = new Date().toString().substring(0, 24);
 
         setState((prevState) => {
             let newState = { ...prevState };
