@@ -1,13 +1,25 @@
+import { makeStyles } from "@mui/styles";
+
 import { darkTheme } from '../../../../../Theme';
 
 import { Box, Button } from "@mui/material";
 import { Table, TableBody, TableCell, TableRow, Select, MenuItem } from "@mui/material";
 
+const useSelectStyles = makeStyles({
+    paper: {
+        background: props => (props.theme === "dark") ? darkTheme.backgroundColor : "white",
+        color: "inherit"
+    },
+    icon: {
+        fill: "gray",
+    }
+});
 
 function EditCard(props) {
     const { classes, tableStyles } = props;
-    
     const { Input, entryData, updateCardData, saveEntry, theme } = props;
+    
+    const selectStyles = useSelectStyles({ theme });
 
     return (<>
         <Table className={tableStyles.table} >
@@ -32,22 +44,24 @@ function EditCard(props) {
                     </TableCell>
                     <TableCell style={{ width: "59%" }} className={tableStyles.tableCell}>
                         <Select
+                            fullWidth
                             variant="standard"
                             name="cardType"
                             value={entryData.data.cardType}
                             className={classes.root}
-                            style={{
-                                width: "100%",
-                                backgroundColor: "inherit",
-                                color: "inherit"
-                            }}
                             MenuProps={{
-                                sx: {
-                                    "& .MuiPaper-root": {
-                                        backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : null,
-                                        color: "inherit",
-                                    }
+                                classes: {
+                                    paper: selectStyles.paper
                                 }
+                            }}
+                            inputProps={{
+                                classes: {
+                                    icon: selectStyles.icon,
+                                }
+                            }}
+                            sx={{
+                                color: "inherit",
+                                backgroundColor: "inherit"
                             }}
                             onChange={updateCardData}
                         >
@@ -63,18 +77,24 @@ function EditCard(props) {
                     </TableCell>
                     <TableCell style={{ width: "59%" }} className={tableStyles.tableCell}>
                         <Select
+                            fullWidth
                             variant="standard"
                             name="network"
                             value={entryData.data.network}
                             className={classes.root}
-                            style={{ width: "100%", backgroundColor: "inherit", color: "inherit" }}
                             MenuProps={{
-                                sx: {
-                                    "& .MuiPaper-root": {
-                                        backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : null,
-                                        color: "inherit"
-                                    }
+                                classes: {
+                                    paper: selectStyles.paper
                                 }
+                            }}
+                            inputProps={{
+                                classes: {
+                                    icon: selectStyles.icon,
+                                }
+                            }}
+                            sx={{
+                                color: "inherit",
+                                backgroundColor: "inherit"
                             }}
                             onChange={updateCardData}
                         >
