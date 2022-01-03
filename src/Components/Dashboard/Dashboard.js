@@ -259,8 +259,6 @@ function Dashboard(props) {
                             updateEditModeStatus={updateEditModeStatus}
                             entriesById={entriesById}
                             selectedEntryId={selectedEntryId}
-                            entriesById={entriesById}
-                            selectedEntryId={selectedEntryId}
                             categories={categories}
                             selectedFieldIndex={selectedFieldIndex}
                             updateSelectedFieldIndex={updateSelectedFieldIndex}

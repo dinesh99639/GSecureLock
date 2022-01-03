@@ -200,7 +200,7 @@ function CredentialData(props) {
 
         updateEntryData(props.entryData)
         updateSelectedFieldIndex(0);
-    }, [props.entryData, selectedEntryId, updateSelectedFieldIndex]);
+    }, [props.entryData, selectedEntryId, updateSelectedFieldIndex, updateEntryData]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%", width: "100%" }} >
