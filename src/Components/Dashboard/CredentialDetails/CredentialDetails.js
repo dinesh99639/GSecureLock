@@ -64,9 +64,9 @@ function CredentialDetails(props) {
 
                     selectedFieldIndex={selectedFieldIndex}
                     updateSelectedFieldIndex={updateSelectedFieldIndex}
+                    
                     entryData={entryData}
-
-                    saveEntry={saveEntry}
+                    updateEntryData={updateEntryData}
 
                     updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
                 />

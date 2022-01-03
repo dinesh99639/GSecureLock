@@ -43,7 +43,7 @@ const useRemoveFieldBtn = makeStyles({
 });
 
 function FieldOptions(props) {
-    const { theme, selectedFieldIndex, updateSelectedFieldIndex, entryData, saveEntry, updateIsUpdateFromFieldOptions } = props;
+    const { theme, selectedFieldIndex, updateSelectedFieldIndex, entryData, updateEntryData, updateIsUpdateFromFieldOptions } = props;
 
     const selectStyles = useSelectStyles({ theme });
     const generatePasswordBtnStyles = useGeneratePasswordBtn();
@@ -54,15 +54,15 @@ function FieldOptions(props) {
         newEntryData.data[selectedFieldIndex].type = e.target.value;
 
         updateIsUpdateFromFieldOptions(true);
-        saveEntry(newEntryData);
+        updateEntryData(newEntryData);
     }
 
     const removeField = () => {
         let newEntryData = { ...entryData };
         newEntryData.data.splice(selectedFieldIndex, 1);
-        
+
         updateSelectedFieldIndex(0);
-        saveEntry(newEntryData);
+        updateEntryData(newEntryData);
     }
 
     return (<>
