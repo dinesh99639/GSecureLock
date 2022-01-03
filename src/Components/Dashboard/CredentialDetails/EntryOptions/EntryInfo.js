@@ -23,7 +23,7 @@ function EntryInfo(props) {
         >
             <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Entry Info</Box>
 
-            <Box style={{ padding: "10px" }} >
+            <Box style={{ padding: "10px 10px 0 10px" }} >
                 <Grid container style={{ padding: "5px 0" }} >
                     <Grid item xs={4}>
                         <Typography style={{ fontSize: "12.5px" }} >Last Modified:</Typography>

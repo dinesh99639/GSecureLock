@@ -109,6 +109,7 @@ function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
     const { theme, isEditMode, entryData, updateEntryData, updateEditModeStatus, selectedEntryId, categories, selectedFieldIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
+    const { isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions } = props;
 
     const updateMetaInput = (e) => updateEntryData((state) => {
         let data = state.data;
@@ -196,11 +197,13 @@ function CredentialData(props) {
     }, [entryData]);
 
     useEffect(() => {
-        // updateEditModeStatus(false);
+        updateEntryData(props.entryData);
+        
+        if (isUpdateFromFieldOptions) updateIsUpdateFromFieldOptions(false);
+        else updateSelectedFieldIndex(0);
 
-        updateEntryData(props.entryData)
-        updateSelectedFieldIndex(0);
-    }, [props.entryData, selectedEntryId, updateSelectedFieldIndex, updateEntryData]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.entryData, selectedEntryId, updateEntryData, updateSelectedFieldIndex, updateIsUpdateFromFieldOptions]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%", width: "100%" }} >

@@ -5,7 +5,7 @@ import FieldOptions from "./FieldOptions";
 import Suggestions from './Suggestions';
 
 function EntryOptions(props) {
-    const { theme, isEditMode, entryData, selectedFieldIndex } = props;
+    const { theme, isEditMode, entryData, saveEntry, selectedFieldIndex, updateSelectedFieldIndex, updateIsUpdateFromFieldOptions } = props;
 
     return (<>
         <Box
@@ -20,7 +20,10 @@ function EntryOptions(props) {
                 <FieldOptions
                     theme={theme}
                     selectedFieldIndex={selectedFieldIndex}
+                    updateSelectedFieldIndex={updateSelectedFieldIndex}
                     entryData={entryData}
+                    saveEntry={saveEntry}
+                    updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
                 />
             </> : <>
                 <EntryInfo

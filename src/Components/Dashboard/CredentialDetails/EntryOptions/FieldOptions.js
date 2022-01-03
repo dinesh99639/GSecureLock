@@ -43,11 +43,27 @@ const useRemoveFieldBtn = makeStyles({
 });
 
 function FieldOptions(props) {
-    const { theme, selectedFieldIndex, entryData } = props;
+    const { theme, selectedFieldIndex, updateSelectedFieldIndex, entryData, saveEntry, updateIsUpdateFromFieldOptions } = props;
 
     const selectStyles = useSelectStyles({ theme });
     const generatePasswordBtnStyles = useGeneratePasswordBtn();
     const removeFieldBtnStyles = useRemoveFieldBtn();
+
+    const handleFieldTypeChange = (e) => {
+        let newEntryData = { ...entryData };
+        newEntryData.data[selectedFieldIndex].type = e.target.value;
+
+        updateIsUpdateFromFieldOptions(true);
+        saveEntry(newEntryData);
+    }
+
+    const removeField = () => {
+        let newEntryData = { ...entryData };
+        newEntryData.data.splice(selectedFieldIndex, 1);
+        
+        updateSelectedFieldIndex(0);
+        saveEntry(newEntryData);
+    }
 
     return (<>
         <Box
@@ -59,7 +75,7 @@ function FieldOptions(props) {
         >
             {(entryData.data.length) ? <>
                 <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Field Options</Box>
-                <Box style={{ padding: "5px 10px" }} >
+                <Box style={{ padding: "5px 10px 0 10px" }} >
                     <Typography style={{ fontSize: "14px" }} >Field Type</Typography>
                     <Select
                         fullWidth
@@ -81,6 +97,7 @@ function FieldOptions(props) {
                             backgroundColor: "inherit",
                             borderBottom: "1px solid gray"
                         }}
+                        onChange={handleFieldTypeChange}
                     >
                         <MenuItem value={"text"}>Text</MenuItem>
                         <MenuItem value={"password"}>Password</MenuItem>
@@ -106,6 +123,7 @@ function FieldOptions(props) {
 
                     <Button
                         className={removeFieldBtnStyles.root}
+                        onClick={removeField}
                     >Remove Field</Button>
                 </Box>
             </> : <>

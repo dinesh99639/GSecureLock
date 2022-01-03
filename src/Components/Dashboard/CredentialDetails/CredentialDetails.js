@@ -22,6 +22,7 @@ function CredentialDetails(props) {
     } = props;
 
     const [entryData, updateEntryData] = useState(entriesById[selectedEntryId]);
+    const [isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions] = useState(false);
 
     useEffect(() => {
         updateEntryData(entriesById[selectedEntryId])
@@ -52,6 +53,8 @@ function CredentialDetails(props) {
                     deleteEntry={deleteEntry}
                     showSnack={props.showSnack}
                     
+                    isUpdateFromFieldOptions={isUpdateFromFieldOptions}
+                    updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
                 />
             </Grid>
             <Grid item xs={5.46}>
@@ -60,7 +63,12 @@ function CredentialDetails(props) {
                     isEditMode={isEditMode}
 
                     selectedFieldIndex={selectedFieldIndex}
+                    updateSelectedFieldIndex={updateSelectedFieldIndex}
                     entryData={entryData}
+
+                    saveEntry={saveEntry}
+
+                    updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
                 />
             </Grid>
         </Grid>
