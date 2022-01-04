@@ -46,6 +46,12 @@ function Dashboard(props) {
     const [newEntryId, updateNewEntryId] = useState('');
 
     const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
+    
+    const [drafts, updateDrafts] = useState({});
+
+    useEffect(() => {
+        console.log("drafts", drafts)
+    }, [drafts])
 
     const addNewEntry = () => {
         let id = "C" + new Date().getTime();
@@ -244,6 +250,7 @@ function Dashboard(props) {
                 <Grid item xs={2.5} >
                     <CredentialsList
                         state={props.state}
+                        drafts={drafts}
                         selectedCategory={selectedCategory}
                         selectedEntryId={selectedEntryId}
                         updateSelectedEntryId={updateSelectedEntryId}
@@ -256,6 +263,8 @@ function Dashboard(props) {
                     {(selectedEntryId !== '' && entriesById) ? <>
                         <CredentialDetails 
                             theme={theme}
+                            updateDrafts={updateDrafts}
+
                             isEditMode={isEditMode}
                             updateEditModeStatus={updateEditModeStatus}
                             entriesById={entriesById}

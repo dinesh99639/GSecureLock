@@ -5,24 +5,25 @@ import { Box, IconButton, InputBase, Typography, Tooltip } from "@mui/material";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
-    const { state, selectedCategory, selectedEntryId, updateSelectedEntryId, addNewEntry, updateEditModeStatus } = props
+    const { state, drafts, selectedCategory, selectedEntryId, updateSelectedEntryId, addNewEntry, updateEditModeStatus } = props
 
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
 
     useEffect(() => {
         let data = state.data;
-        
+
         if (data) {
             let credentials = data.credentials;
 
             if (searchString !== '') {
                 credentials = credentials.filter((item) => item.name.toLowerCase().includes(searchString));
             }
-            
+
             if (selectedCategory === 'All') updateEntries({ credentials, templates: data.templates });
             else {
                 let credentialsByCategory = credentials.filter((item) => item.category === selectedCategory);
@@ -37,9 +38,9 @@ function CredentialsList(props) {
         <Box className="borderRight" style={{ height: "100%" }} >
             <Box className="borderBottom" style={{ display: "flex", padding: "0 5px" }} >
                 <Tooltip title="Add">
-                    <IconButton 
-                        size="small" 
-                        style={{ color: "inherit" }} 
+                    <IconButton
+                        size="small"
+                        style={{ color: "inherit" }}
                         onClick={addNewEntry}
                     ><AddCircleOutlineRoundedIcon /></IconButton>
                 </Tooltip>
@@ -84,7 +85,14 @@ function CredentialsList(props) {
                             }}
                         >
                             <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
-                            <Typography style={{ fontSize: "14px", opacity: 0.9 }} >@{entry.user}</Typography>
+                            <Box style={{ fontSize: "14px", opacity: 0.9, display: "flex", justifyContent: "space-between" }} >
+                                <Typography>@{entry.user}</Typography>
+                                {(drafts[entry.id]) ? <>
+                                    <Tooltip title="Draft">
+                                        <DriveFileRenameOutlineIcon />
+                                    </Tooltip>
+                                </> : null}
+                            </Box>
                         </Box>
                     })
                 }

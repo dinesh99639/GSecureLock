@@ -8,6 +8,7 @@ import EntryOptions from './EntryOptions/EntryOptions';
 function CredentialDetails(props) {
     const {
         theme,
+        updateDrafts,
         isEditMode,
         updateEditModeStatus,
         entriesById,
@@ -33,6 +34,7 @@ function CredentialDetails(props) {
             <Grid item xs={6.54}>
                 <CredentialData
                     theme={theme}
+                    updateDrafts={updateDrafts}
 
                     isEditMode={isEditMode}
                     updateEditModeStatus={updateEditModeStatus}

@@ -108,33 +108,38 @@ function SelectCategory({ name, categories, entryData, onChange, theme }) {
 function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
-    const { theme, isEditMode, entryData, updateEntryData, updateEditModeStatus, selectedEntryId, categories, selectedFieldIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
+    const { theme, updateDrafts, isEditMode, entryData, updateEntryData, updateEditModeStatus, selectedEntryId, categories, selectedFieldIndex, deleteEntry, updateSelectedFieldIndex, showSnack } = props;
     const { isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions } = props;
 
-    const updateMetaInput = (e) => updateEntryData((state) => {
-        let data = state.data;
+    const updateMetaInput = (e) => updateEntryData((prevEntryData) => {
+        updateDrafts((drafts) => ({ ...drafts, [prevEntryData.id]: true }));
+        let data = prevEntryData.data;
 
         if (e.target.name === "category") {
-            if (state.category === "Cards") { // If previous state category is Cards
+            if (prevEntryData.category === "Cards") { // If previous category is Cards
                 if (props.entryData.category !== "Cards") data = props.entryData.data;
                 else data = [];
             }
-            if (e.target.value === "Cards") { // If current state category is Cards
+            if (e.target.value === "Cards") { // If current category is Cards
                 if (props.entryData.category === "Cards") data = props.entryData.data;
                 else data = initData.cardData;
             }
         }
 
-        return { ...state, data, [e.target.name]: e.target.value }
+        return { ...prevEntryData, data, [e.target.name]: e.target.value }
     })
-    const updateFieldInput = (e, idx) => updateEntryData((state) => {
-        let data = [...state.data];
+    const updateFieldInput = (e, idx) => updateEntryData((prevEntryData) => {
+        updateDrafts((drafts) => ({ ...drafts, [prevEntryData.id]: true }));
+        let data = [...prevEntryData.data];
         data[idx][e.target.name] = e.target.value;
 
-        return { ...state, data };
+        return { ...prevEntryData, data };
     })
     const updateCardData = (e) => {
-        updateEntryData((entryDataObj) => ({ ...entryDataObj, data: { ...entryDataObj.data, [e.target.name]: e.target.value } }))
+        updateEntryData((entryDataObj) => {
+            updateDrafts((drafts) => ({ ...drafts, [entryDataObj.id]: true }));
+            return { ...entryDataObj, isDraft: true, data: { ...entryDataObj.data, [e.target.name]: e.target.value } }
+        })
     }
 
     const handleDragEnd = (e) => {
@@ -149,7 +154,10 @@ function CredentialData(props) {
     };
 
     const addField = () => {
-        updateEntryData((entryDataObj) => ({ ...entryDataObj, data: [...entryDataObj.data, { name: '', value: '', type: "text" }] }));
+        updateEntryData((entryDataObj) => {
+            updateDrafts((drafts) => ({ ...drafts, [entryDataObj.id]: true }));
+            return { ...entryDataObj, isDraft: true, data: [...entryDataObj.data, { name: '', value: '', type: "text" }] }
+        });
         updateSelectedFieldIndex(entryData.data.length);
     }
 
@@ -168,6 +176,13 @@ function CredentialData(props) {
     }
 
     const saveEntry = (entryData) => {
+        updateDrafts((prevDrafts) => {
+            let newDrafts = { ...prevDrafts };
+            delete newDrafts[entryData.id];
+
+            return newDrafts;
+        });
+        
         props.saveEntry(entryData);
         updateEditModeStatus(false);
     }
