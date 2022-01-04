@@ -8,13 +8,13 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 
 function CredentialsList(props) {
     let searchRef = createRef(null);
-    const { selectedCategory, selectedEntryId, updateSelectedEntryId, addNewEntry, updateEditModeStatus } = props
+    const { state, selectedCategory, selectedEntryId, updateSelectedEntryId, addNewEntry, updateEditModeStatus } = props
 
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
 
     useEffect(() => {
-        let data = props.state.data;
+        let data = state.data;
         
         if (data) {
             let credentials = data.credentials;
@@ -31,7 +31,7 @@ function CredentialsList(props) {
         }
         else updateEntries({ credentials: [], templates: [] });
 
-    }, [searchString, selectedCategory, props.state]);
+    }, [searchString, selectedCategory, state.data]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
