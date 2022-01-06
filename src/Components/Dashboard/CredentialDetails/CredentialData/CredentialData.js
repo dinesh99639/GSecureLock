@@ -212,13 +212,13 @@ function CredentialData(props) {
     }, [entryData]);
 
     useEffect(() => {
-        updateEntryData(props.entryData);
+        updateEntryData(entryData);
         
         if (isUpdateFromFieldOptions) updateIsUpdateFromFieldOptions(false);
         else updateSelectedFieldIndex(0);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.entryData, selectedEntryId, updateEntryData, updateSelectedFieldIndex, updateIsUpdateFromFieldOptions]);
+    }, [entryData, updateEntryData, updateSelectedFieldIndex, updateIsUpdateFromFieldOptions]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%", width: "100%" }} >
