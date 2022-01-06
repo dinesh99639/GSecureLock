@@ -138,7 +138,7 @@ function CredentialData(props) {
     const updateCardData = (e) => {
         updateEntryData((entryDataObj) => {
             updateDrafts((drafts) => ({ ...drafts, [entryDataObj.id]: true }));
-            return { ...entryDataObj, isDraft: true, data: { ...entryDataObj.data, [e.target.name]: e.target.value } }
+            return { ...entryDataObj, data: { ...entryDataObj.data, [e.target.name]: e.target.value } }
         })
     }
 
@@ -156,7 +156,7 @@ function CredentialData(props) {
     const addField = () => {
         updateEntryData((entryDataObj) => {
             updateDrafts((drafts) => ({ ...drafts, [entryDataObj.id]: true }));
-            return { ...entryDataObj, isDraft: true, data: [...entryDataObj.data, { name: '', value: '', type: "text" }] }
+            return { ...entryDataObj, data: [...entryDataObj.data, { name: '', value: '', type: "text" }] }
         });
         updateSelectedFieldIndex(entryData.data.length);
     }
