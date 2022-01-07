@@ -12,9 +12,9 @@ function EditEntry(props) {
     const dispatch = useDispatch();
     
     const { classes, tableStyles } = props;
-    const { Input, entryData, saveEntry, handleDragEnd, addField, updateFieldInput } = props;
+    const { Input, saveEntry, handleDragEnd, addField, updateFieldInput } = props;
 
-    const { selectedFieldIndex } = useSelector((state) => state.entries);
+    const { selectedFieldIndex, entryData } = useSelector((state) => state.entries);
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
 
 

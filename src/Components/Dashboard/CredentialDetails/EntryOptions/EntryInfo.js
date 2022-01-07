@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, } from "react";
+import { useSelector } from 'react-redux';
 
 import { Box, Grid, Typography, Button } from "@mui/material";
 
 function EntryInfo(props) {
-    const { entryData } = props;
+    const { entryData } = useSelector((state) => state.entries);
 
     const [createdAt, updateCreatedAt] = useState("");
     const [lastModifiedAt, updateLastModifiedAt] = useState("");

@@ -16,11 +16,12 @@ function ViewEntry(props) {
     const { Input, copyText, openLink } = props;
 
     const theme = useSelector((state) => state.config.theme);
+    const viewEntryData = useSelector((state) => state.entries.entryData);
 
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
 
 
-    const [entryData, updateEntryData] = useState(props.entryData);
+    const [entryData, updateEntryData] = useState(viewEntryData);
 
     const setPasswordVisible = (idx, visibility) => {
         updateEntryData((entryDataObj) => {
@@ -33,7 +34,7 @@ function ViewEntry(props) {
         })
     }
 
-    useEffect(() => {updateEntryData(props.entryData)}, [props.entryData]);
+    useEffect(() => {updateEntryData(viewEntryData)}, [viewEntryData]);
 
     return (<>
         <Table className={tableStyles.table} >

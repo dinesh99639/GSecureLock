@@ -115,7 +115,6 @@ function App() {
             {(state.isLoggedIn !== null) && (<>
                 <Header
                     auth={{ isLoggedIn: state.isLoggedIn, login, logout }}
-                    encryptedData={state.encryptedData}
                 />
 
                 <Switch>

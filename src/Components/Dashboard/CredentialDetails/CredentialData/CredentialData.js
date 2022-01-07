@@ -113,9 +113,9 @@ function CredentialData(props) {
     const tableStyles = useTableStyling();
 
     const theme = useSelector((state) => state.config.theme);
-    const { isEditMode, categories, drafts } = useSelector((state) => state.entries);
+    const { isEditMode, categories, drafts, entryData } = useSelector((state) => state.entries);
 
-    const { entryData, updateEntryData, deleteEntry } = props;
+    const { deleteEntry } = props;
     const { isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions } = props;
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
@@ -124,9 +124,11 @@ function CredentialData(props) {
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
     const updateDrafts = useCallback((drafts) => dispatch({ type: "updateDrafts", payload: { drafts } }), [dispatch]);
+    const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
 
 
-    const updateMetaInput = (e) => updateEntryData((prevEntryData) => {
+    const updateMetaInput = (e) => {
+        let prevEntryData = { ...entryData };
         updateDrafts({ ...drafts, [prevEntryData.id]: true });
         let data = prevEntryData.data;
 
@@ -140,21 +142,22 @@ function CredentialData(props) {
                 else data = initData.cardData;
             }
         }
+        updateEntryData({ ...prevEntryData, data, [e.target.name]: e.target.value })
+    }
+    const updateFieldInput = (e, idx) => {
+        let prevEntryData = { ...entryData };
 
-        return { ...prevEntryData, data, [e.target.name]: e.target.value }
-    })
-    const updateFieldInput = (e, idx) => updateEntryData((prevEntryData) => {
         updateDrafts({ ...drafts, [prevEntryData.id]: true });
         let data = [...prevEntryData.data];
         data[idx][e.target.name] = e.target.value;
 
-        return { ...prevEntryData, data };
-    })
+        updateEntryData({ ...prevEntryData, data })
+    }
     const updateCardData = (e) => {
-        updateEntryData((entryDataObj) => {
-            updateDrafts({ ...drafts, [entryDataObj.id]: true });
-            return { ...entryDataObj, data: { ...entryDataObj.data, [e.target.name]: e.target.value } }
-        })
+        let entryDataObj = { ...entryData };
+        updateDrafts({ ...drafts, [entryDataObj.id]: true });
+        
+        updateEntryData({ ...entryDataObj, data: { ...entryDataObj.data, [e.target.name]: e.target.value } })
     }
 
     const handleDragEnd = (e) => {
@@ -164,15 +167,13 @@ function CredentialData(props) {
         let [source_data] = data.splice(e.source.index, 1);
         data.splice(e.destination.index, 0, source_data);
 
-        updateEntryData((entryDataObj) => ({ ...entryDataObj, data }));
+        updateEntryData({ ...entryData, data });
         updateSelectedFieldIndex(e.destination.index);
     };
 
     const addField = () => {
-        updateEntryData((entryDataObj) => {
-            updateDrafts({ ...drafts, [entryDataObj.id]: true });
-            return { ...entryDataObj, data: [...entryDataObj.data, { name: '', value: '', type: "text" }] }
-        });
+        updateDrafts({ ...drafts, [entryData.id]: true });
+        updateEntryData({ ...entryData, data: [...entryData.data, { name: '', value: '', type: "text" }] });
         updateSelectedFieldIndex(entryData.data.length);
     }
 
@@ -299,7 +300,6 @@ function CredentialData(props) {
                             tableStyles={tableStyles}
 
                             Input={Input}
-                            entryData={entryData}
                             updateCardData={updateCardData}
                             saveEntry={saveEntry}
                         />
@@ -308,8 +308,6 @@ function CredentialData(props) {
                             classes={classes}
                             tableStyles={tableStyles}
                             Input={Input}
-
-                            entryData={entryData}
 
                             handleDragEnd={handleDragEnd}
                             addField={addField}
@@ -333,7 +331,6 @@ function CredentialData(props) {
                 <Box style={{ padding: "10px 0" }} >
                     {(entryData.category === "Cards") ? <>
                         <ViewCard
-                            entryData={entryData}
                             copyText={copyText}
                         />
                     </> : <>
@@ -342,7 +339,6 @@ function CredentialData(props) {
                             tableStyles={tableStyles}
                             Input={Input}
 
-                            entryData={entryData}
                             copyText={copyText}
                             openLink={openLink}
                         />

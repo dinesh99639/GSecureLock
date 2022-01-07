@@ -27,7 +27,7 @@ const initState = {
 
         drafts: {},
 
-        entryData: {}
+        entryData: null
     },
 
 }
@@ -51,7 +51,7 @@ function reducer(state = initState, action) {
         case "updateSelectedEntryId":   return { ...state, entries: { ...state.entries, selectedEntryId: props.selectedEntryId } }
         case "updateSelectedFieldIndex":return { ...state, entries: { ...state.entries, selectedFieldIndex: props.selectedFieldIndex } }
         case "updateDrafts":            return { ...state, entries: { ...state.entries, drafts: props.drafts } }
-        case "updateEntryData":            return { ...state, entries: { ...state.entries, entryData: props.entryData } }
+        case "updateEntryData":         return { ...state, entries: { ...state.entries, entryData: props.entryData } }
 
 
         default: return state

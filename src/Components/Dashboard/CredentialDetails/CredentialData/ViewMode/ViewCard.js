@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from 'react-redux';
 
 import cardThemes from "./cardThemes";
 
@@ -8,7 +9,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 function ViewCard(props) {
-    const { entryData, copyText } = props;
+    const { copyText } = props;
+
+    const { entryData } = useSelector((state) => state.entries);
 
     const [is_CVV_Visible, update_CVV_VisibleState] = useState(false);
 

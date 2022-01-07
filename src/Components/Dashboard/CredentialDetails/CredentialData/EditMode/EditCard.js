@@ -19,9 +19,10 @@ const useSelectStyles = makeStyles({
 
 function EditCard(props) {
     const { classes, tableStyles } = props;
-    const { Input, entryData, updateCardData, saveEntry } = props;
+    const { Input, updateCardData, saveEntry } = props;
 
     const theme = useSelector((state) => state.config.theme);
+    const { entryData } = useSelector((state) => state.entries);
     
     const selectStyles = useSelectStyles({ theme });
 

@@ -11,11 +11,11 @@ function CredentialDetails(props) {
 
     const { saveEntry, deleteEntry } = props;
 
-    const { entriesById, selectedEntryId } = useSelector((state) => state.entries);
+    const { entriesById, selectedEntryId, entryData } = useSelector((state) => state.entries);
 
-    // const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
+    const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
 
-    const [entryData, updateEntryData] = useState(entriesById[selectedEntryId]);
+    // const [entryData, updateEntryData] = useState(entriesById[selectedEntryId]);
     const [isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions] = useState(false);
 
     useEffect(() => {
@@ -25,27 +25,22 @@ function CredentialDetails(props) {
 
     return (<>
         <Grid container style={{ height: "100%" }} >
-            <Grid item xs={6.54}>
-                <CredentialData
-                    entryData={entryData}
-                    updateEntryData={updateEntryData}
-
-                    saveEntry={saveEntry}
-                    deleteEntry={deleteEntry}
-                    
-                    isUpdateFromFieldOptions={isUpdateFromFieldOptions}
-                    updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
-                />
-            </Grid>
-            <Grid item xs={5.46}>
-                <EntryOptions
-                    
-                    entryData={entryData}
-                    updateEntryData={updateEntryData}
-
-                    updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
-                />
-            </Grid>
+            {(entryData !== null) ? <>
+                <Grid item xs={6.54}>
+                    <CredentialData
+                        saveEntry={saveEntry}
+                        deleteEntry={deleteEntry}
+                        
+                        isUpdateFromFieldOptions={isUpdateFromFieldOptions}
+                        updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
+                    />
+                </Grid>
+                <Grid item xs={5.46}>
+                    <EntryOptions
+                        updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
+                    />
+                </Grid>
+            </> : null}
         </Grid>
     </>);
 }
