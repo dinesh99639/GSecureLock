@@ -15,11 +15,9 @@ function CredentialDetails(props) {
 
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
 
-    // const [entryData, updateEntryData] = useState(entriesById[selectedEntryId]);
     const [isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions] = useState(false);
 
     useEffect(() => {
-        console.log(entriesById[selectedEntryId])
         updateEntryData(entriesById[selectedEntryId]);
     }, [entriesById, selectedEntryId, updateEntryData])
 
