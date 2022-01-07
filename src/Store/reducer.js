@@ -2,14 +2,13 @@ const initState = {
     config: {
         theme: 'dark',
         isLoading: false,
+        isLoggedIn: null,
         snack: { open: false, type: 'success', message: "" },
     },
 
     state: {
-        isLoggedIn: null,
         dataFileId: null,
         encryptedData: '',
-        data: ''
     },
 
     entries: {
@@ -26,10 +25,11 @@ const initState = {
         selectedFieldIndex: 0,
 
         drafts: {},
+        entryData: null,
 
-        entryData: null
-    },
-
+        savedEntries: [],
+        modifiedEntries: []
+    }
 }
 
 function reducer(state = initState, action) {
@@ -38,9 +38,9 @@ function reducer(state = initState, action) {
     switch (action.type) {
 
         // Config
-        case "setTheme":            return { ...state, config: { ...state.config, theme: props.theme } }
-        case "updateLoadingStatus": return { ...state, config: { ...state.config, isLoading: props.isLoading } }
-        case "updateSnack":         return { ...state, config: { ...state.config, snack: props.snack } }
+        case "setTheme":                return { ...state, config: { ...state.config, theme: props.theme } }
+        case "updateLoadingStatus":     return { ...state, config: { ...state.config, isLoading: props.isLoading } }
+        case "updateSnack":             return { ...state, config: { ...state.config, snack: props.snack } }
 
         // Entries
         case "updateEditModeStatus":    return { ...state, entries: { ...state.entries, isEditMode: props.isEditMode } }
