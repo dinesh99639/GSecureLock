@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Button, IconButton } from "@mui/material";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
@@ -9,8 +10,15 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 function ViewEntry(props) {
+    const dispatch = useDispatch();
+
     const { classes, tableStyles } = props;
-    const { theme, Input, updateSelectedFieldIndex, copyText, openLink } = props;
+    const { Input, copyText, openLink } = props;
+
+    const theme = useSelector((state) => state.config.theme);
+
+    const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
+
 
     const [entryData, updateEntryData] = useState(props.entryData);
 

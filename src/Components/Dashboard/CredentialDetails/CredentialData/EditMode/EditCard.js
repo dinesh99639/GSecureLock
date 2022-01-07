@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+
 import { makeStyles } from "@mui/styles";
 
 import { darkTheme } from '../../../../../Theme';
@@ -17,7 +19,9 @@ const useSelectStyles = makeStyles({
 
 function EditCard(props) {
     const { classes, tableStyles } = props;
-    const { Input, entryData, updateCardData, saveEntry, theme } = props;
+    const { Input, entryData, updateCardData, saveEntry } = props;
+
+    const theme = useSelector((state) => state.config.theme);
     
     const selectStyles = useSelectStyles({ theme });
 

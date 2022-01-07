@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+
 import { Box } from "@mui/material";
 
 import EntryInfo from './EntryInfo';
@@ -5,7 +7,9 @@ import FieldOptions from "./FieldOptions";
 import Suggestions from './Suggestions';
 
 function EntryOptions(props) {
-    const { theme, isEditMode, entryData, updateEntryData, selectedFieldIndex, updateSelectedFieldIndex, updateIsUpdateFromFieldOptions } = props;
+    const { entryData, updateEntryData, updateIsUpdateFromFieldOptions } = props;
+
+    const { isEditMode } = useSelector((state) => state.entries);
 
     return (<>
         <Box
@@ -18,9 +22,6 @@ function EntryOptions(props) {
         >
             {(isEditMode && (entryData.category !== "Cards")) ? <>
                 <FieldOptions
-                    theme={theme}
-                    selectedFieldIndex={selectedFieldIndex}
-                    updateSelectedFieldIndex={updateSelectedFieldIndex}
                     entryData={entryData}
                     updateEntryData={updateEntryData}
                     updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}

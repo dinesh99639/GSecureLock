@@ -1,3 +1,6 @@
+import { useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+
 import { makeStyles } from "@mui/styles";
 
 import { darkTheme } from "../../../../Theme";
@@ -43,7 +46,14 @@ const useRemoveFieldBtn = makeStyles({
 });
 
 function FieldOptions(props) {
-    const { theme, selectedFieldIndex, updateSelectedFieldIndex, entryData, updateEntryData, updateIsUpdateFromFieldOptions } = props;
+    const dispatch = useDispatch();
+
+    const { entryData, updateEntryData, updateIsUpdateFromFieldOptions } = props;
+
+    const { selectedFieldIndex } = useSelector((state) => state.entries);
+    const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
+
+    const theme = useSelector((state) => state.config.theme);
 
     const selectStyles = useSelectStyles({ theme });
     const generatePasswordBtnStyles = useGeneratePasswordBtn();

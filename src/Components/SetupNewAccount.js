@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { makeStyles } from "@mui/styles";
 
@@ -20,8 +21,18 @@ const useStyles = makeStyles({
 });
 
 function SetupNewAccount(props) {
+    const dispatch = useDispatch();
+
     const history = useHistory();
     const classes = useStyles();
+
+    const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
+    const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
+
+    const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
+    const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
+    const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
+    
 
     const [haveAccess, updateAccess] = useState(true);
     const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
@@ -30,21 +41,21 @@ function SetupNewAccount(props) {
 
     const handleContinueBtnClick = async () => {
         if (passwords.password === '' || passwords.confirmPassword === '') {
-            props.showSnack("error", "All fields are required")
+            showSnack("error", "All fields are required")
             return;
         }
 
         if (passwords.password !== passwords.confirmPassword) {
-            props.showSnack("error", "Password and Confirm password should be same")
+            showSnack("error", "Password and Confirm password should be same")
             return;
         }
 
         if (passwords.password.length < 4) {
-            props.showSnack("error", "Password should atleast have 4 characters")
+            showSnack("error", "Password should atleast have 4 characters")
             return;
         }
 
-        props.showBackdrop();
+        showBackdrop();
 
         let initData = JSON.stringify({
             config: {
@@ -114,7 +125,7 @@ function SetupNewAccount(props) {
         props.setState({ ...props.state, encryptedData });
 
         history.push('/dashboard');
-        props.hideBackdrop();
+        hideBackdrop();
     }
 
 

@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Box, Button, Checkbox } from "@mui/material";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
@@ -7,9 +9,14 @@ import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 function EditEntry(props) {
+    const dispatch = useDispatch();
+    
     const { classes, tableStyles } = props;
+    const { Input, entryData, saveEntry, handleDragEnd, addField, updateFieldInput } = props;
 
-    const { Input, entryData, saveEntry, handleDragEnd, addField, updateSelectedFieldIndex, updateFieldInput, selectedFieldIndex } = props;
+    const { selectedFieldIndex } = useSelector((state) => state.entries);
+    const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
+
 
     return (<>
         <DragDropContext onDragEnd={handleDragEnd}>

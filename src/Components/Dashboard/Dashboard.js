@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import crypto from '../../Utils/crypto';
 import initData from '../../initData';
@@ -29,29 +30,24 @@ const getEntryIndexById = (credentials, id) => {
 
 function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
-    const { theme, state, setState } = props;
+    const dispatch = useDispatch();
+
+    const { state, setState } = props;
 
     // const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
     const [lockTime, updateLockTime] = useState({ m: 0, s: 0, lockAt: 0 });
     const [password, updatePassword] = useState('');
-    const [isEditMode, updateEditModeStatus] = useState(false);
 
-    const [selectedCategory, updateSelectedCategory] = useState('All');
 
-    const [categories, updateCategories] = useState({});
-    const [categoriesCount, updateCategoriesCount] = useState([]);
+    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId } = useSelector((state) => state.entries);
 
-    const [entriesById, updateEntriesById] = useState(null);
-    const [selectedEntryId, updateSelectedEntryId] = useState('');
-    const [newEntryId, updateNewEntryId] = useState('');
+    const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
+    const updateCategories = useCallback((categories) => dispatch({ type: "updateCategories", payload: { categories } }), [dispatch]);
+    const updateCategoriesCount = useCallback((categoriesCount) => dispatch({ type: "updateCategoriesCount", payload: { categoriesCount } }), [dispatch]);
+    const updateEntriesById = useCallback((entriesById) => dispatch({ type: "updateEntriesById", payload: { entriesById } }), [dispatch]);
+    const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
+    const updateNewEntryId = useCallback((newEntryId) => dispatch({ type: "updateNewEntryId", payload: { newEntryId } }), [dispatch]);
 
-    const [selectedFieldIndex, updateSelectedFieldIndex] = useState(0);
-    
-    const [drafts, updateDrafts] = useState({});
-
-    useEffect(() => {
-        console.log("drafts", drafts)
-    }, [drafts])
 
     const addNewEntry = () => {
         let id = "C" + new Date().getTime();
@@ -87,29 +83,28 @@ function Dashboard(props) {
 
             let index = getEntryIndexById(newState.data.credentials, id);
 
+            // updateCategoriesCount
+            let counts = [...categoriesCount];
+            let newCounts = [...categoriesCount];
+            let prevCategory = newState.data.credentials[index].category;
 
-            updateCategoriesCount((counts) => {
-                let newCounts = [...counts];
-                let prevCategory = newState.data.credentials[index].category;
+            counts.forEach((count, index) => {
+                if (count.name === prevCategory) {
+                    newCounts[0].count--;
+                    newCounts[index].count--;
+                    if (newCounts[index].count === 0) {
+                        let isStaticCategory = false;
 
-                counts.forEach((count, index) => {
-                    if (count.name === prevCategory) {
-                        newCounts[0].count--;
-                        newCounts[index].count--;
-                        if (newCounts[index].count === 0) {
-                            let isStaticCategory = false;
-
-                            for (var i in initData.staticCategories) {
-                                if (initData.staticCategories[i] === newCounts[index].name)
-                                    isStaticCategory = true;
-                            }
-                            if (!isStaticCategory) newCounts.splice(index, 1);
+                        for (var i in initData.staticCategories) {
+                            if (initData.staticCategories[i] === newCounts[index].name)
+                                isStaticCategory = true;
                         }
+                        if (!isStaticCategory) newCounts.splice(index, 1);
                     }
-                });
+                }
+            });
+            updateCategoriesCount(newCounts);
 
-                return newCounts;
-            })
 
             newState.data.credentials.splice(index, 1);
 
@@ -133,33 +128,31 @@ function Dashboard(props) {
             let index = getEntryIndexById(newState.data.credentials, id);
 
             if (newState.data.credentials[index].category !== entryData.category) {
-                updateCategoriesCount((counts) => {
-                    let newCounts = [...counts];
-                    let prevCategory = newState.data.credentials[index].category;
-                    let currCategory = entryData.category;
+                let counts = [...categoriesCount];
+                let newCounts = [...counts];
+                let prevCategory = newState.data.credentials[index].category;
+                let currCategory = entryData.category;
 
-                    let isNewCategoryFound = false;
+                let isNewCategoryFound = false;
 
-                    counts.forEach((count, index) => {
-                        if (count.name === prevCategory) {
-                            newCounts[0].count--;
-                            newCounts[index].count--;
-                            if (newCounts[index].count === 0) newCounts.splice(index, 1);
-                        }
-                        if (count.name === currCategory) {
-                            newCounts[0].count++;
-                            newCounts[index].count++;
-                            isNewCategoryFound = true;
-                        }
-                    });
-
-                    if (!isNewCategoryFound) {
-                        newCounts[0].count++;
-                        newCounts.push({ name: currCategory, count: 1 })
+                counts.forEach((count, index) => {
+                    if (count.name === prevCategory) {
+                        newCounts[0].count--;
+                        newCounts[index].count--;
+                        if (newCounts[index].count === 0) newCounts.splice(index, 1);
                     }
+                    if (count.name === currCategory) {
+                        newCounts[0].count++;
+                        newCounts[index].count++;
+                        isNewCategoryFound = true;
+                    }
+                });
 
-                    return newCounts;
-                })
+                if (!isNewCategoryFound) {
+                    newCounts[0].count++;
+                    newCounts.push({ name: currCategory, count: 1 })
+                }
+                updateCategoriesCount(newCounts);
             }
 
             // if (!categories[entryData.category])
@@ -173,7 +166,7 @@ function Dashboard(props) {
             return newState;
         });
 
-        updateEntriesById((entries) => ({ ...entries, [selectedEntryId]: entryData }))
+        updateEntriesById({ ...entriesById, [selectedEntryId]: entryData })
 
     }
 
@@ -182,7 +175,7 @@ function Dashboard(props) {
         document.addEventListener("keydown", (e) => {
             if (e.keyCode === 27) updateSelectedEntryId('')
         }, false);
-    }, []);
+    }, [updateSelectedEntryId]);
 
     useEffect(() => {
         if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
@@ -228,7 +221,7 @@ function Dashboard(props) {
         }
         else updateEntriesById(null);
 
-    }, [newEntryId, state.data]);
+    }, [newEntryId, state.data, updateCategories, updateCategoriesCount, updateEntriesById, updateSelectedEntryId, updateNewEntryId]);
 
 
     return (<>
@@ -241,42 +234,20 @@ function Dashboard(props) {
                     />
                 </Grid>
                 <Grid item xs={1.7} >
-                    <Categories
-                        categoriesCount={categoriesCount}
-                        selectedCategory={selectedCategory}
-                        updateSelectedCategory={updateSelectedCategory}
-                    />
+                    <Categories />
                 </Grid>
                 <Grid item xs={2.5} >
                     <CredentialsList
                         state={props.state}
-                        drafts={drafts}
-                        selectedCategory={selectedCategory}
-                        selectedEntryId={selectedEntryId}
-                        updateSelectedEntryId={updateSelectedEntryId}
-                        updateEditModeStatus={updateEditModeStatus}
                         addNewEntry={addNewEntry}
                     />
                 </Grid>
 
                 <Grid item xs={7.34} >
                     {(selectedEntryId !== '' && entriesById) ? <>
-                        <CredentialDetails 
-                            theme={theme}
-                            updateDrafts={updateDrafts}
-
-                            isEditMode={isEditMode}
-                            updateEditModeStatus={updateEditModeStatus}
-                            entriesById={entriesById}
-                            selectedEntryId={selectedEntryId}
-                            categories={categories}
-                            selectedFieldIndex={selectedFieldIndex}
-                            updateSelectedFieldIndex={updateSelectedFieldIndex}
-                            newEntryId={newEntryId}
-                            updateNewEntryId={updateNewEntryId}
+                        <CredentialDetails                            
                             saveEntry={saveEntry}
                             deleteEntry={deleteEntry}
-                            showSnack={props.showSnack}
                         />
                     </> : <>
                         <Box
@@ -303,12 +274,9 @@ function Dashboard(props) {
             state={props.state}
             setState={props.setState}
             updateLockTime={updateLockTime}
-            showSnack={props.showSnack}
 
             password={password}
             updatePassword={updatePassword}
-
-            updateSelectedEntryId={updateSelectedEntryId}
         />}
     </>);
 }

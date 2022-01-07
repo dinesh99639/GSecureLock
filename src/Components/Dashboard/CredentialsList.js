@@ -1,4 +1,5 @@
-import { createRef, useEffect, useState } from "react";
+import { createRef, useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Box, IconButton, InputBase, Typography, Tooltip } from "@mui/material";
 
@@ -8,8 +9,16 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 
 function CredentialsList(props) {
+    const dispatch = useDispatch();
     let searchRef = createRef(null);
-    const { state, drafts, selectedCategory, selectedEntryId, updateSelectedEntryId, addNewEntry, updateEditModeStatus } = props
+    
+    const { selectedCategory, selectedEntryId, drafts } = useSelector((state) => state.entries);
+
+    const { state, addNewEntry } = props
+
+    const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
+    const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
+
 
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });

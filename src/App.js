@@ -1,4 +1,5 @@
-import { useEffect, useState, forwardRef } from "react";
+import { useEffect, useState, forwardRef, useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
@@ -21,10 +22,20 @@ const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-function App(props) {
-    const [theme, setTheme] = useState(localStorage.getItem('theme'));
-    const [isLoading, updateLoadingStatus] = useState(false);
-    const [snack, updateSnack] = useState({ open: false, type: 'success', message: "" });
+function App() {
+    const dispatch = useDispatch();
+
+    const { theme, isLoading, snack } = useSelector((state) => ({ ...state.config }));
+
+    
+    const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
+    const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
+    const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
+    
+    const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
+    const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }) : null;
+
+
     const [state, setState] = useState({
         isLoggedIn: null,
         dataFileId: null,
@@ -68,26 +79,8 @@ function App(props) {
         localStorage.removeItem('dataFileId');
     }
 
-    const toggleTheme = () => {
-        let changedTheme = (theme === "light") ? "dark" : "light";
-        setTheme(changedTheme)
-        localStorage.setItem("theme", changedTheme);
-    }
-
-    const auth = { isLoggedIn: state.isLoggedIn, login, logout };
-
-    const showBackdrop = () => updateLoadingStatus(true);
-    const hideBackdrop = () => updateLoadingStatus(false);
-
-    const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
-    const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }) : null;
 
     useEffect(() => {
-        if (localStorage.getItem('theme') === null) {
-            localStorage.setItem('theme', 'light');
-            setTheme('light');
-        }
-
         let encryptedData = localStorage.getItem('encryptedData');
 
         if (encryptedData) {
@@ -112,7 +105,7 @@ function App(props) {
     useEffect(() => {
         if (state.isLoggedIn === null) showBackdrop();
         else hideBackdrop();
-    }, [state.isLoggedIn]);
+    }, [state.isLoggedIn, showBackdrop, hideBackdrop]);
 
 
     return (<>
@@ -121,28 +114,21 @@ function App(props) {
 
             {(state.isLoggedIn !== null) && (<>
                 <Header
-                    theme={theme}
-                    toggleTheme={toggleTheme}
-                    auth={auth}
+                    auth={{ isLoggedIn: state.isLoggedIn, login, logout }}
                     encryptedData={state.encryptedData}
                 />
 
                 <Switch>
                     <Route path="/dashboard" >
                         <Dashboard
-                            theme={theme}
                             state={state}
                             setState={setState}
-                            showSnack={showSnack}
                         />
                     </Route>
                     <Route path="/setup_account" >
                         <SetupNewAccount
                             state={state}
                             setState={setState}
-                            showBackdrop={showBackdrop}
-                            hideBackdrop={hideBackdrop}
-                            showSnack={showSnack}
                         />
                     </Route>
                     <Route path="/test" ><Test /></Route>

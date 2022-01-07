@@ -1,7 +1,13 @@
+import { useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Box, Typography } from "@mui/material";
 
 function Categories(props) {
-    const { categoriesCount, selectedCategory, updateSelectedCategory } = props;
+    const dispatch = useDispatch();
+
+    const { selectedCategory, categoriesCount } = useSelector((state) => state.entries);
+    const updateSelectedCategory = useCallback((selectedCategory) => dispatch({ type: "updateSelectedCategory", payload: { selectedCategory } }), [dispatch]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >

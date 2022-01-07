@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from "@mui/styles";
 
 import crypto from '../../Utils/crypto';
@@ -19,8 +21,14 @@ const useStyles = makeStyles({
 });
 
 function LockScreen(props) {
+    const dispatch = useDispatch();
+
     const classes = useStyles();
-    const { password, updatePassword, updateSelectedEntryId } = props;
+    const { password, updatePassword } = props;
+
+    const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
+    const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
+    const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
     const unlock = () => {
         try {
@@ -29,7 +37,7 @@ function LockScreen(props) {
             props.updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 })
         }
         catch {
-            props.showSnack("error", "Wrong password");
+            showSnack("error", "Wrong password");
         }
     }
 

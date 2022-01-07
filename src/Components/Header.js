@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 
 import { getUserData } from '../api/drive';
@@ -15,12 +16,24 @@ import './Header.css';
 const Header = (props) => {
     const history = useHistory();
 
+    const dispatch = useDispatch();
+
+    const theme = useSelector((state) => state.config.theme);
+    const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
+
+
     const [path, setPath] = useState(history.location.pathname)
     const [user, setUser] = useState({
         name: '',
         email: '',
         image: ''
     });
+
+    const toggleTheme = () => {
+        let changedTheme = (theme === "light") ? "dark" : "light";
+        setTheme(changedTheme)
+        localStorage.setItem("theme", changedTheme);
+    }
 
     const handleHomeButtonClick = () => {
         history.push("/");
@@ -77,6 +90,13 @@ const Header = (props) => {
         loadUserData();
     }, [props.auth.isLoggedIn]);
 
+    useEffect(() => {
+        if (localStorage.getItem('theme') === null) {
+            localStorage.setItem('theme', 'light');
+            setTheme('light');
+        }
+    }, [setTheme]);
+
     return (
         <Box>
             <AppBar position="static" className="main-header" >
@@ -103,7 +123,7 @@ const Header = (props) => {
                     <Box style={{ display: "flex", alignItems: "center" }}>
                         <Link to="/test" style={{ color: "white" }}>Test</Link>
 
-                        <IconButton size="medium" onClick={props.toggleTheme} >
+                        <IconButton size="medium" onClick={toggleTheme} >
                             {(props.theme === "light") ?
                                 <DarkModeIcon style={{ color: "black" }} /> :
                                 <LightModeIcon style={{ color: "white" }} />
