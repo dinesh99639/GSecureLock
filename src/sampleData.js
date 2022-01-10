@@ -19,9 +19,6 @@ const cipher = {
 const { encrypt } = cipher;
 
 const data = {
-    config: {
-        timer: 5,
-    },
     templates: [{
         id: "t1",
         name: "Default",
