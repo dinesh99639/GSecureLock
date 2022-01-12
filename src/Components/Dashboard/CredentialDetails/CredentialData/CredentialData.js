@@ -139,35 +139,14 @@ function CredentialData(props) {
         let data = prevEntryData.data;
 
         if (e.target.name === "category") {
-            if (savedEntries[selectedEntryIndex].category === "Cards") { // If previous category is Cards
-                if (entryData.category !== "Cards") data = entryData.data;
-                else data = [];
-            }
-            if (e.target.value === "Cards") { // If current category is Cards
-                if (entryData.category === "Cards") data = entryData.data;
-                else data = initData.cardData;
-            }
+            let prevCategory = savedEntries[selectedEntryIndex].category;
+            let currCategory = e.target.value;
+
+            if (prevCategory === "Cards" && currCategory === "Cards") data = { ...savedEntries[selectedEntryIndex].data };
+            else if (prevCategory !== "Cards" && currCategory !== "Cards") data = [...savedEntries[selectedEntryIndex].data];
+            else if (prevCategory === "Cards") data = [];
+            else if (currCategory === "Cards") data = { ...initData.cardData };
         }
-
-        // if (e.target.name === "category") {
-        //     if (entryData.category === "Cards") { // If previous category is Cards
-        //         if (entryData.category === "Cards") data = savedEntries[selectedEntryIndex].data;
-        //         else data = [];
-        //         // console.log(data)
-        //     }
-        //     if (e.target.value === "Cards") { // If current category is Cards
-        //         if (entryData.category === "Cards") data = initData.cardData;
-        //         else data = [...savedEntries[selectedEntryIndex].data];
-        //     }
-        // }
-
-        // if (e.target.name === "category") {
-        //     let prevCategory = entryData.category;
-        //     let currCategory = e.target.value;
-
-        //     if (prevCategory === "Cards" && currCategory !== "Cards") data = [];
-        //     if (prevCategory !== "Cards" && currCategory === "Cards") data = initData.cardData;
-        // }
 
         let newEntryData = { ...prevEntryData, data, [e.target.name]: e.target.value };
         updateEntryData(newEntryData);
