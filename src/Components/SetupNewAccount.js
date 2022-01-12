@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { makeStyles } from "@mui/styles";
 
@@ -26,6 +26,8 @@ function SetupNewAccount(props) {
     const history = useHistory();
     const classes = useStyles();
 
+    const { dataFileId, encryptedData } = useSelector((state) => state.localStore);
+
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
 
@@ -33,6 +35,7 @@ function SetupNewAccount(props) {
     const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
     const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
     
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const [haveAccess, updateAccess] = useState(true);
     const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
@@ -122,7 +125,7 @@ function SetupNewAccount(props) {
         let encryptedData = crypto.encrypt(initData, passwords.password)
 
         await updateFile(localStorage.getItem('dataFileId'), encryptedData);
-        props.setState({ ...props.state, encryptedData });
+        updateLocalStore({ dataFileId, encryptedData })
 
         history.push('/dashboard');
         hideBackdrop();
@@ -130,7 +133,7 @@ function SetupNewAccount(props) {
 
 
     useState(() => {
-        if (props.state.encryptedData.length !== 0) updateAccess(false);
+        if (encryptedData.length !== 0) updateAccess(false);
     }, [])
 
     if (!haveAccess) return <PermissionDenied />;

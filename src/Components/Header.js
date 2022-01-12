@@ -124,7 +124,7 @@ const Header = (props) => {
                         <Link to="/test" style={{ color: "white" }}>Test</Link>
 
                         <IconButton size="medium" onClick={toggleTheme} >
-                            {(props.theme === "light") ?
+                            {(theme === "light") ?
                                 <DarkModeIcon style={{ color: "black" }} /> :
                                 <LightModeIcon style={{ color: "white" }} />
                             }

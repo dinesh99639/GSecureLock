@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef, useCallback } from "react";
+import { useEffect, forwardRef, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -25,9 +25,8 @@ const Alert = forwardRef(function Alert(props, ref) {
 function App() {
     const dispatch = useDispatch();
 
-    const { theme, isLoading, snack } = useSelector((state) => ({ ...state.config }));
-
-    
+    const { theme, isLoading, snack, isLoggedIn } = useSelector((state) => ({ ...state.config }));
+ 
     const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
     const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
     const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
@@ -35,13 +34,9 @@ function App() {
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }) : null;
 
+    const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
-    const [state, setState] = useState({
-        isLoggedIn: null,
-        dataFileId: null,
-        encryptedData: '',
-        data: ''
-    });
 
     const login = async () => {
         showBackdrop();
@@ -64,18 +59,16 @@ function App() {
         res = await downloadFile(dataFileId);
         encryptedData = res.body;
 
-        setState({ isLoggedIn, dataFileId, encryptedData });
+        updateLoginStatus(isLoggedIn);
+        updateLocalStore({ dataFileId, encryptedData });
         localStorage.setItem('encryptedData', encryptedData);
         hideBackdrop()
     }
 
     const logout = () => {
         window.gapi.auth2.getAuthInstance().signOut();
-        setState({
-            isLoggedIn: false,
-            dataFileId: null,
-            data: ''
-        })
+        updateLoginStatus(false);
+        updateLocalStore({ dataFileId: '', encryptedData: '' });
         localStorage.removeItem('dataFileId');
     }
 
@@ -84,13 +77,10 @@ function App() {
         let encryptedData = localStorage.getItem('encryptedData');
 
         if (encryptedData) {
-            setState({
-                isLoggedIn: true,
-                dataFileId: localStorage.getItem('dataFileId'),
-                encryptedData
-            })
+            updateLoginStatus(true);
+            updateLocalStore({ dataFileId: localStorage.getItem('dataFileId'), encryptedData });
         }
-        else initApp(setState);
+        else initApp(updateLoginStatus, updateLocalStore);
 
         // const checkStorage = async () => {
         //     console.log(await window.gapi.auth2.getAuthInstance().signIn())
@@ -100,35 +90,29 @@ function App() {
         // }
 
         // checkStorage()
-    }, []);
+    }, [updateLocalStore, updateLoginStatus]);
 
     useEffect(() => {
-        if (state.isLoggedIn === null) showBackdrop();
+        if (isLoggedIn === null) showBackdrop();
         else hideBackdrop();
-    }, [state.isLoggedIn, showBackdrop, hideBackdrop]);
+    }, [isLoggedIn, showBackdrop, hideBackdrop]);
 
 
     return (<>
         <ThemeProvider theme={(theme === "light") ? lightTheme : darkTheme}>
             <GlobalStyles />
 
-            {(state.isLoggedIn !== null) && (<>
+            {(isLoggedIn !== null) && (<>
                 <Header
-                    auth={{ isLoggedIn: state.isLoggedIn, login, logout }}
+                    auth={{ isLoggedIn: isLoggedIn, login, logout }}
                 />
 
                 <Switch>
                     <Route path="/dashboard" >
-                        <Dashboard
-                            state={state}
-                            setState={setState}
-                        />
+                        <Dashboard />
                     </Route>
                     <Route path="/setup_account" >
-                        <SetupNewAccount
-                            state={state}
-                            setState={setState}
-                        />
+                        <SetupNewAccount />
                     </Route>
                     <Route path="/test" ><Test /></Route>
                 </Switch>

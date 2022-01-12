@@ -88,7 +88,7 @@ function EditEntry(props) {
             <Button
                 variant="standard"
                 style={{ backgroundColor: "#0088fd", color: "white", margin: "0 10px", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
-                onClick={() => saveEntry(entryData)}
+                onClick={() => saveEntry()}
             >Save</Button>
         </Box>
     </>);

@@ -13,33 +13,17 @@ import CredentialDetails from './CredentialDetails/CredentialDetails';
 
 import LockScreen from './LockScreen';
 
-
-const getEntryIndexById = (credentials, id) => {
-    let index = null;
-
-    credentials.every((entry, idx) => {
-        if (entry.id === id) {
-            index = idx;
-            return false;
-        }
-        return true;
-    })
-
-    return index;
-}
-
 function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
     const dispatch = useDispatch();
-
-    const { state, setState } = props;
 
     // const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
     const [lockTime, updateLockTime] = useState({ m: 0, s: 0, lockAt: 0 });
     const [password, updatePassword] = useState('');
 
 
-    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId } = useSelector((state) => state.entries);
+    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId, selectedEntryIndex, savedEntries, modifiedEntries, templates } = useSelector((state) => state.entries);
+    const { dataFileId } = useSelector((state) => state.localStore);
 
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
     const updateCategories = useCallback((categories) => dispatch({ type: "updateCategories", payload: { categories } }), [dispatch]);
@@ -48,126 +32,124 @@ function Dashboard(props) {
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
     const updateNewEntryId = useCallback((newEntryId) => dispatch({ type: "updateNewEntryId", payload: { newEntryId } }), [dispatch]);
 
+    const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
+    const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
+    const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
+
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const addNewEntry = () => {
         let id = "C" + new Date().getTime();
 
-        setState((state) => {
-            let data = {
-                id,
-                user: "",
-                name: "Untitled",
-                category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
-                data: (selectedCategory === "Cards") ? initData.cardData : [],
+        let newEntryData = {
+            id,
+            user: "",
+            name: "Untitled",
+            category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
+            data: (selectedCategory === "Cards") ? initData.cardData : [],
 
-                createdAt: new Date().toString().substring(0, 24),
-                lastModifiedAt: new Date().toString().substring(0, 24)
-            }
+            createdAt: new Date().toString().substring(0, 24),
+            lastModifiedAt: new Date().toString().substring(0, 24)
+        }
 
-            return {
-                ...state,
-                data: {
-                    ...state.data,
-                    credentials: [...state.data.credentials, data]
-                }
-            };
-        });
+        updateSavedEntries([...savedEntries, newEntryData]);
+        updateModifiedEntries([...modifiedEntries, newEntryData]);
 
         updateNewEntryId(id);
         updateEditModeStatus(true);
     }
 
     const deleteEntry = (id, closeDeleteConfirmationModal) => {
-        setState((prevState) => {
-            let newState = { ...prevState };
+        let newSavedEntries = [...savedEntries];
+        let newmodifiedEntries = [...modifiedEntries];
 
-            let index = getEntryIndexById(newState.data.credentials, id);
+        // updateCategoriesCount
+        let counts = [...categoriesCount];
+        let newCounts = [...categoriesCount];
+        let prevCategory = newSavedEntries[selectedEntryIndex].category;
 
-            // updateCategoriesCount
+        counts.forEach((count, index) => {
+            if (count.name === prevCategory) {
+                newCounts[0].count--;
+                newCounts[index].count--;
+                if (newCounts[index].count === 0) {
+                    let isStaticCategory = false;
+
+                    for (var i in initData.staticCategories) {
+                        if (initData.staticCategories[i] === newCounts[index].name)
+                            isStaticCategory = true;
+                    }
+                    if (!isStaticCategory) newCounts.splice(index, 1);
+                }
+            }
+        });
+        updateCategoriesCount(newCounts);
+
+
+        newSavedEntries.splice(selectedEntryIndex, 1);
+        newmodifiedEntries.splice(selectedEntryIndex, 1);
+
+        let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
+
+        updateLocalStore({ dataFileId, encryptedData });
+        updateSavedEntries(newSavedEntries);
+        updateModifiedEntries(newmodifiedEntries);
+
+        localStorage.setItem("encryptedData", encryptedData);
+
+        updateSelectedEntryId('');
+        closeDeleteConfirmationModal();
+    }
+
+    const saveEntry = (entryData) => {
+        let newEntryData = { ...entryData };
+        let newSavedEntries = [...savedEntries];
+        let newmodifiedEntries = [...modifiedEntries];
+
+        newEntryData.lastModifiedAt = new Date().toString().substring(0, 24);
+
+        if (newSavedEntries[selectedEntryIndex].category !== newEntryData.category) {
             let counts = [...categoriesCount];
-            let newCounts = [...categoriesCount];
-            let prevCategory = newState.data.credentials[index].category;
+            let newCounts = [...counts];
+            let prevCategory = newSavedEntries[selectedEntryIndex].category;
+            let currCategory = newEntryData.category;
+
+            let isNewCategoryFound = false;
 
             counts.forEach((count, index) => {
                 if (count.name === prevCategory) {
                     newCounts[0].count--;
                     newCounts[index].count--;
-                    if (newCounts[index].count === 0) {
-                        let isStaticCategory = false;
-
-                        for (var i in initData.staticCategories) {
-                            if (initData.staticCategories[i] === newCounts[index].name)
-                                isStaticCategory = true;
-                        }
-                        if (!isStaticCategory) newCounts.splice(index, 1);
-                    }
+                    if (newCounts[index].count === 0) newCounts.splice(index, 1);
+                }
+                if (count.name === currCategory) {
+                    newCounts[0].count++;
+                    newCounts[index].count++;
+                    isNewCategoryFound = true;
                 }
             });
-            updateCategoriesCount(newCounts);
 
-
-            newState.data.credentials.splice(index, 1);
-
-            let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
-            newState.encryptedData = encryptedData;
-            localStorage.setItem("encryptedData", encryptedData);
-
-            updateSelectedEntryId('');
-            closeDeleteConfirmationModal();
-            return newState;
-        })
-    }
-
-    const saveEntry = (entryData) => {
-        entryData.lastModifiedAt = new Date().toString().substring(0, 24);
-
-        setState((prevState) => {
-            let newState = { ...prevState };
-
-            let id = entryData.id;
-            let index = getEntryIndexById(newState.data.credentials, id);
-
-            if (newState.data.credentials[index].category !== entryData.category) {
-                let counts = [...categoriesCount];
-                let newCounts = [...counts];
-                let prevCategory = newState.data.credentials[index].category;
-                let currCategory = entryData.category;
-
-                let isNewCategoryFound = false;
-
-                counts.forEach((count, index) => {
-                    if (count.name === prevCategory) {
-                        newCounts[0].count--;
-                        newCounts[index].count--;
-                        if (newCounts[index].count === 0) newCounts.splice(index, 1);
-                    }
-                    if (count.name === currCategory) {
-                        newCounts[0].count++;
-                        newCounts[index].count++;
-                        isNewCategoryFound = true;
-                    }
-                });
-
-                if (!isNewCategoryFound) {
-                    newCounts[0].count++;
-                    newCounts.push({ name: currCategory, count: 1 })
-                }
-                updateCategoriesCount(newCounts);
+            if (!isNewCategoryFound) {
+                newCounts[0].count++;
+                newCounts.push({ name: currCategory, count: 1 })
             }
+            updateCategoriesCount(newCounts);
+        }
 
-            // if (!categories[entryData.category])
+        newSavedEntries[selectedEntryIndex] = newEntryData;
+        newmodifiedEntries[selectedEntryIndex] = newEntryData;
 
-            newState.data.credentials[index] = entryData;
+        let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
 
-            let encryptedData = crypto.encrypt(JSON.stringify(newState.data), password);
-            newState.encryptedData = encryptedData;
-            localStorage.setItem("encryptedData", encryptedData);
+        updateLocalStore({ dataFileId, encryptedData });
+        updateEntryData(newEntryData);
+        updateSavedEntries(newSavedEntries);
+        updateModifiedEntries(newmodifiedEntries);
+        // console.log(newSavedEntries, newmodifiedEntries)
 
-            return newState;
-        });
+        localStorage.setItem("encryptedData", encryptedData);
 
-        updateEntriesById({ ...entriesById, [selectedEntryId]: entryData })
-
+        updateEntriesById({ ...entriesById, [selectedEntryId]: newEntryData })
     }
 
     useEffect(() => {
@@ -179,19 +161,19 @@ function Dashboard(props) {
 
     useEffect(() => {
         if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
-            setState((state) => ({ ...state, data: null }));
+            updateSavedEntries([]);
+            updateModifiedEntries([]);
         }
-    }, [lockTime, setState]);
+    }, [lockTime, updateSavedEntries, updateModifiedEntries]);
 
     useEffect(() => {
-        let data = state.data;
 
-        if (data) {
+        if (savedEntries) {
             let credentialsById = {};
             let categoriesCountObj = {};
             let categoriesCountArr = [];
             let totalEntries = 0;
-            data.credentials.forEach((entry) => {
+            savedEntries.forEach((entry) => {
                 credentialsById[entry.id] = entry;
 
                 if (categoriesCountObj[entry.category]) categoriesCountObj[entry.category]++;
@@ -221,7 +203,7 @@ function Dashboard(props) {
         }
         else updateEntriesById(null);
 
-    }, [newEntryId, state.data, updateCategories, updateCategoriesCount, updateEntriesById, updateSelectedEntryId, updateNewEntryId]);
+    }, [newEntryId, savedEntries, updateCategories, updateCategoriesCount, updateEntriesById, updateSelectedEntryId, updateNewEntryId]);
 
 
     return (<>
@@ -238,14 +220,13 @@ function Dashboard(props) {
                 </Grid>
                 <Grid item xs={2.5} >
                     <CredentialsList
-                        state={props.state}
                         addNewEntry={addNewEntry}
                     />
                 </Grid>
 
                 <Grid item xs={7.34} >
                     {(selectedEntryId !== '' && entriesById) ? <>
-                        <CredentialDetails                            
+                        <CredentialDetails
                             saveEntry={saveEntry}
                             deleteEntry={deleteEntry}
                         />
@@ -271,8 +252,6 @@ function Dashboard(props) {
         </>}
 
         {((lockTime.m <= 0) && (lockTime.s <= 0)) && <LockScreen
-            state={props.state}
-            setState={props.setState}
             updateLockTime={updateLockTime}
 
             password={password}

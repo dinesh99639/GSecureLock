@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { darkTheme } from '../../../../Theme';
 import initData from '../../../../initData';
@@ -108,15 +109,14 @@ function SelectCategory({ name, categories, entryData, onChange, theme }) {
 
 function CredentialData(props) {
     const dispatch = useDispatch();
-    
+
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
 
-    const theme = useSelector((state) => state.config.theme);
-    const { isEditMode, categories, drafts, entryData } = useSelector((state) => state.entries);
+    const { theme, isUpdateFromFieldOptions } = useSelector((state) => state.config);
+    const { isEditMode, categories, drafts, entryData, savedEntries, modifiedEntries, selectedEntryIndex } = useSelector((state) => state.entries);
 
     const { deleteEntry } = props;
-    const { isUpdateFromFieldOptions, updateIsUpdateFromFieldOptions } = props;
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
@@ -126,38 +126,82 @@ function CredentialData(props) {
     const updateDrafts = useCallback((drafts) => dispatch({ type: "updateDrafts", payload: { drafts } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
 
+    const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
+
+    const updateIsUpdateFromFieldOptions = useCallback((isUpdateFromFieldOptions) => dispatch({ type: "updateIsUpdateFromFieldOptions", payload: { isUpdateFromFieldOptions } }), [dispatch]);
+
 
     const updateMetaInput = (e) => {
         let prevEntryData = { ...entryData };
+        let newModifiedEntries = [...modifiedEntries];
+
         updateDrafts({ ...drafts, [prevEntryData.id]: true });
         let data = prevEntryData.data;
 
         if (e.target.name === "category") {
-            if (prevEntryData.category === "Cards") { // If previous category is Cards
-                if (props.entryData.category !== "Cards") data = props.entryData.data;
+            if (savedEntries[selectedEntryIndex].category === "Cards") { // If previous category is Cards
+                if (entryData.category !== "Cards") data = entryData.data;
                 else data = [];
             }
             if (e.target.value === "Cards") { // If current category is Cards
-                if (props.entryData.category === "Cards") data = props.entryData.data;
+                if (entryData.category === "Cards") data = entryData.data;
                 else data = initData.cardData;
             }
         }
-        updateEntryData({ ...prevEntryData, data, [e.target.name]: e.target.value })
+
+        // if (e.target.name === "category") {
+        //     if (entryData.category === "Cards") { // If previous category is Cards
+        //         if (entryData.category === "Cards") data = savedEntries[selectedEntryIndex].data;
+        //         else data = [];
+        //         // console.log(data)
+        //     }
+        //     if (e.target.value === "Cards") { // If current category is Cards
+        //         if (entryData.category === "Cards") data = initData.cardData;
+        //         else data = [...savedEntries[selectedEntryIndex].data];
+        //     }
+        // }
+
+        // if (e.target.name === "category") {
+        //     let prevCategory = entryData.category;
+        //     let currCategory = e.target.value;
+
+        //     if (prevCategory === "Cards" && currCategory !== "Cards") data = [];
+        //     if (prevCategory !== "Cards" && currCategory === "Cards") data = initData.cardData;
+        // }
+
+        let newEntryData = { ...prevEntryData, data, [e.target.name]: e.target.value };
+        updateEntryData(newEntryData);
+
+        newModifiedEntries[selectedEntryIndex] = newEntryData;
+        updateModifiedEntries(newModifiedEntries);
     }
     const updateFieldInput = (e, idx) => {
         let prevEntryData = { ...entryData };
+        let newModifiedEntries = [...modifiedEntries];
 
         updateDrafts({ ...drafts, [prevEntryData.id]: true });
-        let data = [...prevEntryData.data];
+
+        let data = cloneDeep(prevEntryData.data);
+
         data[idx][e.target.name] = e.target.value;
 
-        updateEntryData({ ...prevEntryData, data })
+        let newEntryData = { ...prevEntryData, data };
+        updateEntryData(newEntryData);
+
+        newModifiedEntries[selectedEntryIndex] = newEntryData;
+        updateModifiedEntries(newModifiedEntries);
     }
     const updateCardData = (e) => {
-        let entryDataObj = { ...entryData };
-        updateDrafts({ ...drafts, [entryDataObj.id]: true });
-        
-        updateEntryData({ ...entryDataObj, data: { ...entryDataObj.data, [e.target.name]: e.target.value } })
+        let prevEntryData = { ...entryData };
+        let newModifiedEntries = [...modifiedEntries];
+
+        updateDrafts({ ...drafts, [prevEntryData.id]: true });
+
+        let newEntryData = { ...prevEntryData, data: { ...prevEntryData.data, [e.target.name]: e.target.value } };
+        updateEntryData(newEntryData);
+
+        newModifiedEntries[selectedEntryIndex] = newEntryData;
+        updateModifiedEntries(newModifiedEntries);
     }
 
     const handleDragEnd = (e) => {
@@ -172,9 +216,17 @@ function CredentialData(props) {
     };
 
     const addField = () => {
-        updateDrafts({ ...drafts, [entryData.id]: true });
-        updateEntryData({ ...entryData, data: [...entryData.data, { name: '', value: '', type: "text" }] });
-        updateSelectedFieldIndex(entryData.data.length);
+        let prevEntryData = { ...entryData };
+        let newModifiedEntries = [...modifiedEntries];
+
+        updateDrafts({ ...drafts, [prevEntryData.id]: true });
+
+        let newEntryData = { ...prevEntryData, data: [...prevEntryData.data, { name: '', value: '', type: "text" }] };
+        updateEntryData(newEntryData);
+        updateSelectedFieldIndex(prevEntryData.data.length);
+
+        newModifiedEntries[selectedEntryIndex] = newEntryData;
+        updateModifiedEntries(newModifiedEntries);
     }
 
     const copyText = (type, text) => {
@@ -191,12 +243,14 @@ function CredentialData(props) {
         window.open(link);
     }
 
-    const saveEntry = (entryData) => {
+    const saveEntry = () => {
+        let prevEntryData = { ...entryData };
         let newDrafts = { ...drafts };
-        delete newDrafts[entryData.id];
+
+        delete newDrafts[prevEntryData.id];
         updateDrafts(newDrafts);
-        
-        props.saveEntry(entryData);
+
+        props.saveEntry(prevEntryData);
         updateEditModeStatus(false);
     }
 
@@ -226,7 +280,7 @@ function CredentialData(props) {
 
     useEffect(() => {
         updateEntryData(entryData);
-        
+
         if (isUpdateFromFieldOptions) updateIsUpdateFromFieldOptions(false);
         else updateSelectedFieldIndex(0);
 
@@ -253,7 +307,7 @@ function CredentialData(props) {
                                 margin: "0 5px",
                                 padding: 0
                             }}
-                            onClick={() => saveEntry(entryData)}
+                            onClick={() => saveEntry()}
                         ><SaveIcon /></IconButton>
 
                         <IconButton
@@ -374,26 +428,26 @@ function CredentialData(props) {
                     Are you sure you want to delete this "Bank Card" entry?
                 </Typography>
                 <Box style={{ display: "flex", justifyContent: "space-evenly", marginTop: "20px" }} >
-                    <Button 
-                        variant="contained" 
-                        style={{ 
-                            fontSize: "14px", 
-                            padding: "3px 0", 
-                            width: "100px", 
-                            textTransform: 'none' 
+                    <Button
+                        variant="contained"
+                        style={{
+                            fontSize: "14px",
+                            padding: "3px 0",
+                            width: "100px",
+                            textTransform: 'none'
                         }}
-                        onClick={closeDeleteConfirmationModal} 
+                        onClick={closeDeleteConfirmationModal}
                     >Cancel</Button>
-                    <Button 
-                        variant="contained" 
-                        style={{ 
-                            backgroundColor: "red", 
-                            fontSize: "14px", 
-                            padding: "3px 0", 
-                            width: "100px", 
-                            textTransform: 'none' 
+                    <Button
+                        variant="contained"
+                        style={{
+                            backgroundColor: "red",
+                            fontSize: "14px",
+                            padding: "3px 0",
+                            width: "100px",
+                            textTransform: 'none'
                         }}
-                        onClick={() => deleteEntry(entryData.id, closeDeleteConfirmationModal)} 
+                        onClick={() => deleteEntry(entryData.id, closeDeleteConfirmationModal)}
                     >Confirm</Button>
                 </Box>
             </Paper>

@@ -1,7 +1,7 @@
 import config from '../config.json';
 import { getAllFiles, createFile, downloadFile } from './drive';
 
-const initDrive = (setState) => {
+const initDrive = (updateLoginStatus, updateLocalStore) => {
     window.gapi.client.load('drive', 'v3', async () => {
         let isLoggedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
         let dataFileId = null;
@@ -27,30 +27,31 @@ const initDrive = (setState) => {
             localStorage.setItem('encryptedData', encryptedData);
         }
         
-        setState({ isLoggedIn, dataFileId, encryptedData });
+        updateLoginStatus(isLoggedIn);
+        updateLocalStore({ dataFileId, encryptedData });
     })
 }
 
-const initClient = async (setState) => {
+const initClient = async (updateLoginStatus, updateLocalStore) => {
     await window.gapi.load('client:auth2', async () => {
         await window.gapi.client.init({
             clientId: config.CLIENT_ID,
             scope: config.SCOPES.join(' ')
-        }).then((res) => initDrive(setState))
+        }).then((res) => initDrive(updateLoginStatus, updateLocalStore))
     });
 }
 
-const loadGoogleApi = async (setState) => {
+const loadGoogleApi = async (updateLoginStatus, updateLocalStore) => {
     var scr = document.createElement('script');
     var head = document.head || document.getElementsByTagName('head')[0];
     scr.src = 'https://apis.google.com/js/api.js';
 
     head.insertBefore(scr, head.firstChild);
     scr.addEventListener('load', async () => {
-        await initClient(setState)
+        await initClient(updateLoginStatus, updateLocalStore)
     })
 }
 
-const initApp = (setState) => loadGoogleApi(setState);
+const initApp = (updateLoginStatus, updateLocalStore) => loadGoogleApi(updateLoginStatus, updateLocalStore);
 
 export default initApp;

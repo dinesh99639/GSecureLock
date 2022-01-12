@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from "@mui/styles";
 
 import crypto from '../../Utils/crypto';
@@ -24,17 +24,28 @@ function LockScreen(props) {
     const dispatch = useDispatch();
 
     const classes = useStyles();
-    const { password, updatePassword } = props;
+    const { password, updatePassword, updateLockTime } = props;
+
+    const { encryptedData } = useSelector((state) => state.localStore);
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
+    const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
+    const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
+    const updateTemplates = useCallback((templates) => dispatch({ type: "updateTemplates", payload: { templates } }), [dispatch]);
+
+
     const unlock = () => {
         try {
-            let data = JSON.parse(crypto.decrypt(props.state.encryptedData, password));
-            props.setState({ ...props.state, data });
-            props.updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 })
+            let data = JSON.parse(crypto.decrypt(encryptedData, password));
+            
+            updateSavedEntries([...data.credentials]);
+            updateModifiedEntries([...data.credentials]);
+            updateTemplates(data.templates);
+            
+            updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 })
         }
         catch {
             showSnack("error", "Wrong password");

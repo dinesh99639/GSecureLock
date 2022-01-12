@@ -12,36 +12,60 @@ function CredentialsList(props) {
     const dispatch = useDispatch();
     let searchRef = createRef(null);
     
-    const { selectedCategory, selectedEntryId, drafts } = useSelector((state) => state.entries);
+    const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates } = useSelector((state) => state.entries);
 
-    const { state, addNewEntry } = props
-
+    const { addNewEntry } = props
+    
+    const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
+    
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
+    const updateSelectedEntryIndex = useCallback((selectedEntryIndex) => dispatch({ type: "updateSelectedEntryIndex", payload: { selectedEntryIndex } }), [dispatch]);
 
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
 
-    useEffect(() => {
-        let data = state.data;
+    const getEntryIndexById = (credentials, id) => {
+        let index = null;
+    
+        credentials.every((entry, idx) => {
+            if (entry.id === id) {
+                index = idx;
+                return false;
+            }
+            return true;
+        })
+    
+        return index;
+    }
 
-        if (data) {
-            let credentials = data.credentials;
+    const handleSelectEntry = (entryData) => {
+        updateSelectedEntryId(entryData.id);
+        updateEditModeStatus(false);
+        
+        let entryIdx = getEntryIndexById(modifiedEntries, entryData.id);
+        updateSelectedEntryIndex(entryIdx);
+        updateEntryData({ ...modifiedEntries[entryIdx] })
+    }
+
+    useEffect(() => {
+        if (modifiedEntries) {
+            let credentials = [...modifiedEntries];
 
             if (searchString !== '') {
                 credentials = credentials.filter((item) => item.name.toLowerCase().includes(searchString));
             }
 
-            if (selectedCategory === 'All') updateEntries({ credentials, templates: data.templates });
+            if (selectedCategory === 'All') updateEntries({ credentials: modifiedEntries, templates });
             else {
                 let credentialsByCategory = credentials.filter((item) => item.category === selectedCategory);
-                updateEntries({ credentials: credentialsByCategory, templates: data.templates });
+                updateEntries({ credentials: credentialsByCategory, templates });
             }
         }
         else updateEntries({ credentials: [], templates: [] });
 
-    }, [searchString, selectedCategory, state.data]);
+    }, [searchString, selectedCategory, modifiedEntries, templates]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
@@ -88,10 +112,7 @@ function CredentialsList(props) {
                                 backgroundColor: (selectedEntryId === entry.id) ? "rgb(0, 136, 253)" : null,
                                 color: (selectedEntryId === entry.id) ? "white" : "inherit",
                             }}
-                            onClick={() => {
-                                updateSelectedEntryId(entry.id);
-                                updateEditModeStatus(false);
-                            }}
+                            onClick={() => handleSelectEntry(entry)}
                         >
                             <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
                             <Box style={{ fontSize: "14px", opacity: 0.9, display: "flex", justifyContent: "space-between" }} >

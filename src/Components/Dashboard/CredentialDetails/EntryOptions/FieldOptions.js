@@ -48,13 +48,12 @@ const useRemoveFieldBtn = makeStyles({
 function FieldOptions(props) {
     const dispatch = useDispatch();
 
-    const { updateIsUpdateFromFieldOptions } = props;
+    const theme = useSelector((state) => state.config.theme);
 
     const { selectedFieldIndex, entryData } = useSelector((state) => state.entries);
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
-
-    const theme = useSelector((state) => state.config.theme);
+    const updateIsUpdateFromFieldOptions = useCallback((isUpdateFromFieldOptions) => dispatch({ type: "updateIsUpdateFromFieldOptions", payload: { isUpdateFromFieldOptions } }), [dispatch]);
 
     const selectStyles = useSelectStyles({ theme });
     const generatePasswordBtnStyles = useGeneratePasswordBtn();

@@ -7,9 +7,6 @@ import FieldOptions from "./FieldOptions";
 import Suggestions from './Suggestions';
 
 function EntryOptions(props) {
-
-    const { updateIsUpdateFromFieldOptions } = props;
-
     const { isEditMode, entryData } = useSelector((state) => state.entries);
 
     return (<>
@@ -22,9 +19,7 @@ function EntryOptions(props) {
             }}
         >
             {(isEditMode && (entryData.category !== "Cards")) ? <>
-                <FieldOptions
-                    updateIsUpdateFromFieldOptions={updateIsUpdateFromFieldOptions}
-                />
+                <FieldOptions />
             </> : <>
                 <EntryInfo />
             </>}
