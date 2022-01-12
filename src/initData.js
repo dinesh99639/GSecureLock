@@ -14,9 +14,9 @@ exports.newAccountData = {
 }
 
 exports.cardData = {
-    network: "",
+    network: "VISA",
     cardName: "",
-    cardType: "",
+    cardType: "Debit Card",
     cardNo: "",
     validThru: "",
     cardHolderName: "",
