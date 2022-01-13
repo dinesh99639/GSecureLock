@@ -49,4 +49,20 @@ export const GlobalStyles = createGlobalStyle`
         border-left: ${({ theme }) => theme.searchBox.borderLeft};
         border-right: ${({ theme }) => theme.searchBox.borderRight};
     }
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: 7px;
+    }   
+    
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 25px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555; 
+    }
 `;
