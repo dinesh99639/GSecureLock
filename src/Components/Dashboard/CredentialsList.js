@@ -58,15 +58,17 @@ function CredentialsList(props) {
         if (modifiedEntries) {
             let credentials = [...modifiedEntries];
 
+            if (selectedCategory === 'All') credentials = [...modifiedEntries];
+            else {
+                let credentialsByCategory = credentials.filter((item) => item.category === selectedCategory);
+                credentials = credentialsByCategory;
+            }
+
             if (searchString !== '') {
                 credentials = credentials.filter((item) => item.name.toLowerCase().includes(searchString));
             }
 
-            if (selectedCategory === 'All') updateEntries({ credentials: modifiedEntries, templates });
-            else {
-                let credentialsByCategory = credentials.filter((item) => item.category === selectedCategory);
-                updateEntries({ credentials: credentialsByCategory, templates });
-            }
+            updateEntries({ credentials, templates });
         }
         else updateEntries({ credentials: [], templates: [] });
 
