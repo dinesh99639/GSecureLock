@@ -35,6 +35,8 @@ function Dashboard(props) {
     const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
     const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
 
+    const updateSelectedEntryIndex = useCallback((selectedEntryIndex) => dispatch({ type: "updateSelectedEntryIndex", payload: { selectedEntryIndex } }), [dispatch]);
+
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const addNewEntry = () => {
@@ -56,7 +58,10 @@ function Dashboard(props) {
         updateSavedEntries([...savedEntries, newEntryData]);
         updateModifiedEntries([...modifiedEntries, newEntryData]);
 
+        updateSelectedEntryIndex(modifiedEntries.length)
+        updateEntryData(newEntryData);
         updateNewEntryId(id);
+        updateSelectedEntryId(id);
         updateEditModeStatus(true);
     }
 
