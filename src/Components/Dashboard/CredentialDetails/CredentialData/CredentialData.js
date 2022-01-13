@@ -128,6 +128,8 @@ function CredentialData(props) {
 
     const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
 
+    const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
+
     const updateMetaInput = (e) => {
         let prevEntryData = { ...entryData };
         let newModifiedEntries = [...modifiedEntries];
@@ -351,7 +353,14 @@ function CredentialData(props) {
                         <Typography className="noOverflow" style={{ fontWeight: "bold", flex: 1 }} >{entryData.name}</Typography>
                     </Tooltip>
                     <Box>
-                        <IconButton size="small" style={{ color: "#009dcd", margin: "0 5px", padding: 0 }} onClick={() => updateEditModeStatus(true)} ><EditOutlinedIcon /></IconButton>
+                        <IconButton 
+                            size="small" 
+                            style={{ color: "#009dcd", margin: "0 5px", padding: 0 }} 
+                            onClick={() => {
+                                updateEditModeStatus(true);
+                                updateEntryOptionsMode("EntryOptions");
+                            }} 
+                            ><EditOutlinedIcon /></IconButton>
                         <IconButton size="small" onClick={() => openDeleteConfirmationModal(entryData.name, deleteEntry)} style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
                     </Box>
                 </Box>
@@ -360,6 +369,7 @@ function CredentialData(props) {
                     {(entryData.category === "Cards") ? <>
                         <ViewCard
                             copyText={copyText}
+                            saveEntry={saveEntry}
                         />
                     </> : <>
                         <ViewEntry

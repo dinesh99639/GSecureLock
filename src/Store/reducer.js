@@ -3,7 +3,8 @@ const initState = {
         theme: 'dark',
         isLoading: false,
         isLoggedIn: null,
-        snack: { open: false, type: 'success', message: "" }
+        snack: { open: false, type: 'success', message: "" },
+        entryOptionsMode: "EntryOptions"
     },
 
     lockTime: { m: 0, s: 0, lockAt: 0 },
@@ -46,9 +47,10 @@ function reducer(state = initState, action) {
         case "updateLoadingStatus":             return { ...state, config: { ...state.config, isLoading: props.isLoading } }
         case "updateSnack":                     return { ...state, config: { ...state.config, snack: props.snack } }
         case "updateLoginStatus":               return { ...state, config: { ...state.config, isLoggedIn: props.isLoggedIn } }
-   
+        case "updateEntryOptionsMode":          return { ...state, config: { ...state.config, entryOptionsMode: props.entryOptionsMode } }
+        
         // lockTime
-        case "updateLockTime":                return { ...state, lockTime: { ...props.lockTime } }
+        case "updateLockTime":                  return { ...state, lockTime: { ...props.lockTime } }
         
         // LocalStore
         case "updateLocalStore":                return { ...state, localStore: { ...props.localStore } }

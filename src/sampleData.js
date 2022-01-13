@@ -70,6 +70,7 @@ const data = {
                 cardHolderName: "Firstname Lastname",
                 CVV: "000"
             },
+            cardTheme: "bluePurple",
 
             createdAt: "Thu Dec 30 2021 22:52:56",
             lastModifiedAt: "Thu Dec 30 2021 22:52:56"

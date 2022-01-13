@@ -24,6 +24,8 @@ function CredentialsList(props) {
     const updateSelectedEntryIndex = useCallback((selectedEntryIndex) => dispatch({ type: "updateSelectedEntryIndex", payload: { selectedEntryIndex } }), [dispatch]);
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
 
+    const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
+
     const [searchString, updateSearchString] = useState('');
     const [entries, updateEntries] = useState({ credentials: [], templates: [] });
 
@@ -45,6 +47,7 @@ function CredentialsList(props) {
         updateSelectedEntryId(entryData.id);
         updateEditModeStatus(false);
         updateSelectedFieldIndex(0);
+        updateEntryOptionsMode("EntryOptions");
         
         let entryIdx = getEntryIndexById(modifiedEntries, entryData.id);
         updateSelectedEntryIndex(entryIdx);

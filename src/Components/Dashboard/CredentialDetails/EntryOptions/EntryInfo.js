@@ -1,10 +1,14 @@
-import { useEffect, useState, } from "react";
-import { useSelector } from 'react-redux';
+import { useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Box, Grid, Typography, Button } from "@mui/material";
 
 function EntryInfo(props) {
+    const dispatch = useDispatch();
+
     const { entryData } = useSelector((state) => state.entries);
+
+    const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
 
     const [createdAt, updateCreatedAt] = useState("");
     const [lastModifiedAt, updateLastModifiedAt] = useState("");
@@ -69,6 +73,7 @@ function EntryInfo(props) {
                             textTransform: "none",
                             border: "1px solid gray"
                         }}
+                        onClick={() => updateEntryOptionsMode("ChangeCardTheme")}
                     >Change Theme</Button>
                 </> : <>
                     <Button

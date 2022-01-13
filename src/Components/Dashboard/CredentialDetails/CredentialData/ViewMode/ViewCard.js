@@ -1,48 +1,34 @@
-import { useState } from "react";
-import { useSelector } from 'react-redux';
+import { useState, useCallback } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 
-import cardThemes from "./cardThemes";
+import cardThemes from "../../cardThemes";
 
-import { Box, IconButton, Typography, Paper, Grid } from "@mui/material";
+import { Box, IconButton, Typography, Paper, Grid, Button } from "@mui/material";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 function ViewCard(props) {
+    const dispatch = useDispatch();
+
     const { copyText } = props;
 
+    const { entryOptionsMode } = useSelector((state) => state.config);
     const { entryData } = useSelector((state) => state.entries);
+
+    const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
 
     const [is_CVV_Visible, update_CVV_VisibleState] = useState(false);
 
-    // const [cardThemesArr, updatecardThemesArr] = useState([]);
-    // useEffect(() => {
-    //     let tmp = []
-    //     for (let i in cardThemes) {
-    //         tmp.push(i)
-    //     }
-    //     console.log(tmp)
-    //     updatecardThemesArr(tmp)
-    // }, [])
-
-    // const [currentCardTheme, updateCurrentCardTheme] = useState(cardThemes.color);
-    // const [cardColorIndex, updatecardColorIndex] = useState(0);
-
-    // useEffect(() => {
-    //     console.log()
-    //     const id = setInterval(() => {
-    //         updateCurrentCardTheme(cardThemes[cardThemesArr[cardColorIndex%19]])
-    //         updatecardColorIndex(cardColorIndex + 1)
-    //     }, 1000);
-    //     return () => clearInterval(id);
-    // }, [cardColorIndex, cardThemesArr, cardThemes]);
+    const saveEntry = () => {
+        props.saveEntry();
+        updateEntryOptionsMode("EntryOptions");
+    }
 
     return (<>
         <Paper
             style={{
-                // ...currentCardTheme,
-                // ...cardThemes.color,
-                ...cardThemes.bluePurple,
+                ...cardThemes[entryData.cardTheme],
                 position: "relative",
                 width: "76%",
                 padding: "20%",
@@ -54,7 +40,7 @@ function ViewCard(props) {
             <Box
                 style={{
                     color: "white",
-                    padding: "8px 14px",
+                    padding: "0.75vw 1.4vw",
                     position: "absolute",
                     top: 0,
                     left: 0,
@@ -122,6 +108,16 @@ function ViewCard(props) {
                 <ContentCopyIcon style={{ fontSize: "1.2vw" }} />
             </IconButton>
         </Box>
+
+        {(entryOptionsMode === "ChangeCardTheme") ? <>
+            <Box style={{ padding: "35px 0", display: "flex", justifyContent: "center" }} >
+                <Button
+                    variant="standard"
+                    style={{ backgroundColor: "#0088fd", color: "white", margin: "0 10px", padding: "3px 12px", minWidth: "0", textTransform: "none" }}
+                    onClick={() => saveEntry()}
+                >Save</Button>
+            </Box>
+        </> : null}
     </>);
 }
 
