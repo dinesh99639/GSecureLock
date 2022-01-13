@@ -228,6 +228,7 @@ function CredentialData(props) {
 
         props.saveEntry(prevEntryData);
         updateEditModeStatus(false);
+        updateSelectedFieldIndex(0);
     }
 
     const [deleteConfirmModal, updateDeleteConfirmModal] = useState({
