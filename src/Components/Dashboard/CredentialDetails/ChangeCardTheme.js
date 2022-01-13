@@ -38,7 +38,7 @@ function ChangeCardTheme(props) {
         updateModifiedEntries(newModifiedEntries);
     }
 
-    return (<>
+    return (<Box>
         <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Change Theme</Box>
         <Box style={{ overflowY: "scroll", height: "87vh" }} >
             {
@@ -118,7 +118,7 @@ function ChangeCardTheme(props) {
                 })
             }
         </Box>
-    </>);
+    </Box>);
 }
 
 export default ChangeCardTheme;

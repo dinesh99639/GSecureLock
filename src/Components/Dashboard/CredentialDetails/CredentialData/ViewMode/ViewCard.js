@@ -30,7 +30,7 @@ function ViewCard(props) {
             style={{
                 ...cardThemes[entryData.cardTheme],
                 position: "relative",
-                width: "76%",
+                width: "75%",
                 padding: "20%",
                 boxSizing: "border-box",
                 borderRadius: "10px",
