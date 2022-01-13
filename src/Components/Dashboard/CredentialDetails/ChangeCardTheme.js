@@ -112,7 +112,7 @@ function ChangeCardTheme(props) {
                                 </Box>
                             </Paper>
 
-                            <Typography style={{ fontSize: "1.25vw", textAlign: "center" }} >{(cardTheme.substr(0, 1).toUpperCase() + cardTheme.substr(1)).match(/[A-Z][a-z]+/g).join(' ')}</Typography>
+                            <Typography style={{ fontSize: "1.2vw", textAlign: "center" }} >{(cardTheme.substr(0, 1).toUpperCase() + cardTheme.substr(1)).match(/[A-Z][a-z]+/g).join(' ')}</Typography>
                         </Box>
                     )
                 })

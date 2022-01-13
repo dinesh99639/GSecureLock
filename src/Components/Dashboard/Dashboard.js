@@ -51,6 +51,8 @@ function Dashboard(props) {
             lastModifiedAt: new Date().toString().substring(0, 24)
         }
 
+        if (selectedCategory === "Cards") newEntryData.cardTheme = "purePurple";
+
         updateSavedEntries([...savedEntries, newEntryData]);
         updateModifiedEntries([...modifiedEntries, newEntryData]);
 

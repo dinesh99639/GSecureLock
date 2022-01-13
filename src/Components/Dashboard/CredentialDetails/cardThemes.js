@@ -1,5 +1,5 @@
 const cardThemes = {
-    blackPurple: {
+    purpleBlack: {
         background: "linear-gradient(90deg, rgba(0,19,36,1) 0%, rgba(67,9,121,1) 50%, rgba(191,0,255,1) 100%)",
         color: "white"
     },
@@ -7,7 +7,7 @@ const cardThemes = {
         background: "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)",
         color: "white"
     },
-    blackOrange: {
+    orangeBlack: {
         background: "linear-gradient(90deg, rgba(0,19,36,1) 0%, rgba(142,93,2,1) 72%, rgba(255,174,0,1) 100%)",
         color: "white"
     },
@@ -74,11 +74,7 @@ const cardThemes = {
     greenBluePurple: {
         background: "linear-gradient(155deg, #52c234 0%, rgba(0,212,255,1) 50%,  #9733ee 75%)",
         color: "white"
-    },
-    color: {
-        background: "linear-gradient(to right, #da22ff, #9733ee)",
-        color: "white"
-    },
+    }
 }
 
 export default cardThemes;
