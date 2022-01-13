@@ -17,9 +17,8 @@ function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
     const dispatch = useDispatch();
 
-    // const [lockTime, updateLockTime] = useState({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
-    const [lockTime, updateLockTime] = useState({ m: 0, s: 0, lockAt: 0 });
     const [password, updatePassword] = useState('');
+    const [isSessionLocked, updateIsSessionLocked] = useState(true);
 
 
     const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId, selectedEntryIndex, savedEntries, modifiedEntries, templates } = useSelector((state) => state.entries);
@@ -153,18 +152,10 @@ function Dashboard(props) {
     }
 
     useEffect(() => {
-        // if (lockTime.m > 0 && lockTime.s > 0) 
         document.addEventListener("keydown", (e) => {
-            if (e.keyCode === 27) updateSelectedEntryId('')
+            if (e.key  === "Escape") updateSelectedEntryId('')
         }, false);
     }, [updateSelectedEntryId]);
-
-    useEffect(() => {
-        if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
-            updateSavedEntries([]);
-            updateModifiedEntries([]);
-        }
-    }, [lockTime, updateSavedEntries, updateModifiedEntries]);
 
     useEffect(() => {
 
@@ -208,51 +199,52 @@ function Dashboard(props) {
 
     return (<>
         {(isDesktop) ? <>
-            <Grid container style={{ display: "flex", flex: 1 }} >
-                <Grid item xs={0.46} >
-                    <Timebar
-                        lockTime={lockTime}
-                        updateLockTime={updateLockTime}
-                    />
-                </Grid>
-                <Grid item xs={1.7} >
-                    <Categories />
-                </Grid>
-                <Grid item xs={2.5} >
-                    <CredentialsList
-                        addNewEntry={addNewEntry}
-                    />
-                </Grid>
-
-                <Grid item xs={7.34} >
-                    {(selectedEntryId !== '' && entriesById) ? <>
-                        <CredentialDetails
-                            saveEntry={saveEntry}
-                            deleteEntry={deleteEntry}
+            {(!isSessionLocked) ? <>
+                <Grid container style={{ display: "flex", flex: 1 }} >
+                    <Grid item xs={0.46} >
+                        <Timebar 
+                            updateIsSessionLocked={updateIsSessionLocked}
                         />
-                    </> : <>
-                        <Box
-                            style={{
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center"
-                            }}
-                        >
-                            <Typography style={{ fontSize: "25px" }} >GSecurePass</Typography>
-                            <Typography style={{ fontSize: "15px" }} >A secure password manager</Typography>
-                        </Box>
-                    </>}
-                </Grid>
+                    </Grid>
+                    <Grid item xs={1.7} >
+                        <Categories />
+                    </Grid>
+                    <Grid item xs={2.5} >
+                        <CredentialsList
+                            addNewEntry={addNewEntry}
+                        />
+                    </Grid>
 
-            </Grid>
+                    <Grid item xs={7.34} >
+                        {(selectedEntryId !== '' && entriesById) ? <>
+                            <CredentialDetails
+                                saveEntry={saveEntry}
+                                deleteEntry={deleteEntry}
+                            />
+                        </> : <>
+                            <Box
+                                style={{
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}
+                            >
+                                <Typography style={{ fontSize: "25px" }} >GSecurePass</Typography>
+                                <Typography style={{ fontSize: "15px" }} >A secure password manager</Typography>
+                            </Box>
+                        </>}
+                    </Grid>
+
+                </Grid>
+            </> : null}
         </> : <>
             Mobile View
         </>}
 
-        {((lockTime.m <= 0) && (lockTime.s <= 0)) && <LockScreen
-            updateLockTime={updateLockTime}
+        {(isSessionLocked) && <LockScreen
+            updateIsSessionLocked={updateIsSessionLocked}
 
             password={password}
             updatePassword={updatePassword}

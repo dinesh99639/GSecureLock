@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Typography, IconButton, Paper, Divider, Box } from '@mui/material';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
@@ -32,7 +34,15 @@ const RemainingProgress = (props) => {
 }
 
 function Timebar(props) {
-    const {lockTime, updateLockTime} = props;
+    const dispatch = useDispatch();
+
+    const { updateIsSessionLocked } = props;
+
+    const lockTime = useSelector((state) => state.lockTime);
+    const updateLockTime = useCallback((lockTime) => dispatch({ type: "updateLockTime", payload: { lockTime } }), [dispatch]);
+
+    const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
+    const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
 
     const updateLockType = (m) => {
         if (m > 0) updateLockTime({ m, s: 0, lockAt: new Date().getTime() + m * 60000 });
@@ -48,18 +58,21 @@ function Timebar(props) {
     useEffect(
         () => {
             if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
+                updateIsSessionLocked(true);
+                updateSavedEntries([]);
+                updateModifiedEntries([]);
                 return;
             }
-            const id = setInterval(() => updateLockTime((lockTime) => {
+            const id = setInterval(() => {
                 let timeLeft = parseInt((lockTime.lockAt - new Date().getTime()) / 1000);
                 let m = parseInt(timeLeft / 60);
                 let s = timeLeft % 60;
-
-                return { m, s, lockAt: lockTime.lockAt }
-            }), 1000);
+                
+                updateLockTime({ m, s, lockAt: lockTime.lockAt });
+            }, 1000);
             return () => clearInterval(id);
         },
-        [lockTime, updateLockTime]
+        [lockTime, updateLockTime, updateIsSessionLocked, updateSavedEntries, updateModifiedEntries]
     );
 
     return (<>

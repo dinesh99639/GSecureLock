@@ -24,13 +24,15 @@ function LockScreen(props) {
     const dispatch = useDispatch();
 
     const classes = useStyles();
-    const { password, updatePassword, updateLockTime } = props;
+    const { password, updatePassword, updateIsSessionLocked } = props;
 
     const { encryptedData } = useSelector((state) => state.localStore);
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
+
+    const updateLockTime = useCallback((lockTime) => dispatch({ type: "updateLockTime", payload: { lockTime } }), [dispatch]);
 
     const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
     const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
@@ -45,7 +47,8 @@ function LockScreen(props) {
             updateModifiedEntries([...data.credentials]);
             updateTemplates(data.templates);
             
-            updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 })
+            updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 });
+            updateIsSessionLocked(false);
         }
         catch {
             showSnack("error", "Wrong password");
