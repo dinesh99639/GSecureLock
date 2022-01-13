@@ -1,5 +1,4 @@
-import { useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { Grid } from "@mui/material";
 
@@ -7,18 +6,10 @@ import CredentialData from './CredentialData/CredentialData';
 import EntryOptions from './EntryOptions/EntryOptions';
 
 function CredentialDetails(props) {
-    const dispatch = useDispatch();
 
     const { saveEntry, deleteEntry } = props;
 
-    const { entryData, modifiedEntries, selectedEntryIndex } = useSelector((state) => state.entries);
-
-    const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
-
-
-    useEffect(() => {
-        updateEntryData(modifiedEntries[selectedEntryIndex]);
-    }, [modifiedEntries, selectedEntryIndex, updateEntryData])
+    const { entryData } = useSelector((state) => state.entries);
 
     return (<>
         <Grid container style={{ height: "100%" }} >
