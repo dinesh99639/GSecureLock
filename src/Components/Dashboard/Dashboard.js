@@ -3,8 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import crypto from '../../Utils/crypto';
 import initData from '../../initData';
+import { darkTheme } from '../../Theme';
 
-import { Grid, Box, Typography } from '@mui/material';
+import { Grid, Box, Typography, Modal, Paper, Button } from '@mui/material';
 
 import Timebar from './Timebar';
 import Categories from './Categories';
@@ -20,8 +21,12 @@ function Dashboard(props) {
     const [password, updatePassword] = useState('');
     const [isSessionLocked, updateIsSessionLocked] = useState(true);
 
+    const lockTime = useSelector((state) => state.lockTime);
+    const updateLockTime = useCallback((lockTime) => dispatch({ type: "updateLockTime", payload: { lockTime } }), [dispatch]);
 
-    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId, selectedEntryIndex, savedEntries, modifiedEntries, templates } = useSelector((state) => state.entries);
+    const { theme } = useSelector((state) => state.config);
+
+    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId, selectedEntryIndex, savedEntries, modifiedEntries, templates, drafts } = useSelector((state) => state.entries);
     const { dataFileId } = useSelector((state) => state.localStore);
 
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
@@ -160,7 +165,7 @@ function Dashboard(props) {
 
     useEffect(() => {
         document.addEventListener("keydown", (e) => {
-            if (e.key  === "Escape") updateSelectedEntryId('')
+            if (e.key === "Escape") updateSelectedEntryId('')
         }, false);
     }, [updateSelectedEntryId]);
 
@@ -209,7 +214,7 @@ function Dashboard(props) {
             {(!isSessionLocked) ? <>
                 <Grid container style={{ display: "flex", flex: 1 }} >
                     <Grid item xs={0.46} >
-                        <Timebar 
+                        <Timebar
                             updateIsSessionLocked={updateIsSessionLocked}
                         />
                     </Grid>
@@ -256,6 +261,48 @@ function Dashboard(props) {
             password={password}
             updatePassword={updatePassword}
         />}
+
+        {((lockTime.m === 0) && (lockTime.s <= 10) && (lockTime.s > 0) && (Object.keys(drafts).length > 0)) && <>
+            <Modal
+                open={true}
+            >
+                <Paper
+                    elevation={5}
+                    style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : "",
+                        color: "inherit",
+                        outline: "none",
+                        borderRadius: "7px",
+                        padding: "10px"
+
+                    }}
+                >
+                    <Typography style={{ textAlign: "center", margin: "10px" }} >
+                        Your session will be locked in
+                    </Typography>
+                    <Typography style={{ textAlign: "center", margin: "10px" }} >
+                        {lockTime.s} sec
+                    </Typography>
+                    <Box style={{ display: "flex", justifyContent: "space-evenly", marginTop: "20px" }} >
+                        <Button
+                            variant="contained"
+                            style={{
+                                fontSize: "14px",
+                                padding: "3px 0",
+                                width: "120px",
+                                textTransform: 'none'
+                            }}
+                            onClick={() => updateLockTime({ m: 5, s: 0, lockAt: new Date().getTime() + 300000 })}
+                        >Extend 5 mins</Button>
+                    </Box>
+                </Paper>
+            </Modal>
+        </>}
     </>);
 }
 
