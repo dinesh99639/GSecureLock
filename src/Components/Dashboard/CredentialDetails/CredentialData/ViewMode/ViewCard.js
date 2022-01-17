@@ -25,7 +25,7 @@ function ViewCard(props) {
         updateEntryOptionsMode("EntryOptions");
     }
 
-    return (<>
+    return (<Box style={{ overflowY: "scroll", height: "83vh" }} >
         <Paper
             style={{
                 ...cardThemes[entryData.cardTheme],
@@ -118,7 +118,7 @@ function ViewCard(props) {
                 >Save</Button>
             </Box>
         </> : null}
-    </>);
+    </Box>);
 }
 
 export default ViewCard;

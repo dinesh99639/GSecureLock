@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Button, IconButton } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -36,7 +36,7 @@ function ViewEntry(props) {
 
     useEffect(() => {updateEntryData(viewEntryData)}, [viewEntryData]);
 
-    return (<>
+    return (<Box style={{ overflowY: "scroll", height: "83vh" }} >
         <Table className={tableStyles.table} >
             <TableBody>
                 {entryData.data?.map((field, index) => {
@@ -103,7 +103,7 @@ function ViewEntry(props) {
                 })}
             </TableBody>
         </Table>
-    </>);
+    </Box>);
 }
 
 export default ViewEntry;

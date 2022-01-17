@@ -18,7 +18,7 @@ function EditEntry(props) {
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
 
 
-    return (<>
+    return (<Box style={{ overflowY: "scroll", height: "73vh" }} >
         <DragDropContext onDragEnd={handleDragEnd}>
             <Table className={tableStyles.table} >
                 <Droppable droppableId="entryData" style={{ tableLayout: "fixed" }} >
@@ -91,7 +91,7 @@ function EditEntry(props) {
                 onClick={() => saveEntry()}
             >Save</Button>
         </Box>
-    </>);
+    </Box>);
 }
 
 export default EditEntry;

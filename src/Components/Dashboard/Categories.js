@@ -13,7 +13,7 @@ function Categories(props) {
         <Box className="borderRight" style={{ height: "100%" }} >
             <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Categories</Box>
 
-            <Box>
+            <Box style={{ overflowY: "scroll", height: "87vh" }} >
                 {categoriesCount.map((category) => {
                     return <Box
                         key={category.name}
