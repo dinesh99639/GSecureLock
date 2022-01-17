@@ -40,7 +40,7 @@ function ChangeCardTheme(props) {
 
     return (<Box>
         <Box className="borderBottom" style={{ textAlign: "center", padding: "8px 0" }} >Change Theme</Box>
-        <Box style={{ overflowY: "scroll", height: "87vh" }} >
+        <Box style={{ overflowY: "auto", height: "87vh" }} >
             {
                 Object.keys(cardThemes).map((cardTheme) => {
                     return (

@@ -26,7 +26,7 @@ function EditCard(props) {
     
     const selectStyles = useSelectStyles({ theme });
 
-    return (<Box style={{ overflowY: "scroll", height: "73vh" }} >
+    return (<Box style={{ overflowY: "auto", height: "73vh" }} >
         <Table className={tableStyles.table} >
             <TableBody>
                 <TableRow className={tableStyles.tableRow} >

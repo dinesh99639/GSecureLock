@@ -36,7 +36,7 @@ function ViewEntry(props) {
 
     useEffect(() => {updateEntryData(viewEntryData)}, [viewEntryData]);
 
-    return (<Box style={{ overflowY: "scroll", height: "83vh" }} >
+    return (<Box style={{ overflowY: "auto", height: "83vh" }} >
         <Table className={tableStyles.table} >
             <TableBody>
                 {entryData.data?.map((field, index) => {

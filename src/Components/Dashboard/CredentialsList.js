@@ -105,7 +105,7 @@ function CredentialsList(props) {
                 </Tooltip>
             </Box>
 
-            <Box style={{ overflowY: "scroll", height: "87vh" }} >
+            <Box style={{ overflowY: "auto", height: "87vh" }} >
                 {
                     entries.credentials.map((entry, index) => {
                         return <Box
