@@ -99,7 +99,9 @@ function Timebar(props) {
                             <ListItemText
                                 align="center"
                                 primary={lock.name}
-                                style={{ color: (lockTime.m >= lock.value && lockTime.m >= (lock.value - 5)) ? "white" : "inherit" }}
+                                style={{ 
+                                    color: ((lockTime.m >= lock.value) || (lockTime.m - lock.value + 5 >= 3)) ? "white" : "inherit" 
+                                }}
                             />
                         </ListItemButton>
                     </ListItem>

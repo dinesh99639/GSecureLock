@@ -1,6 +1,6 @@
 export const lightTheme = {
     backgroundColor: 'white',
-    color: '#696969',
+    color: '#000',
     border: "1px solid rgba(0, 0, 0, 0.25)",
 
     header: {
@@ -8,7 +8,7 @@ export const lightTheme = {
     },
 
     timebar: {
-        color: "#636363",
+        color: "#000",
         backgroundColor: "rgba(0, 0, 0, 0)"
     },
 

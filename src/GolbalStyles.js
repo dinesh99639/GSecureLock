@@ -20,8 +20,12 @@ export const GlobalStyles = createGlobalStyle`
     }
     
     :root {
-        --headerBackgroundColor: ${({ theme }) => theme.header.backgroundColor};
         --timebar-color: ${({ theme }) => theme.timebar.color};
+    }
+
+    .main-header {
+        background-color: ${({ theme }) => theme.header.backgroundColor};
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 10px 0px !important;
     }
 
     .timebar {

@@ -29,7 +29,7 @@ function Categories(props) {
                         onClick={() => updateSelectedCategory(category.name)}
                     >
                         <Typography style={{ fontSize: "16px", overflow: "none" }} >{category.name}</Typography>
-                        <Typography style={{ fontSize: "14px", opacity: 0.7 }} >Total: {category.count}</Typography>
+                        <Typography style={{ fontSize: "14px", opacity: 0.76 }} >Total: {category.count}</Typography>
                     </Box>
                 })}
             </Box>

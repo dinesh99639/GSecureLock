@@ -122,8 +122,8 @@ function CredentialsList(props) {
                             onClick={() => handleSelectEntry(entry)}
                         >
                             <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
-                            <Box style={{ fontSize: "14px", opacity: 0.9, display: "flex", justifyContent: "space-between" }} >
-                                <Typography>@{entry.user}</Typography>
+                            <Box style={{ fontSize: "14px", opacity: 0.76, display: "flex", justifyContent: "space-between" }} >
+                                <Typography >@{entry.user}</Typography>
                                 {(drafts[entry.id]) ? <>
                                     <Tooltip title="Draft">
                                         <DriveFileRenameOutlineIcon />

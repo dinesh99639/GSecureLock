@@ -11,8 +11,6 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 
-import './Header.css';
-
 const Header = (props) => {
     const history = useHistory();
 
