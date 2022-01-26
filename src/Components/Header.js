@@ -89,10 +89,14 @@ const Header = (props) => {
     }, [props.auth.isLoggedIn]);
 
     useEffect(() => {
-        if (localStorage.getItem('theme') === null) {
+        let theme = localStorage.getItem('theme');
+
+        if (theme === null) {
             localStorage.setItem('theme', 'light');
             setTheme('light');
         }
+        else if (theme === "light") setTheme('light');
+        else if (theme === "dark") setTheme('dark');
     }, [setTheme]);
 
     return (
