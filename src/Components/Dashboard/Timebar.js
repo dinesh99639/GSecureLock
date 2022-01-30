@@ -87,6 +87,8 @@ function Timebar(props) {
 
             <List style={{ padding: 0 }}>
                 {lockTypes.map((lock) => {
+                    let isLockTimeGreater = lockTime.m >= lock.value;
+
                     return <ListItem
                         key={lock.name}
                         style={{ padding: "0", borderBottom: "1px solid" }}
@@ -95,12 +97,18 @@ function Timebar(props) {
                             lockTime={lockTime}
                             lock={lock}
                         />
-                        <ListItemButton style={{ padding: "7px 0" }} onClick={() => updateLockType(lock.value)} >
+                        <ListItemButton
+                            style={{ 
+                                padding: "7px 0", 
+                                borderBottom: "1px solid " + (isLockTimeGreater ? "white": "inherit")
+                            }} 
+                            onClick={() => updateLockType(lock.value)} 
+                        >
                             <ListItemText
                                 align="center"
                                 primary={lock.name}
                                 style={{ 
-                                    color: ((lockTime.m >= lock.value) || (lockTime.m - lock.value + 5 >= 3)) ? "white" : "inherit" 
+                                    color: (isLockTimeGreater || (lockTime.m - lock.value + 5 >= 3)) ? "white" : "inherit" 
                                 }}
                             />
                         </ListItemButton>
