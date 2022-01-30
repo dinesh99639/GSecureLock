@@ -44,21 +44,27 @@ function Dashboard(props) {
 
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
-    const addNewEntry = () => {
+    const addNewEntry = (newEntryData) => {
         let id = "C" + new Date().getTime();
-
-        let newEntryData = {
-            id,
-            user: "",
-            name: "Untitled",
-            category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
-            data: (selectedCategory === "Cards") ? initData.cardData : [],
-
-            createdAt: new Date().toString().substring(0, 24),
-            lastModifiedAt: new Date().toString().substring(0, 24)
+        
+        if (!newEntryData) {
+            newEntryData = {
+                id,
+                user: "",
+                name: "Untitled",
+                category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
+                data: (selectedCategory === "Cards") ? initData.cardData : [],
+    
+                createdAt: new Date().toString().substring(0, 24),
+                lastModifiedAt: new Date().toString().substring(0, 24)
+            }
+            if (selectedCategory === "Cards") newEntryData.cardTheme = "purePurple";
         }
-
-        if (selectedCategory === "Cards") newEntryData.cardTheme = "purePurple";
+        else {
+            newEntryData.id = id;
+            newEntryData.createdAt = new Date().toString().substring(0, 24);
+            newEntryData.lastModifiedAt = new Date().toString().substring(0, 24);
+        }
 
         updateSavedEntries([...savedEntries, newEntryData]);
         updateModifiedEntries([...modifiedEntries, newEntryData]);
@@ -230,6 +236,7 @@ function Dashboard(props) {
                     <Grid item xs={7.34} >
                         {(selectedEntryId !== '' && entriesById) ? <>
                             <CredentialDetails
+                                password={password}
                                 saveEntry={saveEntry}
                                 deleteEntry={deleteEntry}
                             />

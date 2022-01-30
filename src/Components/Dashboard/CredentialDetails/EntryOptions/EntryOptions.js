@@ -7,6 +7,8 @@ import FieldOptions from "./FieldOptions";
 import Suggestions from './Suggestions';
 
 function EntryOptions(props) {
+    const { password } = props;
+    
     const { isEditMode, entryData } = useSelector((state) => state.entries);
 
     return (<>
@@ -21,7 +23,7 @@ function EntryOptions(props) {
             {(isEditMode && (entryData.category !== "Cards")) ? <>
                 <FieldOptions />
             </> : <>
-                <EntryInfo />
+                <EntryInfo password={password} />
             </>}
         </Box>
 

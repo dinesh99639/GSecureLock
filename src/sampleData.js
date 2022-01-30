@@ -19,14 +19,41 @@ const cipher = {
 const { encrypt } = cipher;
 
 const data = {
-    templates: [{
-        id: "t1",
-        name: "Default",
-        data: [
-            { user: "", password: "", website: "" }
-        ],
-        labels: []
-    }],
+    templates: [
+        {
+            id: "T1",
+            user: "",
+            name: "Password",
+            category: "Passwords",
+            data: [
+                { name: "User", value: "", type: "text" },
+                { name: "Password", value: "", type: "password" },
+                { name: "Website", value: "", type: "link" }
+            ],
+
+            createdAt: "Thu Dec 30 2021 22:52:56",
+            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
+        },
+        {
+            id: "T2",
+            user: "",
+            name: "Card",
+            category: "Cards",
+            data: {
+                network: "",
+                cardName: "",
+                cardType: "Debit Card",
+                cardNo: "",
+                validThru: "",
+                cardHolderName: "",
+                CVV: ""
+            },
+            cardTheme: "bluePurple",
+
+            createdAt: "Thu Dec 30 2021 22:52:56",
+            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
+        }
+    ],
     credentials: [
         {
             id: "C1",

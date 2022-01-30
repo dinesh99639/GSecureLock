@@ -8,7 +8,7 @@ import ChangeCardTheme from './ChangeCardTheme';
 
 function CredentialDetails(props) {
 
-    const { saveEntry, deleteEntry } = props;
+    const { saveEntry, deleteEntry, password } = props;
 
     const { entryOptionsMode } = useSelector((state) => state.config);
     const { entryData } = useSelector((state) => state.entries);
@@ -24,7 +24,7 @@ function CredentialDetails(props) {
                 </Grid>
                 <Grid item xs={5.46}>
                     {
-                        (entryOptionsMode === "EntryOptions") ? <EntryOptions /> : 
+                        (entryOptionsMode === "EntryOptions") ? <EntryOptions password={password} /> : 
                         (entryOptionsMode === "ChangeCardTheme") ? <ChangeCardTheme /> :
                         null
                     }

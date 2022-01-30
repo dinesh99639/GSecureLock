@@ -27,7 +27,10 @@ function CredentialsList(props) {
     const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
 
     const [searchString, updateSearchString] = useState('');
-    const [entries, updateEntries] = useState({ credentials: [], templates: [] });
+    const [isTemplateMode, updateIsTemplateMode] = useState(false);
+    const [entries, updateEntries] = useState([]);
+
+    const toggleTemplateMode = () => updateIsTemplateMode(!isTemplateMode);
 
     const getEntryIndexById = (credentials, id) => {
         let index = null;
@@ -44,35 +47,43 @@ function CredentialsList(props) {
     }
 
     const handleSelectEntry = (entryData) => {
-        updateSelectedEntryId(entryData.id);
-        updateEditModeStatus(false);
-        updateSelectedFieldIndex(0);
-        updateEntryOptionsMode("EntryOptions");
-        
-        let entryIdx = getEntryIndexById(modifiedEntries, entryData.id);
-        updateSelectedEntryIndex(entryIdx);
-        updateEntryData({ ...modifiedEntries[entryIdx] })
+        if (isTemplateMode) {
+            addNewEntry(entryData);
+            toggleTemplateMode()
+        }
+        else {
+            updateSelectedEntryId(entryData.id);
+            updateSelectedFieldIndex(0);
+            updateEntryOptionsMode("EntryOptions");
+            updateEditModeStatus(false);
+
+            let entryIdx = getEntryIndexById(modifiedEntries, entryData.id);
+            updateEntryData({ ...modifiedEntries[entryIdx] })
+            updateSelectedEntryIndex(entryIdx);
+        }
+
     }
 
     useEffect(() => {
-        if (modifiedEntries) {
-            let credentials = [...modifiedEntries];
+        if (modifiedEntries || templates) {
+            let entries = [];
 
-            if (selectedCategory === 'All') credentials = [...modifiedEntries];
-            else {
-                let credentialsByCategory = credentials.filter((item) => item.category === selectedCategory);
-                credentials = credentialsByCategory;
+            if (isTemplateMode) entries = [...templates];
+            else entries = [...modifiedEntries];
+
+            if (selectedCategory !== 'All') {
+                let credentialsByCategory = entries.filter((item) => item.category === selectedCategory);
+                entries = credentialsByCategory;
             }
 
             if (searchString !== '') {
-                credentials = credentials.filter((item) => item.name.toLowerCase().includes(searchString));
+                entries = entries.filter((item) => item.name.toLowerCase().includes(searchString));
             }
 
-            updateEntries({ credentials, templates });
+            updateEntries(entries);
         }
-        else updateEntries({ credentials: [], templates: [] });
-
-    }, [searchString, selectedCategory, modifiedEntries, templates]);
+        else updateEntries([]);
+    }, [isTemplateMode, searchString, selectedCategory, modifiedEntries, templates]);
 
     return (<>
         <Box className="borderRight" style={{ height: "100%" }} >
@@ -81,7 +92,7 @@ function CredentialsList(props) {
                     <IconButton
                         size="small"
                         style={{ color: "inherit" }}
-                        onClick={addNewEntry}
+                        onClick={()=>addNewEntry()}
                     ><AddCircleOutlineRoundedIcon /></IconButton>
                 </Tooltip>
                 <Box className="searchBox" style={{ display: "flex", flex: 1, borderRadius: "4px" }} >
@@ -101,13 +112,17 @@ function CredentialsList(props) {
                 </Box>
 
                 <Tooltip title="Templates">
-                    <IconButton size="small" style={{ color: "inherit" }} ><HorizontalSplitIcon /></IconButton>
+                    <IconButton 
+                        size="small" 
+                        style={{ color: "inherit" }} 
+                        onClick={toggleTemplateMode}
+                    ><HorizontalSplitIcon /></IconButton>
                 </Tooltip>
             </Box>
 
             <Box style={{ overflowY: "auto", height: "87vh" }} >
                 {
-                    entries.credentials.map((entry, index) => {
+                    entries.map((entry, index) => {
                         return <Box
                             key={entry.id}
                             className="borderBottom"
@@ -123,7 +138,7 @@ function CredentialsList(props) {
                         >
                             <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
                             <Box style={{ fontSize: "14px", opacity: 0.76, display: "flex", justifyContent: "space-between" }} >
-                                <Typography >@{entry.user}</Typography>
+                                <Typography>{(isTemplateMode) ? "Template" : "@"+entry.user}</Typography>
                                 {(drafts[entry.id]) ? <>
                                     <Tooltip title="Draft">
                                         <DriveFileRenameOutlineIcon />
