@@ -229,6 +229,7 @@ function Dashboard(props) {
                     </Grid>
                     <Grid item xs={2.5} >
                         <CredentialsList
+                            password={password}
                             addNewEntry={addNewEntry}
                         />
                     </Grid>

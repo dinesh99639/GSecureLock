@@ -1,23 +1,30 @@
 import { createRef, useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Box, IconButton, InputBase, Typography, Tooltip } from "@mui/material";
+import { darkTheme } from '../../Theme';
+import crypto from '../../Utils/crypto';
+
+import { Box, IconButton, InputBase, Typography, Tooltip, Modal, Paper, Button } from "@mui/material";
 
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 function CredentialsList(props) {
     const dispatch = useDispatch();
     let searchRef = createRef(null);
-    
-    const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates } = useSelector((state) => state.entries);
 
-    const { addNewEntry } = props
-    
+    const { dataFileId } = useSelector((state) => state.localStore);
+    const { theme } = useSelector((state) => state.config);
+    const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates, savedEntries } = useSelector((state) => state.entries);
+
+    const { addNewEntry, password } = props
+
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
-    
+
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
@@ -25,7 +32,9 @@ function CredentialsList(props) {
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
 
     const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
-
+    
+    const updateTemplates = useCallback((templates) => dispatch({ type: "updateTemplates", payload: { templates } }), [dispatch]);
+    
     const [searchString, updateSearchString] = useState('');
     const [isTemplateMode, updateIsTemplateMode] = useState(false);
     const [entries, updateEntries] = useState([]);
@@ -34,7 +43,7 @@ function CredentialsList(props) {
 
     const getEntryIndexById = (credentials, id) => {
         let index = null;
-    
+
         credentials.every((entry, idx) => {
             if (entry.id === id) {
                 index = idx;
@@ -42,7 +51,7 @@ function CredentialsList(props) {
             }
             return true;
         })
-    
+
         return index;
     }
 
@@ -62,6 +71,43 @@ function CredentialsList(props) {
             updateSelectedEntryIndex(entryIdx);
         }
 
+    }
+
+    const [deleteConfirmModal, updateDeleteConfirmModal] = useState({
+        open: false,
+        entryName: "",
+        callback: null
+    });
+    const openDeleteConfirmationModal = (id, name) => {
+        updateDeleteConfirmModal({
+            open: true,
+            id,
+            name
+        })
+    }
+    const closeDeleteConfirmationModal = () => {
+        updateDeleteConfirmModal({
+            open: false,
+            entryName: "",
+            callback: null
+        })
+    }
+
+    const deleteTemplate = () => {
+        let newTemplates = [];
+
+        for (let i in templates) {
+            if (templates[i].id !== deleteConfirmModal.id) {
+                newTemplates.push({ ...templates[i] })
+            }
+        }
+        updateTemplates(newTemplates);
+
+        let encryptedData = crypto.encrypt(JSON.stringify({ templates: newTemplates, credentials: savedEntries }), password);
+        updateLocalStore({ dataFileId, encryptedData });
+        localStorage.setItem("encryptedData", encryptedData);
+
+        closeDeleteConfirmationModal()
     }
 
     useEffect(() => {
@@ -92,7 +138,7 @@ function CredentialsList(props) {
                     <IconButton
                         size="small"
                         style={{ color: "inherit" }}
-                        onClick={()=>addNewEntry()}
+                        onClick={() => addNewEntry()}
                     ><AddCircleOutlineRoundedIcon /></IconButton>
                 </Tooltip>
                 <Box className="searchBox" style={{ display: "flex", flex: 1, borderRadius: "4px" }} >
@@ -112,9 +158,9 @@ function CredentialsList(props) {
                 </Box>
 
                 <Tooltip title="Templates">
-                    <IconButton 
-                        size="small" 
-                        style={{ color: "inherit" }} 
+                    <IconButton
+                        size="small"
+                        style={{ color: "inherit" }}
                         onClick={toggleTemplateMode}
                     ><HorizontalSplitIcon /></IconButton>
                 </Tooltip>
@@ -127,29 +173,98 @@ function CredentialsList(props) {
                             key={entry.id}
                             className="borderBottom"
                             style={{
+                                display: "flex",
                                 margin: "0 2px",
-                                padding: "5px 10px",
                                 cursor: "pointer",
                                 borderRadius: "4px",
                                 backgroundColor: (selectedEntryId === entry.id) ? "rgb(0, 136, 253)" : null,
                                 color: (selectedEntryId === entry.id) ? "white" : "inherit",
                             }}
-                            onClick={() => handleSelectEntry(entry)}
                         >
-                            <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
-                            <Box style={{ fontSize: "14px", opacity: 0.76, display: "flex", justifyContent: "space-between" }} >
-                                <Typography>{(isTemplateMode) ? "Template" : "@"+entry.user}</Typography>
-                                {(drafts[entry.id]) ? <>
-                                    <Tooltip title="Draft">
-                                        <DriveFileRenameOutlineIcon />
-                                    </Tooltip>
-                                </> : null}
+                            <Box
+                                style={{ flex: 1, padding: "5px 10px" }}
+                                onClick={() => handleSelectEntry(entry)}
+                            >
+                                <Typography className="noOverflow" style={{ fontSize: "16px" }} >{entry.name}</Typography>
+                                <Box style={{ fontSize: "14px", opacity: 0.76, display: "flex", justifyContent: "space-between" }} >
+                                    <Typography>{(isTemplateMode) ? "Template" : "@" + entry.user}</Typography>
+                                    {(drafts[entry.id]) ? <>
+                                        <Tooltip title="Draft">
+                                            <DriveFileRenameOutlineIcon />
+                                        </Tooltip>
+                                    </> : null}
+                                </Box>
                             </Box>
+                            {(isTemplateMode) ? <>
+                                <IconButton
+                                    size="small"
+                                    disableRipple={true}
+                                    sx={{
+                                        color: "inherit",
+                                        padding: "5px 10px 5px 5px",
+                                        "&:hover": { color: "red" }
+                                    }}
+                                    onClick={() => openDeleteConfirmationModal(entry.id, entry.name)}
+                                ><DeleteOutlinedIcon /></IconButton>
+                            </> : null}
+
                         </Box>
                     })
                 }
             </Box>
         </Box>
+
+        <Modal
+            open={deleteConfirmModal.open}
+            onClose={closeDeleteConfirmationModal}
+        >
+            <Paper
+                elevation={5}
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : "",
+                    color: "inherit",
+                    outline: "none",
+                    borderRadius: "7px",
+                    padding: "5px"
+
+                }}
+            >
+                <Typography style={{ textAlign: "center" }} >
+                    Confirm
+                </Typography>
+                <Typography style={{ textAlign: "center", margin: "10px" }} >
+                    Are you sure you want to delete this "{deleteConfirmModal.name}" template?
+                </Typography>
+                <Box style={{ display: "flex", justifyContent: "space-evenly", marginTop: "20px" }} >
+                    <Button
+                        variant="contained"
+                        style={{
+                            fontSize: "14px",
+                            padding: "3px 0",
+                            width: "100px",
+                            textTransform: 'none'
+                        }}
+                        onClick={closeDeleteConfirmationModal}
+                    >Cancel</Button>
+                    <Button
+                        variant="contained"
+                        style={{
+                            backgroundColor: "red",
+                            fontSize: "14px",
+                            padding: "3px 0",
+                            width: "100px",
+                            textTransform: 'none'
+                        }}
+                        onClick={() => deleteTemplate()}
+                    >Confirm</Button>
+                </Box>
+            </Paper>
+        </Modal>
     </>);
 }
 
