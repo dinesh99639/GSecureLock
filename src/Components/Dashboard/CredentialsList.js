@@ -25,6 +25,8 @@ function CredentialsList(props) {
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
 
+    const updateSelectedCategory = useCallback((selectedCategory) => dispatch({ type: "updateSelectedCategory", payload: { selectedCategory } }), [dispatch]);
+
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
@@ -39,8 +41,10 @@ function CredentialsList(props) {
     const [isTemplateMode, updateIsTemplateMode] = useState(false);
     const [entries, updateEntries] = useState([]);
 
-    const toggleTemplateMode = () => updateIsTemplateMode(!isTemplateMode);
-
+    const toggleTemplateMode = () => {
+        updateIsTemplateMode(!isTemplateMode);
+        updateSelectedCategory("All");
+    }
     const getEntryIndexById = (credentials, id) => {
         let index = null;
 
