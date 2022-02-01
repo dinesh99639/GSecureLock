@@ -409,7 +409,7 @@ function CredentialData(props) {
                     Confirm
                 </Typography>
                 <Typography style={{ textAlign: "center", margin: "10px" }} >
-                    Are you sure you want to delete this "Bank Card" entry?
+                    Are you sure you want to delete this "{deleteConfirmModal.entryName}" entry?
                 </Typography>
                 <Box style={{ display: "flex", justifyContent: "space-evenly", marginTop: "20px" }} >
                     <Button
