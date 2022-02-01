@@ -26,7 +26,7 @@ function Dashboard(props) {
 
     const { theme } = useSelector((state) => state.config);
 
-    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId, selectedEntryIndex, savedEntries, modifiedEntries, templates, drafts } = useSelector((state) => state.entries);
+    const { selectedCategory, entriesById, selectedEntryId, categoriesCount, newEntryId, selectedEntryIndex, savedEntries, modifiedEntries, templates, drafts, isTemplateMode } = useSelector((state) => state.entries);
     const { dataFileId } = useSelector((state) => state.localStore);
 
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
@@ -182,7 +182,12 @@ function Dashboard(props) {
             let categoriesCountObj = {};
             let categoriesCountArr = [];
             let totalEntries = 0;
-            savedEntries.forEach((entry) => {
+
+            let entries = [];
+            if (isTemplateMode) entries = [...templates];
+            else entries = [...savedEntries];
+
+            entries.forEach((entry) => {
                 credentialsById[entry.id] = entry;
 
                 if (categoriesCountObj[entry.category]) categoriesCountObj[entry.category]++;
@@ -212,7 +217,7 @@ function Dashboard(props) {
         }
         else updateEntriesById(null);
 
-    }, [newEntryId, savedEntries, updateCategories, updateCategoriesCount, updateEntriesById, updateSelectedEntryId, updateNewEntryId]);
+    }, [newEntryId, savedEntries, isTemplateMode, templates, updateCategories, updateCategoriesCount, updateEntriesById, updateSelectedEntryId, updateNewEntryId]);
 
 
     return (<>

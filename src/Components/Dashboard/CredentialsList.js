@@ -18,7 +18,7 @@ function CredentialsList(props) {
 
     const { dataFileId } = useSelector((state) => state.localStore);
     const { theme } = useSelector((state) => state.config);
-    const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates, savedEntries } = useSelector((state) => state.entries);
+    const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates, savedEntries, isTemplateMode } = useSelector((state) => state.entries);
 
     const { addNewEntry, password } = props
 
@@ -28,17 +28,18 @@ function CredentialsList(props) {
     const updateSelectedCategory = useCallback((selectedCategory) => dispatch({ type: "updateSelectedCategory", payload: { selectedCategory } }), [dispatch]);
 
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
+    const updateIsTemplateMode = useCallback((isTemplateMode) => dispatch({ type: "updateIsTemplateMode", payload: { isTemplateMode } }), [dispatch]);
+    
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
     const updateSelectedEntryIndex = useCallback((selectedEntryIndex) => dispatch({ type: "updateSelectedEntryIndex", payload: { selectedEntryIndex } }), [dispatch]);
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
 
     const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
-    
+
     const updateTemplates = useCallback((templates) => dispatch({ type: "updateTemplates", payload: { templates } }), [dispatch]);
-    
+
     const [searchString, updateSearchString] = useState('');
-    const [isTemplateMode, updateIsTemplateMode] = useState(false);
     const [entries, updateEntries] = useState([]);
 
     const toggleTemplateMode = () => {

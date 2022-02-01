@@ -16,6 +16,7 @@ const initState = {
 
     entries: {
         isEditMode: false,
+        isTemplateMode: false,
 
         selectedCategory: "All",
         categories: {},
@@ -57,6 +58,8 @@ function reducer(state = initState, action) {
 
         // Entries
         case "updateEditModeStatus":            return { ...state, entries: { ...state.entries, isEditMode: props.isEditMode } }
+        case "updateIsTemplateMode":            return { ...state, entries: { ...state.entries, isTemplateMode: props.isTemplateMode } }
+        
         case "updateSelectedCategory":          return { ...state, entries: { ...state.entries, selectedCategory: props.selectedCategory } }
         case "updateCategories":                return { ...state, entries: { ...state.entries, categories: props.categories } }
         case "updateCategoriesCount":           return { ...state, entries: { ...state.entries, categoriesCount: props.categoriesCount } }
