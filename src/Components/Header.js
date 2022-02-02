@@ -21,7 +21,7 @@ const Header = (props) => {
 
     const theme = useSelector((state) => state.config.theme);
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
-    const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
+    // const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
 
     const [accountAnchorEl, setAccountAnchorEl] = useState(null);
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
