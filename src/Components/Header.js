@@ -21,10 +21,11 @@ const Header = (props) => {
 
     const theme = useSelector((state) => state.config.theme);
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
+    const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
 
     const [accountAnchorEl, setAccountAnchorEl] = useState(null);
-    const closeAccountMenu = () => setAccountAnchorEl(null);
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
+    const closeAccountMenu = () => setAccountAnchorEl(null);
 
     const [path, setPath] = useState(history.location.pathname)
     const [user, setUser] = useState({
@@ -62,6 +63,19 @@ const Header = (props) => {
         }
     }
 
+    const logout = () => {
+        // - Signout from google account
+        history.replace("/");
+        closeAccountMenu();
+        setUser({ name: '', email: '', image: '' })
+        // updateLoginStatus(false);
+        setPath('/');
+
+        localStorage.removeItem("dataFileId");
+        localStorage.removeItem("encryptedData");
+        localStorage.removeItem("userData");
+    }
+    
     const openGithubProject = () => {
         window.open('https://github.com/dinesh99639/GSecurePass');
     }
@@ -195,11 +209,11 @@ const Header = (props) => {
                                 <Divider sx={{ backgroundColor: "inehrit", width: "100%", margin: "3px" }} />
                                 <MenuItem onClick={closeAccountMenu}>
                                     <AccountCircleIcon fontSize='small' />
-                                    <Typography sx={{ padding: "0 0 0 7px" }} >Account</Typography>
+                                    <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Account</Typography>
                                 </MenuItem>
-                                <MenuItem onClick={closeAccountMenu}>
+                                <MenuItem onClick={logout}>
                                     <LogoutIcon fontSize='small' />
-                                    <Typography sx={{ padding: "0 0 0 7px" }} >Sign out</Typography>
+                                    <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Sign out</Typography>
                                 </MenuItem>
 
                                 <Typography 
