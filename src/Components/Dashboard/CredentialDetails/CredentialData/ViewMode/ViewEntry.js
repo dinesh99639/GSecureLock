@@ -47,7 +47,7 @@ function ViewEntry(props) {
                         className={tableStyles.tableRow}
                         onClick={() => updateSelectedFieldIndex(index)}
                     >
-                        <TableCell style={{ width: "38%" }} className={tableStyles.tableCell}>{field.name}</TableCell>
+                        <TableCell style={{ width: "38%", paddingLeft: "13px" }} className={tableStyles.tableCell}>{field.name}</TableCell>
                         <TableCell style={{ width: "56%" }} className={tableStyles.tableCell}>
                             <Button
                                 style={{ padding: 0 }}
