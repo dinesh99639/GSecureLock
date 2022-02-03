@@ -63,6 +63,10 @@ const Header = (props) => {
         }
     }
 
+    const openAccountSettings = () => {
+        history.push("/account");
+    }
+
     const logout = () => {
         // - Signout from google account
         history.replace("/");
@@ -207,7 +211,7 @@ const Header = (props) => {
                                     >@{user.email.split("@")[0]}</Typography>
                                 </Box>
                                 <Divider sx={{ backgroundColor: "inehrit", width: "100%", margin: "3px" }} />
-                                <MenuItem onClick={closeAccountMenu}>
+                                <MenuItem onClick={openAccountSettings}>
                                     <AccountCircleIcon fontSize='small' />
                                     <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Account</Typography>
                                 </MenuItem>

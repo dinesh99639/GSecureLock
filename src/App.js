@@ -14,6 +14,7 @@ import MuiAlert from '@mui/material/Alert';
 
 import Header from './Components/Header';
 import Dashboard from "./Components/Dashboard/Dashboard";
+import Account from "./Components/Account/Account";
 import SetupNewAccount from "./Components/SetupNewAccount";
 import Test from "./Components/Test";
 
@@ -110,6 +111,9 @@ function App() {
                 <Switch>
                     <Route path="/dashboard" >
                         <Dashboard />
+                    </Route>
+                    <Route path="/account" >
+                        <Account />
                     </Route>
                     <Route path="/setup_account" >
                         <SetupNewAccount />
