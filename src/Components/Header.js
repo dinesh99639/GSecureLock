@@ -152,7 +152,7 @@ const Header = (props) => {
                     </Box>
 
                     <Box style={{ display: "flex", alignItems: "center" }}>
-                        <Link to="/test" style={{ color: "white" }}>Test</Link>
+                        {/* <Link to="/test" style={{ color: "white" }}>Test</Link> */}
 
                         <IconButton size="medium" onClick={toggleTheme} >
                             {(theme === "light") ?

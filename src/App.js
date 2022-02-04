@@ -16,7 +16,7 @@ import Header from './Components/Header';
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Account from "./Components/Account/Account";
 import SetupNewAccount from "./Components/SetupNewAccount";
-import Test from "./Components/Test";
+// import Test from "./Components/Test";
 
 
 const Alert = forwardRef(function Alert(props, ref) {
@@ -118,7 +118,7 @@ function App() {
                     <Route path="/setup_account" >
                         <SetupNewAccount />
                     </Route>
-                    <Route path="/test" ><Test /></Route>
+                    {/* <Route path="/test" ><Test /></Route> */}
                 </Switch>
             </>)}
 
