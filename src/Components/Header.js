@@ -65,6 +65,7 @@ const Header = (props) => {
 
     const openAccountSettings = () => {
         history.push("/account");
+        closeAccountMenu();
     }
 
     const logout = () => {
