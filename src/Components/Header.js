@@ -19,20 +19,15 @@ const Header = (props) => {
 
     const dispatch = useDispatch();
 
-    const theme = useSelector((state) => state.config.theme);
+    const { theme, user } = useSelector((state) => state.config);
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
-    // const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
+    const setUser = useCallback((user) => dispatch({ type: "setUser", payload: { user } }), [dispatch]);
 
     const [accountAnchorEl, setAccountAnchorEl] = useState(null);
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
     const closeAccountMenu = () => setAccountAnchorEl(null);
 
-    const [path, setPath] = useState(history.location.pathname)
-    const [user, setUser] = useState({
-        name: '',
-        email: '',
-        image: ''
-    });
+    const [path, setPath] = useState(history.location.pathname);
 
     const toggleTheme = () => {
         let changedTheme = (theme === "light") ? "dark" : "light";
@@ -64,7 +59,7 @@ const Header = (props) => {
     }
 
     const openAccountSettings = () => {
-        history.push("/account");
+        history.push("/account/profile");
         closeAccountMenu();
     }
 
@@ -107,6 +102,7 @@ const Header = (props) => {
                         email: res.user.emailAddress,
                         image: res.user.photoLink
                     }
+                    console.log(res.user)
 
                     localStorage.setItem('userData', JSON.stringify(userData));
                 }
@@ -115,7 +111,7 @@ const Header = (props) => {
             setUser(userData);
         }
         loadUserData();
-    }, [props.auth.isLoggedIn]);
+    }, [props.auth.isLoggedIn, setUser]);
 
     useEffect(() => {
         let theme = localStorage.getItem('theme');
@@ -170,7 +166,7 @@ const Header = (props) => {
                                 aria-controls="menu-appbar"
                                 onClick={openAccountMenu}
                             >
-                                <Avatar alt={user.name} src={user.image} sx={{ width: 25, height: 25, margin: "auto 5px" }} />
+                                <Avatar alt={user.name} src={user.image} sx={{ width: 25, height: 25, margin: "auto 5px", fontSize: "15px", backgroundColor: "rgba(0, 0, 0, 0.2)" }} />
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
@@ -201,7 +197,7 @@ const Header = (props) => {
                                         alignItems: "center"
                                     }}
                                 >
-                                    <Avatar alt={user.name} src={user.image} sx={{ width: 76, height: 76, margin: "auto 5px" }} />
+                                    <Avatar alt={user.name} src={user.image} sx={{ width: 76, height: 76, margin: "auto 5px", fontSize: "30px", backgroundColor: "rgba(0, 0, 0, 0.2)" }} />
                                     <Typography sx={{ fontSize: "15px", margin: "5px 0 0 0", textAlign: "center" }} >{user.name}</Typography>
                                     <Typography
                                         sx={{
