@@ -5,48 +5,6 @@ import { Box, Avatar, Typography } from "@mui/material";
 
 function Profile() {
     const { user, theme } = useSelector((state) => state.config);
-    const { savedEntries, templates } = useSelector((state) => state.entries);
-    const entriesCanvas = createRef(null);
-
-    console.log(templates.length)
-
-    let entriesChartData = [
-        { label: "Templates", color: "#04ff3a", value: templates.length },
-        { label: "Credentials", color: "#0497ff", value: savedEntries.length }
-    ]
-
-    useEffect(() => {
-        function donutChart(cx, cy, radius, arcwidth, data) {
-            var canvas = entriesCanvas.current;
-            var ctx = canvas.getContext("2d");
-
-            var tot = 0;
-            var accum = 0;
-            var PI = Math.PI;
-            var PI2 = PI * 2;
-            var offset = -PI / 2;
-            ctx.lineWidth = arcwidth;
-            for (let i = 0; i < data.length; i++) { tot += data[i].value; }
-            for (let i = 0; i < data.length; i++) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius,
-                    offset + PI2 * (accum / tot),
-                    offset + PI2 * ((accum + data[i].value) / tot)
-                );
-                ctx.strokeStyle = data[i].color;
-                ctx.stroke();
-                accum += data[i].value;
-            }
-            var innerRadius = radius - arcwidth - 3;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.fillStyle = (theme === "dark") ? "white" : "black";
-            ctx.font = (innerRadius / 5) + 'px verdana';
-            ctx.fillText("Entries", cx, cy + innerRadius * .1);
-        }
-
-        donutChart(100, 100, 80, 15, entriesChartData);
-    }, [theme, entriesChartData, entriesCanvas])
 
     return (<>
         <Box
@@ -72,43 +30,22 @@ function Profile() {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
                 margin: "50px 0 0 0"
             }}
         >
-            <Typography>Statistics</Typography>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    margin: "15px 0 0 0"
-                }}
-            >
-                <canvas id="canvas" ref={entriesCanvas} width="200" height="200"></canvas>
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column"
-                    }}
-                >
+            <Typography style={{ padding: "0 20px", fontWeight: "bold" }} >Tips</Typography>
+            <ul style={{ margin: "10px 10px", display: "flex", flexDirection: "column", gap: "10px" }} >
+                <li>Always use the strong and long password to protect your credentials from bruteforce attacks.</li>
+                <li>Keep changing your important credentials at frequent intervals.</li>
+                <li>Keep a watch on the users who have access to your system, because stealing your cookies and localstorage will grant access to many of your accounts.</li>
+            </ul>
 
-                    {
-                        entriesChartData.map((data) => {
-                            return <Box
-                                key={data.label}
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    margin: "8px 0"
-                                }}
-                            >
-                                <Box sx={{ height: "15px", width: "15px", backgroundColor: data.color, borderRadius: "50%" }} ></Box>
-                                <Typography style={{ padding: "0 5px" }} >{data.label}</Typography>
-                            </Box>
-                        })
-                    }
-                </Box>
-            </Box>
+            <Typography style={{ padding: "0 20px", fontWeight: "bold", marginTop: "10px" }} >About this application</Typography>
+            <ul style={{ margin: "10px 10px", display: "flex", flexDirection: "column", gap: "10px" }} >
+                <li>This application only uses your google drive appdata to save your credentials.</li>
+                <li>This application will not send any of your data to anyone in any form.</li>
+                <li>There is a puzzle in the source code, you can give it a try. You can give your answer to that puzzle in github issues.</li>
+            </ul>
         </Box>
     </>);
 }
