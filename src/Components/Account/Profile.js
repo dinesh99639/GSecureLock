@@ -30,7 +30,7 @@ function Profile() {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                margin: "50px 0 0 0"
+                margin: "50px 20px 0 0"
             }}
         >
             <Typography style={{ padding: "0 20px", fontWeight: "bold" }} >Tips</Typography>
