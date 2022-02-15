@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouteMatch, Route, Switch, useHistory } from 'react-router-dom';
 
 import Profile from "./Profile";
+import ImportExport from "./importExport";
 
 import { Box, Divider, Grid, Typography } from "@mui/material";
 
@@ -15,17 +16,17 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 function Account(props) {
     const history = useHistory();
     let { path, url } = useRouteMatch();
+    
+    const [selectedOption, updateSelectedOption] = useState(history.location.pathname.split("/").at(-1));
 
-    const [selectedOption, updateSelectedOption] = useState("Profile");
-
-    const changeOption = (name, to) => {
-        updateSelectedOption(name);
+    const changeOption = (to) => {
+        updateSelectedOption(to);
         history.push(`${url}/${to}`);
     }
 
     const sidebarOptions = [
         { name: "Profile", icon: <AccountCircleIcon fontSize="small" />, to: "profile", component: <Profile /> },
-        { name: "Import/Export", icon: <ImportExportIcon fontSize="small" />, to: "importExport", component: <Profile /> },
+        { name: "Import/Export", icon: <ImportExportIcon fontSize="small" />, to: "importExport", component: <ImportExport /> },
         { name: "Change Password", icon: <VpnKeyIcon fontSize="small" />, to: "changePassword", component: <Profile /> },
         { name: "Remove Account", icon: <PersonRemoveIcon fontSize="small" />, to: "removeAccount", component: <Profile /> }
     ]
@@ -64,11 +65,11 @@ function Account(props) {
                                         backgroundColor: "rgba(0, 0, 0, 0.1)"
                                     }
                                 }}
-                                onClick={() => changeOption(option.name, option.to)}
+                                onClick={() => changeOption(option.to)}
                             >
                                 <Box
                                     style={{
-                                        borderLeft: "5px solid " + ((option.name === selectedOption) ? "rgb(0, 136, 253)" : "rgba(0, 0, 0, 0)"),
+                                        borderLeft: "5px solid " + ((option.to === selectedOption) ? "rgb(0, 136, 253)" : "rgba(0, 0, 0, 0)"),
                                         padding: "4px 0",
                                     }}
                                 >
