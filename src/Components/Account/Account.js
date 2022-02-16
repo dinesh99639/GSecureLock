@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouteMatch, Route, Switch, useHistory } from 'react-router-dom';
 
 import Profile from "./Profile";

@@ -1,10 +1,9 @@
-import { createRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Box, Avatar, Typography } from "@mui/material";
 
 function Profile() {
-    const { user, theme } = useSelector((state) => state.config);
+    const { user } = useSelector((state) => state.config);
 
     return (<>
         <Box
