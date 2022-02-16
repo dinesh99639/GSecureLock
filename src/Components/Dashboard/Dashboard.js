@@ -256,7 +256,7 @@ function Dashboard(props) {
                                     alignItems: "center"
                                 }}
                             >
-                                <Typography style={{ fontSize: "25px" }} >GSecurePass</Typography>
+                                <Typography style={{ fontSize: "25px" }} >GSecureLock</Typography>
                                 <Typography style={{ fontSize: "15px" }} >A secure password manager</Typography>
                             </Box>
                         </>}

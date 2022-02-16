@@ -77,7 +77,7 @@ const Header = (props) => {
     }
     
     const openGithubProject = () => {
-        window.open('https://github.com/dinesh99639/GSecurePass');
+        window.open('https://github.com/dinesh99639/GSecureLock');
     }
 
     useEffect(() => {
@@ -144,7 +144,7 @@ const Header = (props) => {
                             component="div"
                             sx={{ cursor: "pointer", width: "auto" }}
                             onClick={handleHomeButtonClick}
-                        >GSecurePass</Typography>
+                        >GSecureLock</Typography>
                     </Box>
 
                     <Box style={{ display: "flex", alignItems: "center" }}>
