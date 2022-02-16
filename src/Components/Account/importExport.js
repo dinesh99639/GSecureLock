@@ -36,6 +36,7 @@ function ImportExport(props) {
                         <TextField
                             variant="standard"
                             placeholder="New password"
+                            type="password"
                             className={classes.root}
                             InputProps={{
                                 className: classes.input
@@ -96,10 +97,11 @@ function ImportExport(props) {
                             color: "inherit"
                         }}
                     >
-                        <Typography>Export a plain text file</Typography>
+                        <Typography>Export as a plain text file</Typography>
                         <TextField
                             variant="standard"
                             placeholder="Session password"
+                            type="password"
                             className={classes.root}
                             InputProps={{
                                 className: classes.input
@@ -131,7 +133,7 @@ function ImportExport(props) {
                             color: "inherit"
                         }}
                     >
-                        <Typography>Export an encrypted file</Typography>
+                        <Typography>Export as an encrypted file</Typography>
                         <Typography sx={{ padding: "16px", fontSize: "12px" }} >Password is same as the session password</Typography>
                         <Button
                             variant="contained"
