@@ -10,7 +10,7 @@ import { AppBar, Box, Toolbar, IconButton, Typography, Avatar, Menu, MenuItem, D
 import MenuIcon from '@mui/icons-material/Menu';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
+import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -152,7 +152,7 @@ const Header = (props) => {
 
                         <IconButton size="medium" onClick={toggleTheme} >
                             {(theme === "light") ?
-                                <DarkModeIcon style={{ color: "black" }} /> :
+                                <NightlightRoundIcon style={{ color: "white", fontSize: "20px", transform: "rotate(-45deg)" }} /> :
                                 <LightModeIcon style={{ color: "white" }} />
                             }
                         </IconButton>
