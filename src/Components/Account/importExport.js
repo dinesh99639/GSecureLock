@@ -22,7 +22,9 @@ function ImportExport(props, fileType) {
 
     const [sessionPassword, updateSessionPassword] = useState("");
 
-    const { encryptedData } = useSelector((state) => state.localStore);
+    const { dataFileId, encryptedData } = useSelector((state) => state.localStore);
+
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
@@ -36,7 +38,7 @@ function ImportExport(props, fileType) {
 
         let MM = (time.getMonth() + 1).toString();
         MM = (MM.length === 1) ? ("0" + MM) : MM;
-        
+
         let DD = time.getDate().toString();
         DD = (DD.length === 1) ? ("0" + DD) : DD;
 
@@ -80,6 +82,58 @@ function ImportExport(props, fileType) {
     }
 
     const exportEncryptedFile = () => saveToFile(encryptedData, "gslock");
+    
+    const modifyAppEntries = (fileContents, entries) => {
+        let templateIds = {};
+        let credentialIds = {};
+        
+        entries.templates.forEach((template, idx) => templateIds[template.id] = idx);
+        entries.credentials.forEach((credential, idx) => credentialIds[credential.id] = idx);
+        
+        fileContents.templates.forEach((template) => {
+            if (templateIds[template.id] !== undefined) entries.templates[templateIds[template.id]] = template;
+            else entries.templates.push(template);
+        });
+
+        fileContents.credentials.forEach((credential) => {
+            if (credentialIds[credential.id] !== undefined) entries.credentials[credentialIds[credential.id]] = credential;
+            else entries.credentials.push(credential);
+        });
+
+        let encryptedData = crypto.encrypt(JSON.stringify(entries), sessionPassword);
+        
+        // -Update server 
+        updateLocalStore({ dataFileId, encryptedData });
+        localStorage.setItem('encryptedData', encryptedData);
+    }
+
+    const importPlainFile = (fileContents, entries) => {
+        try {
+            fileContents = JSON.parse(fileContents);
+            modifyAppEntries(fileContents, entries);
+            showSnack("success", "Imported successfully");
+        }
+        catch {
+            showSnack("error", "Import file error");
+        }
+    }
+
+    const getFileContents = (callabck, entries) => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".txt";
+        input.click();
+        
+        input.addEventListener('change', async (e) => {
+            let fileContents = await e.target.files[0].text();
+            callabck(fileContents, entries);
+        })
+    }
+
+    const importFile = (callabck) => {
+        let entries = getAppEntries();
+        if (entries) getFileContents(callabck, entries);
+    }
 
     return (<>
         <Box>
@@ -120,6 +174,7 @@ function ImportExport(props, fileType) {
                             sx={{
                                 fontSize: "12px"
                             }}
+                            onClick={() => importFile(importPlainFile)}
                         >Import</Button>
                     </Paper>
                 </Grid>
