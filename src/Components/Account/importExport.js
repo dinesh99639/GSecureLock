@@ -2,9 +2,10 @@ import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from "@mui/styles";
 
-import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Typography, Modal } from "@mui/material";
 
 import crypto from '../../Utils/crypto';
+import { darkTheme } from '../../Theme';
 
 const useStyles = makeStyles({
     root: {
@@ -21,8 +22,11 @@ function ImportExport(props, fileType) {
     const classes = useStyles();
 
     const [sessionPassword, updateSessionPassword] = useState("");
+    const [filePasswordModal, updateFilePasswordModal] = useState({ open: false });
+    const [filePassword, updateFilePassword] = useState("");
 
     const { dataFileId, encryptedData } = useSelector((state) => state.localStore);
+    const { theme } = useSelector((state) => state.config);
 
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
@@ -82,14 +86,14 @@ function ImportExport(props, fileType) {
     }
 
     const exportEncryptedFile = () => saveToFile(encryptedData, "gslock");
-    
+
     const modifyAppEntries = (fileContents, entries) => {
         let templateIds = {};
         let credentialIds = {};
-        
+
         entries.templates.forEach((template, idx) => templateIds[template.id] = idx);
         entries.credentials.forEach((credential, idx) => credentialIds[credential.id] = idx);
-        
+
         fileContents.templates.forEach((template) => {
             if (templateIds[template.id] !== undefined) entries.templates[templateIds[template.id]] = template;
             else entries.templates.push(template);
@@ -105,6 +109,9 @@ function ImportExport(props, fileType) {
         // -Update server 
         updateLocalStore({ dataFileId, encryptedData });
         localStorage.setItem('encryptedData', encryptedData);
+
+        updateFilePasswordModal({ open: false });
+        showSnack("success", "Imported successfully");
     }
 
     const importPlainFile = (fileContents, entries) => {
@@ -118,21 +125,37 @@ function ImportExport(props, fileType) {
         }
     }
 
-    const getFileContents = (callabck, entries) => {
+    const getFileContents = (fileType, callabck, entries) => {
         const input = document.createElement("input");
         input.type = "file";
-        input.accept = ".txt";
+        input.accept = "." + fileType;
         input.click();
-        
+
         input.addEventListener('change', async (e) => {
             let fileContents = await e.target.files[0].text();
             callabck(fileContents, entries);
         })
     }
 
-    const importFile = (callabck) => {
+    const openFilePasswordModal = (fileContents, entries) => {
+        updateFilePasswordModal({ open: true, fileContents, entries });
+    }
+
+    const importEncryptedFile = () => {
+        let { fileContents, entries } = filePasswordModal;
+
+        try {
+            fileContents = JSON.parse(crypto.decrypt(fileContents, filePassword));
+            modifyAppEntries(fileContents, entries);
+        }
+        catch {
+            showSnack("error", "Wrong file password");
+        }
+    }
+
+    const importFile = (type, callabck) => {
         let entries = getAppEntries();
-        if (entries) getFileContents(callabck, entries);
+        if (entries) getFileContents(type, callabck, entries)
     }
 
     return (<>
@@ -174,7 +197,7 @@ function ImportExport(props, fileType) {
                             sx={{
                                 fontSize: "12px"
                             }}
-                            onClick={() => importFile(importPlainFile)}
+                            onClick={() => importFile("txt", importPlainFile)}
                         >Import</Button>
                     </Paper>
                 </Grid>
@@ -213,6 +236,7 @@ function ImportExport(props, fileType) {
                             sx={{
                                 fontSize: "12px"
                             }}
+                            onClick={() => importFile("gslock", openFilePasswordModal)}
                         >Import</Button>
                     </Paper>
                 </Grid>
@@ -287,6 +311,56 @@ function ImportExport(props, fileType) {
                 </Grid>
             </Grid>
         </Box>
+
+        <Modal
+            open={filePasswordModal.open}
+        >
+            <Paper
+                elevation={5}
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : "",
+                    color: "inherit",
+                    outline: "none",
+                    borderRadius: "7px",
+                    padding: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    margin: "0 10px"
+
+                }}
+            >
+                <Typography>Enter file password</Typography>
+                <TextField
+                    variant="standard"
+                    placeholder="File password"
+                    type="password"
+                    className={classes.root}
+                    InputProps={{
+                        className: classes.input
+                    }}
+                    inputProps={{ style: { textAlign: 'center' } }}
+                    InputLabelProps={{
+                        style: { color: 'inherit' },
+                    }}
+                    style={{ margin: "10px 0" }}
+                    value={filePassword}
+                    onChange={(e) => updateFilePassword(e.target.value)}
+                />
+                <Button
+                    variant="contained"
+                    sx={{
+                        fontSize: "12px"
+                    }}
+                    onClick={importEncryptedFile}
+                >Proceed</Button>
+            </Paper>
+        </Modal>
     </>);
 }
 
