@@ -75,7 +75,7 @@ const Header = (props) => {
         localStorage.removeItem("encryptedData");
         localStorage.removeItem("userData");
     }
-    
+
     const openGithubProject = () => {
         window.open('https://github.com/dinesh99639/GSecureLock');
     }
@@ -138,7 +138,16 @@ const Header = (props) => {
                         <MenuIcon />
                     </IconButton>
 
-                    <Box style={{ marginRight: "auto" }}>
+                    <Box style={{ marginRight: "auto", display: "flex" }}>
+                        <img
+                            src={"/logo.svg"}
+                            alt="logo"
+                            style={{ 
+                                height: "30px", 
+                                margin: "0 5px 0 0", 
+                                filter: "brightness(10000%)"
+                            }}
+                        />
                         <Typography
                             variant="h6"
                             component="div"
@@ -217,7 +226,7 @@ const Header = (props) => {
                                     <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Sign out</Typography>
                                 </MenuItem>
 
-                                <Typography 
+                                <Typography
                                     sx={{
                                         margin: "10px 0 0 0",
                                         fontSize: "13px",
@@ -228,7 +237,7 @@ const Header = (props) => {
                                             textDecoration: "underline"
                                         }
                                     }}
-                                    onClick={openGithubProject} 
+                                    onClick={openGithubProject}
                                 >Github Project</Typography>
                             </Menu>
                         </>}

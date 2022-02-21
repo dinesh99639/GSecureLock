@@ -6,11 +6,15 @@ function Home() {
     const login = () => window.gapi.auth2.getAuthInstance().signIn();
 
     return (<>
-        <div style={{ height: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Button variant="contained" onClick={login}>Login</Button>
-            <Button variant="contained" onClick={login}>Check isK</Button>
-        </div>
-        <img style={{ width: "400px", height: "400px" }} src={"/logo.svg"} alt="" />
+        <img
+            src={"/logo.svg"}
+            alt="logo"
+            style={{
+                height: "150px",
+                margin: "auto",
+                filter: "brightness(10000%)"
+            }}
+        />
     </>);
 }
 
