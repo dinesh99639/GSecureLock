@@ -31,7 +31,7 @@ function RemoveAccount(props) {
 
     const removeAccount = () => {
         try {
-            let entries = JSON.parse(crypto.decrypt(encryptedData, sessionPassword));
+            JSON.parse(crypto.decrypt(encryptedData, sessionPassword));
 
             // - Remove all files in server
             // - Remove google session
