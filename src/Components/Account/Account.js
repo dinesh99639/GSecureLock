@@ -4,6 +4,7 @@ import { useRouteMatch, Route, Switch, useHistory } from 'react-router-dom';
 import Profile from "./Profile";
 import ImportExport from "./importExport";
 import ChangePassword from "./ChangePassword";
+import RemoveAccount from "./RemoveAccount";
 
 import { Box, Divider, Grid, Typography } from "@mui/material";
 
@@ -29,7 +30,7 @@ function Account(props) {
         { name: "Profile", icon: <AccountCircleIcon fontSize="small" />, to: "profile", component: <Profile /> },
         { name: "Import/Export", icon: <ImportExportIcon fontSize="small" />, to: "importExport", component: <ImportExport /> },
         { name: "Change Password", icon: <VpnKeyIcon fontSize="small" />, to: "changePassword", component: <ChangePassword /> },
-        { name: "Remove Account", icon: <PersonRemoveIcon fontSize="small" />, to: "removeAccount", component: <Profile /> }
+        { name: "Remove Account", icon: <PersonRemoveIcon fontSize="small" />, to: "removeAccount", component: <RemoveAccount /> }
     ]
 
     const goToDashboard = () => history.push("/dashboard");
