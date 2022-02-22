@@ -4,7 +4,7 @@ function Home() {
             src={"/logo.svg"}
             alt="logo"
             style={{
-                height: "150px",
+                height: "100px",
                 margin: "auto",
                 filter: "brightness(10000%)"
             }}

@@ -1,6 +1,10 @@
 <svg
-    xmlns="http://www.w3.org/2000/svg" style="overflow: visible;" viewBox="90 91 330 330" preserveAspectRatio="x200Y200 meet" x="0" y="0"
-    xmlns:xlink="http://www.w3.org/1999/xlink">
+    xmlns="http://www.w3.org/2000/svg" 
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    preserveAspectRatio="x200Y200 meet" 
+    viewBox="90 91 330 330" 
+    x="0" y="0"
+>
     <defs transform="matrix(1.044432520866394, 0, 0, 1.044432520866394, -12.004644393920898, -9.785348892211914)" data-uid="o_emi83j046_4"></defs>
     <path d="M355.5,66.057l105.081,182.008L355.5,430.072H145.335L40.252,248.064L145.335,66.057H355.5 M375.16,32  H125.673L0.928,248.064l124.744,216.064H375.16l124.745-216.064L375.16,32L375.16,32z" fill="#ff780a" transform="matrix(0, 0.6409235000610352, -0.6409235000610352, 0, 414.9900207519531, 95.50221252441406)" name="Hexagon" data-uid="o_emi83j046_5"></path>
     <g transform="matrix(1.6064442514260178, 0, 0, 1.6064442514260178, 175.0454136249299, 176.8277067266702)" name="Lock" data-uid="o_emi83j046_6">
