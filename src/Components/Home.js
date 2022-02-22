@@ -1,10 +1,4 @@
-import { useEffect } from "react";
-
-import { Button } from '@mui/material';
-
 function Home() {
-    const login = () => window.gapi.auth2.getAuthInstance().signIn();
-
     return (<>
         <img
             src={"/logo.svg"}
