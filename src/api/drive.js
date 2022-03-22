@@ -1,4 +1,4 @@
-exports.getUserData = async () => {
+export const getUserData = async () => {
     return await window.gapi.client.request({
         'path': '/drive/v3/about?fields=user',
         'method': 'GET'
@@ -6,7 +6,7 @@ exports.getUserData = async () => {
 }
 
 
-exports.getAllFiles = async () => {
+export const getAllFiles = async () => {
     return await window.gapi.client.drive.files.list({
         spaces: 'appDataFolder',
         // fields: 'files(id, name)',
@@ -14,7 +14,7 @@ exports.getAllFiles = async () => {
     }).then((res) => res.result)
 }
 
-exports.createFile = async () => {
+export const createFile = async () => {
     return await window.gapi.client.drive.files.create({
         resource: {
             'name': 'data',
@@ -23,7 +23,7 @@ exports.createFile = async () => {
     }).then((res) => res.result);
 }
 
-exports.removeAllFiles = () => {
+export const removeAllFiles = () => {
     exports.getAllFiles().then((res) => {
         res.files.forEach((file) => {
             window.gapi.client.request({
@@ -36,7 +36,7 @@ exports.removeAllFiles = () => {
     })
 }
 
-exports.updateFile = async (fileId, data) => {
+export const updateFile = async (fileId, data) => {
     return await window.gapi.client.request({
         'path': '/upload/drive/v3/files/' + fileId,
         'method': 'PATCH',
@@ -45,7 +45,7 @@ exports.updateFile = async (fileId, data) => {
     }).then((res) => res.result);
 }
 
-exports.downloadFile = async (fileId) => {
+export const downloadFile = async (fileId) => {
     return await window.gapi.client.drive.files.get({
         fileId: fileId,
         alt: 'media'
