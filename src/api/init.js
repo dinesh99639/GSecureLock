@@ -1,4 +1,4 @@
-import config from '../config.json';
+import config from '../config';
 import { getAllFiles, createFile, downloadFile } from './drive';
 
 const initDrive = (updateLoginStatus, updateLocalStore) => {
