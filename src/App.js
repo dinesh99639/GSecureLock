@@ -6,7 +6,6 @@ import { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme } from './Theme';
 import { GlobalStyles } from './GolbalStyles';
 
-import { getAllFiles, createFile, downloadFile } from './api/drive';
 import initApp from './api/init';
 
 import { Backdrop, CircularProgress, Snackbar } from '@mui/material';
@@ -40,41 +39,6 @@ function App() {
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
 
-    const login = async () => {
-        showBackdrop();
-        await window.gapi.auth2.getAuthInstance().signIn();
-
-        let isLoggedIn = true;
-        let dataFileId = null;
-        let encryptedData = '';
-
-        let res = await getAllFiles();
-
-        if (res.files.length === 0) {
-            res = await createFile()
-            res = { files: [{ id: res.id }] }
-        }
-        dataFileId = res.files[0].id;
-
-        localStorage.setItem('dataFileId', dataFileId);
-
-        res = await downloadFile(dataFileId);
-        encryptedData = res.body;
-
-        updateLoginStatus(isLoggedIn);
-        updateLocalStore({ dataFileId, encryptedData });
-        localStorage.setItem('encryptedData', encryptedData);
-        hideBackdrop()
-    }
-
-    const logout = () => {
-        window.gapi.auth2.getAuthInstance().signOut();
-        updateLoginStatus(false);
-        updateLocalStore({ dataFileId: '', encryptedData: '' });
-        localStorage.removeItem('dataFileId');
-    }
-
-
     useEffect(() => {
         let encryptedData = localStorage.getItem('encryptedData');
 
@@ -105,9 +69,7 @@ function App() {
             <GlobalStyles />
 
             {(isLoggedIn !== null) && (<>
-                <Header
-                    auth={{ isLoggedIn: isLoggedIn, login, logout }}
-                />
+                <Header />
 
                 <Switch>
                     <Route path="/dashboard" >

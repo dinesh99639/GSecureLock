@@ -36,7 +36,7 @@ const RemainingProgress = (props) => {
 function Timebar(props) {
     const dispatch = useDispatch();
 
-    const { updateIsSessionLocked } = props;
+    const { updatePassword, updateIsSessionLocked } = props;
 
     const lockTime = useSelector((state) => state.lockTime);
     const updateLockTime = useCallback((lockTime) => dispatch({ type: "updateLockTime", payload: { lockTime } }), [dispatch]);
@@ -46,7 +46,10 @@ function Timebar(props) {
 
     const updateLockType = (m) => {
         if (m > 0) updateLockTime({ m, s: 0, lockAt: new Date().getTime() + m * 60000 });
-        else updateLockTime({ m: 0, s: 0, lockAt: 0 });
+        else {
+            updatePassword('');
+            updateLockTime({ m: 0, s: 0, lockAt: 0 });
+        }
     }
 
     const lockTypes = [
@@ -58,6 +61,7 @@ function Timebar(props) {
     useEffect(
         () => {
             if ((lockTime.m <= 0) && (lockTime.s <= 0)) {
+                updatePassword('');
                 updateIsSessionLocked(true);
                 updateSavedEntries([]);
                 updateModifiedEntries([]);
@@ -72,7 +76,7 @@ function Timebar(props) {
             }, 1000);
             return () => clearInterval(id);
         },
-        [lockTime, updateLockTime, updateIsSessionLocked, updateSavedEntries, updateModifiedEntries]
+        [lockTime, updateLockTime, updateIsSessionLocked, updateSavedEntries, updateModifiedEntries, updatePassword]
     );
 
     return (<>

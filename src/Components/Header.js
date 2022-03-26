@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import { darkTheme } from '../Theme';
-import { getUserData } from '../api/drive';
+import { getUserData, getAllFiles, createFile, downloadFile } from '../api/drive';
 
 import { AppBar, Box, Toolbar, IconButton, Typography, Avatar, Menu, MenuItem, Divider } from '@mui/material';
 
@@ -19,9 +19,19 @@ const Header = (props) => {
 
     const dispatch = useDispatch();
 
-    const { theme, user } = useSelector((state) => state.config);
+    const { theme, user, isLoggedIn } = useSelector((state) => state.config);
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
     const setUser = useCallback((user) => dispatch({ type: "setUser", payload: { user } }), [dispatch]);
+
+    const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
+    const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
+    const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
+
+    const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
+    const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
+
+    const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const [accountAnchorEl, setAccountAnchorEl] = useState(null);
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
@@ -30,9 +40,9 @@ const Header = (props) => {
     const [path, setPath] = useState(history.location.pathname);
 
     const toggleTheme = () => {
-        let changedTheme = (theme === "light") ? "dark" : "light";
-        setTheme(changedTheme)
-        localStorage.setItem("theme", changedTheme);
+        let newTheme = (theme === "light") ? "dark" : "light";
+        setTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
     }
 
     const handleHomeButtonClick = () => {
@@ -40,40 +50,82 @@ const Header = (props) => {
         setPath("/");
     }
 
-    const handleLockButtonClick = async () => {
-        let redirectToDashboard = true;
+    const login = async () => {
+        let loginStatus = false;
+        showBackdrop();
 
-        if (!props.auth.isLoggedIn) {
-            await props.auth.login();
+        await window.gapi.auth2.getAuthInstance().signIn().then(async (resp) => {
+            console.log("Login Success", resp);
+            let isLoggedIn = true;
+            let dataFileId = null;
+            let encryptedData = '';
 
-            if (localStorage.getItem('encryptedData').length === 0) {
-                history.push("/setup_account");
-                redirectToDashboard = false;
+            let res = await getAllFiles();
+
+            if (res.files.length === 0) {
+                res = await createFile()
+                res = { files: [{ id: res.id }] }
             }
-        }
+            dataFileId = res.files[0].id;
 
-        if (redirectToDashboard) {
+            localStorage.setItem('dataFileId', dataFileId);
+
+            res = await downloadFile(dataFileId);
+            encryptedData = res.body;
+
+            updateLoginStatus(isLoggedIn);
+            updateLocalStore({ dataFileId, encryptedData });
+            localStorage.setItem('encryptedData', encryptedData);
+
+            loginStatus = true;
+        }).catch((err) => {
+            console.error("err", err)
+        });
+
+        hideBackdrop();
+
+        return loginStatus;
+    }
+
+    const logout = () => {
+        window.gapi.auth2.getAuthInstance().signOut();
+        updateLoginStatus(false);
+        updateLocalStore({ dataFileId: '', encryptedData: '' });
+        
+        closeAccountMenu();
+        setUser({ name: '', email: '', image: '' })
+        
+        localStorage.removeItem("dataFileId");
+        localStorage.removeItem("encryptedData");
+        localStorage.removeItem("userData");
+        
+        history.replace("/");
+        setPath('/');
+    }
+
+    const handleLockButtonClick = async () => {
+        const gotoDashboard = () => {
             history.push("/dashboard");
             setPath("/dashboard");
+        }
+
+        if (isLoggedIn) gotoDashboard();
+        else {
+            let loginStatus = await login();
+
+            if (loginStatus) {
+                if (localStorage.getItem('encryptedData').length === 0) history.push("/setup_account");
+                else gotoDashboard()
+            }
+            else {
+                showSnack("error", "Login Failed! Try Again...");
+            }
         }
     }
 
     const openAccountSettings = () => {
         history.push("/account/profile");
         closeAccountMenu();
-    }
-
-    const logout = () => {
-        // - Signout from google account
-        history.replace("/");
-        closeAccountMenu();
-        setUser({ name: '', email: '', image: '' })
-        // updateLoginStatus(false);
-        setPath('/');
-
-        localStorage.removeItem("dataFileId");
-        localStorage.removeItem("encryptedData");
-        localStorage.removeItem("userData");
     }
 
     const openGithubProject = () => {
@@ -88,7 +140,7 @@ const Header = (props) => {
                 image: ""
             };
 
-            if (props.auth.isLoggedIn) {
+            if (isLoggedIn) {
                 userData = localStorage.getItem('userData');
 
                 if (userData) {
@@ -102,7 +154,6 @@ const Header = (props) => {
                         email: res.user.emailAddress,
                         image: res.user.photoLink
                     }
-                    console.log(res.user)
 
                     localStorage.setItem('userData', JSON.stringify(userData));
                 }
@@ -111,17 +162,13 @@ const Header = (props) => {
             setUser(userData);
         }
         loadUserData();
-    }, [props.auth.isLoggedIn, setUser]);
+    }, [isLoggedIn, setUser]);
 
     useEffect(() => {
         let theme = localStorage.getItem('theme');
-
-        if (theme === null) {
-            localStorage.setItem('theme', 'light');
-            setTheme('light');
-        }
-        else if (theme === "light") setTheme('light');
-        else if (theme === "dark") setTheme('dark');
+        
+        if (theme === null) theme = 'light';
+        setTheme(theme);
     }, [setTheme]);
 
     return (

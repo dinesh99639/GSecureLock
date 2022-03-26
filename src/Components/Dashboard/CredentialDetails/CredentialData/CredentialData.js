@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 
+import crypto from '../../../../Utils/crypto';
 import { darkTheme } from '../../../../Theme';
 import initData from '../../../../initData';
 
@@ -113,10 +114,11 @@ function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
 
-    const { theme } = useSelector((state) => state.config);
-    const { isEditMode, categories, drafts, entryData, savedEntries, modifiedEntries, selectedEntryIndex } = useSelector((state) => state.entries);
+    const { password } = props;
 
-    const { deleteEntry } = props;
+    const { theme } = useSelector((state) => state.config);
+    const { dataFileId } = useSelector((state) => state.localStore);
+    const { isEditMode, categories, drafts, entryData, savedEntries, modifiedEntries, selectedEntryIndex, entriesById, selectedEntryId, templates, categoriesCount } = useSelector((state) => state.entries);
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
@@ -125,7 +127,13 @@ function CredentialData(props) {
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
     const updateDrafts = useCallback((drafts) => dispatch({ type: "updateDrafts", payload: { drafts } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
+    const updateEntriesById = useCallback((entriesById) => dispatch({ type: "updateEntriesById", payload: { entriesById } }), [dispatch]);
+    const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
+    const updateCategoriesCount = useCallback((categoriesCount) => dispatch({ type: "updateCategoriesCount", payload: { categoriesCount } }), [dispatch]);
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
+
+    const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
     const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
 
     const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
@@ -222,40 +230,121 @@ function CredentialData(props) {
     }
 
     const saveEntry = () => {
-        let prevEntryData = { ...entryData };
         let newDrafts = { ...drafts };
-
-        delete newDrafts[prevEntryData.id];
+        delete newDrafts[entryData.id];
         updateDrafts(newDrafts);
 
-        props.saveEntry(prevEntryData);
+        let newEntryData = { ...entryData };
+        let newSavedEntries = [...savedEntries];
+        let newmodifiedEntries = [...modifiedEntries];
+
+        newEntryData.lastModifiedAt = new Date().toString().substring(0, 24);
+
+        // If category is updated
+        if (newSavedEntries[selectedEntryIndex].category !== newEntryData.category) {
+            let counts = [...categoriesCount];
+            let newCounts = [...counts];
+            let prevCategory = newSavedEntries[selectedEntryIndex].category;
+            let currCategory = newEntryData.category;
+
+            let isNewCategoryFound = true;
+
+            counts.forEach((count, index) => {
+                if (count.name === prevCategory) {
+                    newCounts[0].count--; // "All" Category
+                    newCounts[index].count--;
+                    if (newCounts[index].count === 0) newCounts.splice(index, 1);
+                }
+                if (count.name === currCategory) {
+                    newCounts[0].count++; // "All" Category
+                    newCounts[index].count++;
+                    isNewCategoryFound = false;
+                }
+            });
+
+            if (isNewCategoryFound) {
+                newCounts[0].count++;
+                newCounts.push({ name: currCategory, count: 1 })
+            }
+            updateCategoriesCount(newCounts);
+        }
+
+        newSavedEntries[selectedEntryIndex] = newEntryData;
+        newmodifiedEntries[selectedEntryIndex] = newEntryData;
+
+        let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
+
+        updateLocalStore({ dataFileId, encryptedData });
+        updateEntryData(newEntryData);
+        updateSavedEntries(newSavedEntries);
+        updateModifiedEntries(newmodifiedEntries);
+
+        localStorage.setItem("encryptedData", encryptedData);
+
+        updateEntriesById({ ...entriesById, [selectedEntryId]: newEntryData })
+
         updateEditModeStatus(false);
         updateSelectedFieldIndex(0);
     }
 
+    const deleteEntry = () => {
+        let newSavedEntries = [...savedEntries];
+        let newmodifiedEntries = [...modifiedEntries];
+
+        // updateCategoriesCount
+        let counts = [...categoriesCount];
+        let newCounts = [...categoriesCount];
+        let prevCategory = newSavedEntries[selectedEntryIndex].category;
+
+        counts.forEach((count, index) => {
+            if (count.name === prevCategory) {
+                newCounts[0].count--;
+                newCounts[index].count--;
+                if (newCounts[index].count === 0) {
+                    let isStaticCategory = false;
+
+                    for (var i in initData.staticCategories) {
+                        if (initData.staticCategories[i] === newCounts[index].name)
+                            isStaticCategory = true;
+                    }
+                    if (!isStaticCategory) newCounts.splice(index, 1);
+                }
+            }
+        });
+        updateCategoriesCount(newCounts);
+
+
+        newSavedEntries.splice(selectedEntryIndex, 1);
+        newmodifiedEntries.splice(selectedEntryIndex, 1);
+
+        let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
+
+        updateLocalStore({ dataFileId, encryptedData });
+        updateSavedEntries(newSavedEntries);
+        updateModifiedEntries(newmodifiedEntries);
+
+        localStorage.setItem("encryptedData", encryptedData);
+
+        updateSelectedEntryId('');
+        closeDeleteConfirmationModal();
+    }
+
     const [deleteConfirmModal, updateDeleteConfirmModal] = useState({
         open: false,
-        entryName: "",
-        callback: null
+        entryName: ""
     });
-    const openDeleteConfirmationModal = (entryName, callback) => {
+    const openDeleteConfirmationModal = (entryName) => {
         updateDeleteConfirmModal({
             open: true,
-            entryName,
-            callback
+            entryName
         })
     }
     const closeDeleteConfirmationModal = () => {
         updateDeleteConfirmModal({
             open: false,
-            entryName: "",
-            callback: null
+            entryName: ""
         })
     }
-
-    useEffect(() => {
-        console.log(entryData);
-    }, [entryData]);
 
     useEffect(() => {
         updateEntryData(entryData);
@@ -293,7 +382,7 @@ function CredentialData(props) {
                                 margin: "0 5px",
                                 padding: 0
                             }}
-                            onClick={() => openDeleteConfirmationModal(entryData.name, deleteEntry)}
+                            onClick={() => openDeleteConfirmationModal(entryData.name)}
                         ><DeleteOutlinedIcon /></IconButton>
                     </Box>
                 </Box>
@@ -361,7 +450,7 @@ function CredentialData(props) {
                                 updateEntryOptionsMode("EntryOptions");
                             }} 
                             ><EditOutlinedIcon /></IconButton>
-                        <IconButton size="small" onClick={() => openDeleteConfirmationModal(entryData.name, deleteEntry)} style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
+                        <IconButton size="small" onClick={() => openDeleteConfirmationModal(entryData.name)} style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
                     </Box>
                 </Box>
 
@@ -431,7 +520,7 @@ function CredentialData(props) {
                             width: "100px",
                             textTransform: 'none'
                         }}
-                        onClick={() => deleteEntry(entryData.id, closeDeleteConfirmationModal)}
+                        onClick={deleteEntry}
                     >Confirm</Button>
                 </Box>
             </Paper>

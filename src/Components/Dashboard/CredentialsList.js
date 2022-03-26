@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { darkTheme } from '../../Theme';
 import crypto from '../../Utils/crypto';
+import initData from '../../initData';
 
 import { Box, IconButton, InputBase, Typography, Tooltip, Modal, Paper, Button } from "@mui/material";
 
@@ -20,11 +21,14 @@ function CredentialsList(props) {
     const { theme } = useSelector((state) => state.config);
     const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates, savedEntries, isTemplateMode } = useSelector((state) => state.entries);
 
-    const { addNewEntry, password } = props
+    const { password } = props
 
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
-
+    const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
+    const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
+    const updateNewEntryId = useCallback((newEntryId) => dispatch({ type: "updateNewEntryId", payload: { newEntryId } }), [dispatch]);
+    
     const updateSelectedCategory = useCallback((selectedCategory) => dispatch({ type: "updateSelectedCategory", payload: { selectedCategory } }), [dispatch]);
 
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
@@ -76,6 +80,38 @@ function CredentialsList(props) {
             updateSelectedEntryIndex(entryIdx);
         }
 
+    }
+
+    const addNewEntry = (newEntryData) => {
+        let id = "C" + new Date().getTime();
+        
+        if (!newEntryData) {
+            newEntryData = {
+                id,
+                user: "",
+                name: "Untitled",
+                category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
+                data: (selectedCategory === "Cards") ? initData.cardData : [],
+    
+                createdAt: new Date().toString().substring(0, 24),
+                lastModifiedAt: new Date().toString().substring(0, 24)
+            }
+            if (selectedCategory === "Cards") newEntryData.cardTheme = "purePurple";
+        }
+        else {
+            newEntryData.id = id;
+            newEntryData.createdAt = new Date().toString().substring(0, 24);
+            newEntryData.lastModifiedAt = new Date().toString().substring(0, 24);
+        }
+
+        updateSavedEntries([...savedEntries, newEntryData]);
+        updateModifiedEntries([...modifiedEntries, newEntryData]);
+
+        updateSelectedEntryIndex(modifiedEntries.length)
+        updateEntryData(newEntryData);
+        updateNewEntryId(id);
+        updateSelectedEntryId(id);
+        updateEditModeStatus(true);
     }
 
     const [deleteConfirmModal, updateDeleteConfirmModal] = useState({

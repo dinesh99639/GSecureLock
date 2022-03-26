@@ -24,7 +24,7 @@ function Suggestions(props) {
         }
 
         if (strength === "") updateSuggestions({ ...suggestions, [field]: field + " cannot be empty" });
-        else updateSuggestions({ ...suggestions, [field]: "Password for the field \"" + field + "\" is " + strength });
+        else updateSuggestions({ ...suggestions, [field]: "Strength of password for the field \"" + field + "\" is " + strength });
     }
 
     useEffect(() => {
@@ -38,7 +38,7 @@ function Suggestions(props) {
             });
         }
         else {
-            console.log("card")
+            // console.log("card");
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
