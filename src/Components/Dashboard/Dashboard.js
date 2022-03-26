@@ -119,8 +119,17 @@ function Dashboard(props) {
                                     alignItems: "center"
                                 }}
                             >
+                                <img
+                                        src={"/logo.svg"}
+                                        alt="logo"
+                                        style={{
+                                            margin: "10px 0",
+                                            width: "70px",
+                                            filter: (theme === "dark") ? "brightness(10000%)": "brightness(0%)"
+                                        }}
+                                    />
                                 <Typography style={{ fontSize: "25px" }} >GSecureLock</Typography>
-                                <Typography style={{ fontSize: "15px" }} >A secure password manager</Typography>
+                                <Typography style={{ fontSize: "14.5px" }} >A secure password manager</Typography>
                             </Box>
                         </>}
                     </Grid>
