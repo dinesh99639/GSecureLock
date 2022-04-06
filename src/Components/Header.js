@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 
 import { darkTheme } from '../Theme';
 import { getUserData, getAllFiles, createFile, downloadFile } from '../api/drive';
@@ -204,7 +204,7 @@ const Header = (props) => {
                     </Box>
 
                     <Box style={{ display: "flex", alignItems: "center" }}>
-                        {/* <Link to="/test" style={{ color: "white" }}>Test</Link> */}
+                        <Link to="/test" style={{ color: "white" }}>Test</Link>
 
                         <IconButton size="medium" onClick={toggleTheme} >
                             {(theme === "light") ?
