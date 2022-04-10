@@ -54,9 +54,9 @@ function Test() {
         localStorage.clear();
     }
 
-    useEffect(() => {
-        initApp(updateLoginStatus, updateLocalStore)
-    }, [updateLoginStatus, updateLocalStore]);
+    // useEffect(() => {
+    //     initApp(updateLoginStatus, updateLocalStore)
+    // }, [updateLoginStatus, updateLocalStore]);
 
     return (<>
         <div style={{ height: "90vh", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
@@ -65,12 +65,12 @@ function Test() {
             <Button variant="contained" onClick={logout}>Logout</Button>
 
             <br />
-            <Button variant="contained" onClick={async () => { console.log(await getAllFiles()) }}>getAllFiles</Button>
-            <Button variant="contained" onClick={async () => { console.log(await createFile()) }}>createFile</Button>
-            <Button variant="contained" onClick={async () => { console.log(await removeAllFiles()) }}>removeAllFiles</Button>
-            <Button variant="contained" onClick={async () => { console.log(await downloadFile(state.dataFileId)) }}>downloadFile</Button>
-            <Button variant="contained" onClick={async () => { console.log(await updateFile(state.dataFileId, "updated")) }}>updateFile</Button>
             <Button variant="contained" onClick={async () => { console.log(await gapi.getUserData()) }}>User Data</Button>
+            <Button variant="contained" onClick={async () => { console.log(await gapi.getAllFiles()) }}>getAllFiles</Button>
+            <Button variant="contained" onClick={async () => { console.log(await gapi.createFile()) }}>createFile</Button>
+            <Button variant="contained" onClick={async () => { console.log(await gapi.removeAllFiles()) }}>removeAllFiles</Button>
+            <Button variant="contained" onClick={async () => { console.log(await gapi.updateFile(localStorage.getItem("dataFileId"), "updated")) }}>updateFile</Button>
+            <Button variant="contained" onClick={async () => { console.log(await gapi.downloadFile(localStorage.getItem("dataFileId"))) }}>downloadFile</Button>
 
             <br />
             <Button variant="contained" onClick={() => { console.log(state) }}>getState</Button>
