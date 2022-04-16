@@ -17,10 +17,9 @@ export function GApiProvider(props) {
             prompt: '',
             callback: (tokenResponse) => {
                 updateAccessToken(tokenResponse.access_token);
-                console.log(tokenResponse)
+                // console.log(tokenResponse)
             },
         });
-
         updateClient(client);
     }
 
