@@ -1,25 +1,28 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 
 import { darkTheme } from '../Theme';
-import { getUserData, getAllFiles, createFile, downloadFile } from '../api/drive';
+import { GApiContext } from "../api/GApiProvider";
+
 
 import { AppBar, Box, Toolbar, IconButton, Typography, Avatar, Menu, MenuItem, Divider } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 const Header = (props) => {
+    const gapi = useContext(GApiContext);
     const history = useHistory();
 
     const dispatch = useDispatch();
 
     const { theme, user, isLoggedIn } = useSelector((state) => state.config);
+    const { encryptedData } = useSelector((state) => state.localStore);
+
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
     const setUser = useCallback((user) => dispatch({ type: "setUser", payload: { user } }), [dispatch]);
 
@@ -50,55 +53,53 @@ const Header = (props) => {
         setPath("/");
     }
 
-    const login = async () => {
-        let loginStatus = false;
+    const handleOnLogin = async () => {
         showBackdrop();
 
-        await window.gapi.auth2.getAuthInstance().signIn().then(async (resp) => {
-            console.log("Login Success", resp);
-            let isLoggedIn = true;
-            let dataFileId = null;
-            let encryptedData = '';
+        let dataFileId = null;
+        let encryptedData = '';
 
-            let res = await getAllFiles();
+        let res = await gapi.getAllFiles();
 
-            if (res.files.length === 0) {
-                res = await createFile()
-                res = { files: [{ id: res.id }] }
+        if (res.success) {
+            if (res.data.files.length === 0) {
+                res = await gapi.createFile()
+                res = { data: { files: [{ id: res.data.id }] } }
             }
-            dataFileId = res.files[0].id;
+            dataFileId = res.data.files[0].id;
 
             localStorage.setItem('dataFileId', dataFileId);
 
-            res = await downloadFile(dataFileId);
-            encryptedData = res.body;
+            res = await gapi.downloadFile(dataFileId);
+            encryptedData = res.data;
 
-            updateLoginStatus(isLoggedIn);
+            updateLoginStatus(true);
             updateLocalStore({ dataFileId, encryptedData });
             localStorage.setItem('encryptedData', encryptedData);
 
-            loginStatus = true;
-        }).catch((err) => {
-            console.error("err", err)
-        });
+            if (!encryptedData) history.push("/setup_account");
+            else history.push("/dashboard");
+        }
+        else {
+            showSnack("error", "Unable to get data, please refresh");
+        }
 
         hideBackdrop();
-
-        return loginStatus;
+        return true;
     }
 
     const logout = () => {
         window.gapi.auth2.getAuthInstance().signOut();
         updateLoginStatus(false);
         updateLocalStore({ dataFileId: '', encryptedData: '' });
-        
+
         closeAccountMenu();
         setUser({ name: '', email: '', image: '' })
-        
+
         localStorage.removeItem("dataFileId");
         localStorage.removeItem("encryptedData");
         localStorage.removeItem("userData");
-        
+
         history.replace("/");
         setPath('/');
     }
@@ -110,17 +111,7 @@ const Header = (props) => {
         }
 
         if (isLoggedIn) gotoDashboard();
-        else {
-            let loginStatus = await login();
-
-            if (loginStatus) {
-                if (localStorage.getItem('encryptedData').length === 0) history.push("/setup_account");
-                else gotoDashboard()
-            }
-            else {
-                showSnack("error", "Login Failed! Try Again...");
-            }
-        }
+        else gapi.getAccessToken()
     }
 
     const openAccountSettings = () => {
@@ -147,12 +138,12 @@ const Header = (props) => {
                     userData = JSON.parse(userData);
                 }
                 else {
-                    let res = await getUserData();
+                    let res = await gapi.getUserData();
 
                     userData = {
-                        name: res.user.displayName,
-                        email: res.user.emailAddress,
-                        image: res.user.photoLink
+                        name: res.data.user.displayName,
+                        email: res.data.user.emailAddress,
+                        image: res.data.user.photoLink
                     }
 
                     localStorage.setItem('userData', JSON.stringify(userData));
@@ -162,11 +153,18 @@ const Header = (props) => {
             setUser(userData);
         }
         loadUserData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoggedIn, setUser]);
 
     useEffect(() => {
+        if (!encryptedData && gapi.accessTokenCount) handleOnLogin();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [encryptedData, gapi.accessTokenCount]);
+
+    useEffect(() => {
         let theme = localStorage.getItem('theme');
-        
+
         if (theme === null) theme = 'light';
         setTheme(theme);
     }, [setTheme]);
@@ -189,9 +187,9 @@ const Header = (props) => {
                         <img
                             src={"/logo.svg"}
                             alt="logo"
-                            style={{ 
-                                height: "30px", 
-                                margin: "0 5px 0 0", 
+                            style={{
+                                height: "30px",
+                                margin: "0 5px 0 0",
                                 filter: "brightness(10000%)"
                             }}
                         />
@@ -215,7 +213,7 @@ const Header = (props) => {
 
                         {(path === "/") ? <>
                             <IconButton size="medium" onClick={handleLockButtonClick}>
-                                <LockOpenIcon style={{ color: "white" }} />
+                                <AccountCircleIcon style={{ color: "white" }} />
                             </IconButton>
                         </> : <>
                             <IconButton

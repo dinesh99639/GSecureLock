@@ -1,15 +1,15 @@
-import { useEffect, forwardRef, useCallback } from "react";
+import { useEffect, forwardRef, useCallback, useContext } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import { lightTheme, darkTheme } from './Theme';
 import { GlobalStyles } from './GolbalStyles';
 
-import initApp from './api/init';
-
 import { Backdrop, CircularProgress, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
+
+import { GApiContext } from "./api/GApiProvider";
 
 import Header from './Components/Header';
 import Home from './Components/Home';
@@ -24,14 +24,16 @@ const Alert = forwardRef(function Alert(props, ref) {
 });
 
 function App() {
+    const gapi = useContext(GApiContext);
+    const history = useHistory();
     const dispatch = useDispatch();
 
     const { theme, isLoading, snack, isLoggedIn } = useSelector((state) => ({ ...state.config }));
- 
+
     const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
     const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
     const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
-    
+
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }) : null;
 
@@ -43,19 +45,16 @@ function App() {
         let encryptedData = localStorage.getItem('encryptedData');
 
         if (encryptedData) {
+            let dataFileId = localStorage.getItem('dataFileId');
             updateLoginStatus(true);
-            updateLocalStore({ dataFileId: localStorage.getItem('dataFileId'), encryptedData });
+            updateLocalStore({ dataFileId, encryptedData });
         }
-        else initApp(updateLoginStatus, updateLocalStore);
+        else {
+            updateLoginStatus(false);
+            history.push("/");
+        }
 
-        // const checkStorage = async () => {
-        //     console.log(await window.gapi.auth2.getAuthInstance().signIn())
-        //     if (localStorage.getItem('userData') === null && await window.gapi.auth2.getAuthInstance().signIn()) {
-        //         logout();
-        //     }
-        // }
-
-        // checkStorage()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateLocalStore, updateLoginStatus]);
 
     useEffect(() => {
@@ -72,19 +71,11 @@ function App() {
                 <Header />
 
                 <Switch>
-                    <Route path="/dashboard" >
-                        <Dashboard />
-                    </Route>
-                    <Route path="/account" >
-                        <Account />
-                    </Route>
-                    <Route path="/setup_account" >
-                        <SetupNewAccount />
-                    </Route>
-                    <Route path="/test" ><Test /></Route>
-                    <Route path="/" >
-                        <Home />
-                    </Route>
+                    <Route path="/dashboard" component={Dashboard} />
+                    <Route path="/account" component={Account} />
+                    <Route path="/setup_account" component={SetupNewAccount} />
+                    <Route path="/test" component={Test} />
+                    <Route path="/" component={Home} />
                 </Switch>
             </>)}
 

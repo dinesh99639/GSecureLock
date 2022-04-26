@@ -1,10 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { makeStyles } from "@mui/styles";
 
 import crypto from '../Utils/crypto';
-import { updateFile } from '../api/drive';
+import { GApiContext } from "../api/GApiProvider";
 
 import { TextField, Typography, Box, Button } from '@mui/material';
 
@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 });
 
 function SetupNewAccount(props) {
+    const gapi = useContext(GApiContext);
     const dispatch = useDispatch();
 
     const history = useHistory();
@@ -124,7 +125,7 @@ function SetupNewAccount(props) {
 
         let encryptedData = crypto.encrypt(initData, passwords.password)
 
-        await updateFile(localStorage.getItem('dataFileId'), encryptedData);
+        await gapi.updateFile(localStorage.getItem('dataFileId'), encryptedData);
         updateLocalStore({ dataFileId, encryptedData })
 
         history.push('/dashboard');

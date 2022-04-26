@@ -1,4 +1,5 @@
 import { createContext, useEffect, useCallback, useState } from "react";
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import config from '../config';
@@ -6,9 +7,14 @@ import config from '../config';
 export const GApiContext = createContext();
 
 export function GApiProvider(props) {
+    const dispatch = useDispatch();
+
     const [gapi, updateGapi] = useState(null);
     const [client, updateClient] = useState(null);
     const [access_token, updateAccessToken] = useState(null);
+    const [accessTokenCount, setAccessTokenCount] = useState(0);
+
+    const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
 
     const initClient = (gapi) => {
         let client = gapi.accounts.oauth2.initTokenClient({
@@ -16,9 +22,14 @@ export function GApiProvider(props) {
             scope: config.SCOPES.join(' '),
             prompt: '',
             callback: (tokenResponse) => {
-                updateAccessToken(tokenResponse.access_token);
-                // console.log(tokenResponse)
-            },
+                if (tokenResponse?.access_token) {
+                    updateAccessToken(tokenResponse.access_token);
+                    updateLoginStatus(true);
+                    setAccessTokenCount(accessTokenCount + 1);
+
+                    console.log(tokenResponse)
+                }
+            }
         });
         updateClient(client);
     }
@@ -33,6 +44,8 @@ export function GApiProvider(props) {
             await initClient(window.google);
             updateGapi(window.google);
         })
+        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const sendRequest = async (data) => {
@@ -46,6 +59,8 @@ export function GApiProvider(props) {
     }
 
     const functions = {
+        accessTokenCount: accessTokenCount,
+
         getAccessToken: () => client.requestAccessToken(),
         revokeToken: () => gapi.accounts.oauth2.revoke(access_token, () => { console.log('access token revoked') }),
 
@@ -115,7 +130,7 @@ export function GApiProvider(props) {
                 'Authorization': 'Bearer ' + access_token,
                 'Accept': 'application/json'
             }
-            
+
             return await sendRequest({ method: "GET", url, headers });
         },
     }

@@ -8,11 +8,11 @@ import App from './App';
 
 ReactDOM.render(
     <BrowserRouter>
-        <GApiProvider>
-            <StoreProvider>
+        <StoreProvider>
+            <GApiProvider>
                 <App />
-            </StoreProvider>
-        </GApiProvider>
+            </GApiProvider>
+        </StoreProvider>
     </BrowserRouter>
     , document.getElementById('root')
 );
