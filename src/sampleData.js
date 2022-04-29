@@ -50,43 +50,30 @@ const data = {
             },
             cardTheme: "bluePurple",
 
-            createdAt: "Thu Dec 30 2021 22:52:56",
-            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
+            createdAt: "Fri Apr 30 1999 00:00:00",
+            lastModifiedAt: "Fri Apr 30 1999 00:00:00"
         }
     ],
     credentials: [
         {
             id: "C1",
-            user: "user1",
-            name: "Credentials 1",
+            user: "Sample user",
+            name: "Credentials",
             category: "Passwords",
             data: [
-                { name: "User", value: "user1", type: "text" },
-                { name: "Password", value: "user1 password", type: "password" },
-                { name: "Website", value: "https://samplesite.com", type: "link" },
-                { name: "Temporary Key", value: "sd8h677ifsc67e6", type: "hidden" },
+                { name: "User", value: "Sample user", type: "text" },
+                { name: "Password", value: "user password", type: "password" },
+                { name: "Website", value: "https://www.gsecurelock.ml/", type: "link" },
+                { name: "Hidden Field", value: "You can hide info like this", type: "hidden" },
             ],
             
-            createdAt: "Thu Dec 30 2021 22:52:56",
-            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
+            createdAt: "Fri Apr 30 1999 00:00:00",
+            lastModifiedAt: "Fri Apr 30 1999 00:00:00"
         },
         {
             id: "C2",
-            user: "user2",
-            name: "Credentials 2",
-            category: "Passwords",
-            data: [
-                { name: "Password", value: "user2 password", type: "password" },
-                { name: "Website", value: "https://samplesite.com", type: "link" }
-            ],
-
-            createdAt: "Thu Dec 30 2021 22:52:56",
-            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
-        },
-        {
-            id: "C3",
-            user: "user1",
-            name: "Card 1",
+            user: "Sample user",
+            name: "Card",
             category: "Cards",
             data: {
                 network: "VISA",
@@ -99,21 +86,8 @@ const data = {
             },
             cardTheme: "bluePurple",
 
-            createdAt: "Thu Dec 30 2021 22:52:56",
-            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
-        },
-        {
-            id: "C4",
-            user: "user1",
-            name: "Testing 1",
-            category: "Testing",
-            data: [
-                { name: "Password", value: "Testing Password", type: "password" },
-                { name: "Website", value: "https://test.com", type: "link" }
-            ],
-
-            createdAt: "Thu Dec 30 2021 22:52:56",
-            lastModifiedAt: "Thu Dec 30 2021 22:52:56"
+            createdAt: "Fri Apr 30 1999 00:00:00",
+            lastModifiedAt: "Fri Apr 30 1999 00:00:00"
         }
     ]
 }

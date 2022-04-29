@@ -17,7 +17,6 @@ function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
     const dispatch = useDispatch();
 
-    const [password, updatePassword] = useState('');
     const [isSessionLocked, updateIsSessionLocked] = useState(true);
 
     const lockTime = useSelector((state) => state.lockTime);
@@ -91,7 +90,6 @@ function Dashboard(props) {
                 <Grid container style={{ display: "flex", flex: 1 }} >
                     <Grid item xs={0.46} >
                         <Timebar
-                            updatePassword={updatePassword}
                             updateIsSessionLocked={updateIsSessionLocked}
                         />
                     </Grid>
@@ -99,16 +97,12 @@ function Dashboard(props) {
                         <Categories />
                     </Grid>
                     <Grid item xs={2.5} >
-                        <CredentialsList
-                            password={password}
-                        />
+                        <CredentialsList />
                     </Grid>
 
                     <Grid item xs={7.34} >
                         {(selectedEntryId !== '' && entriesById) ? <>
-                            <CredentialDetails
-                                password={password}
-                            />
+                            <CredentialDetails />
                         </> : <>
                             <Box
                                 style={{
@@ -142,9 +136,6 @@ function Dashboard(props) {
 
         {(isSessionLocked) && <LockScreen
             updateIsSessionLocked={updateIsSessionLocked}
-
-            password={password}
-            updatePassword={updatePassword}
         />}
 
         {((lockTime.m === 0) && (lockTime.s <= 10) && (lockTime.s > 0) && (Object.keys(drafts).length > 0)) && <>

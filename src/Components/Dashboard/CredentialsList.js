@@ -17,11 +17,9 @@ function CredentialsList(props) {
     const dispatch = useDispatch();
     let searchRef = createRef(null);
 
-    const { dataFileId } = useSelector((state) => state.localStore);
+    const { password, dataFileId } = useSelector((state) => state.localStore);
     const { theme } = useSelector((state) => state.config);
     const { selectedCategory, selectedEntryId, drafts, modifiedEntries, templates, savedEntries, isTemplateMode } = useSelector((state) => state.entries);
-
-    const { password } = props
 
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);

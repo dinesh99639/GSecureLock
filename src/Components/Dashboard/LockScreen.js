@@ -24,9 +24,10 @@ function LockScreen(props) {
     const dispatch = useDispatch();
 
     const classes = useStyles();
-    const { password, updatePassword, updateIsSessionLocked } = props;
+    const { updateIsSessionLocked } = props;
 
-    const { encryptedData } = useSelector((state) => state.localStore);
+    const { password, encryptedData } = useSelector((state) => state.localStore);
+    const updatePassword = useCallback((password) => dispatch({ type: "updatePassword", payload: { password } }), [dispatch]);
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });

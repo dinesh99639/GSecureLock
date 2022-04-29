@@ -1,14 +1,16 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import { darkTheme } from '../Theme';
 import { GApiContext } from "../api/GApiProvider";
 
-
 import { AppBar, Box, Toolbar, IconButton, Typography, Avatar, Menu, MenuItem, Divider } from '@mui/material';
 
-import MenuIcon from '@mui/icons-material/Menu';
+// import SyncIcon from '@mui/icons-material/Sync';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -21,7 +23,7 @@ const Header = (props) => {
     const dispatch = useDispatch();
 
     const { theme, user, isLoggedIn } = useSelector((state) => state.config);
-    const { encryptedData } = useSelector((state) => state.localStore);
+    const { dataFileId, encryptedData } = useSelector((state) => state.localStore);
 
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
     const setUser = useCallback((user) => dispatch({ type: "setUser", payload: { user } }), [dispatch]);
@@ -40,7 +42,93 @@ const Header = (props) => {
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
     const closeAccountMenu = () => setAccountAnchorEl(null);
 
-    const [path, setPath] = useState(history.location.pathname);
+    const [isSyncChangesClicked, setIsSyncChangesClicked] = useState(false);
+    const [updateType, setUpdateType] = useState(false);
+
+    const handleSyncButtonClick = (updateType) => {
+        showBackdrop();
+
+        if (gapi.isAccessTokenValid()) syncChanges(updateType)
+        else {
+            setUpdateType(updateType)
+            setIsSyncChangesClicked(true);
+            gapi.getAccessToken();
+        }
+    }
+
+    const updateServer = async () => {
+        await gapi.updateFile(dataFileId, encryptedData);
+    }
+    
+    const updateClient = async () => {
+        const encryptedData = await gapi.downloadFile(dataFileId);
+        console.log(encryptedData)
+        localStorage.setItem('encryptedData', encryptedData.data);
+        window.location = '';
+    }
+
+    const syncChanges = async (type) => {
+        if (type) {
+            if (type === "updateServer") await updateServer();
+            else if (type === "updateClient") await updateClient();
+        }
+        else {
+            if (updateType === "updateServer") await updateServer();
+            else if (updateType === "updateClient") await updateClient();
+        }
+        // let serverEncryptedData = await gapi.downloadFile(dataFileId);
+        // serverEncryptedData = serverEncryptedData.data;
+        
+        // let serverEntries = JSON.parse(crypto.decrypt(serverEncryptedData, password));
+        // let serverTemplatesMap = {};
+        // let serverCredentialsMap = {};
+        // serverEntries.templates.forEach((row) => {
+        //     serverTemplatesMap[row.id] = row;
+        // })
+        // serverEntries.credentials.forEach((row) => {
+        //     serverCredentialsMap[row.id] = row;
+        // })
+
+        // let clientEntries = JSON.parse(crypto.decrypt(encryptedData, password));
+        // let newTemplates = [];
+        // let newCredentials = [];
+        // clientEntries.templates.forEach((row) => {
+        //     const serverData = serverTemplatesMap[row.id];
+        //     if (serverData) {
+        //         if (
+        //             new Date(serverData.lastModifiedAt).getTime() >=
+        //             new Date(row.lastModifiedAt).getTime()
+        //         ) {
+        //             newTemplates.push(serverData);
+        //         }
+        //         else newTemplates.push(row);
+
+        //         delete serverTemplatesMap[row.id];
+        //     }
+        //     else newTemplates.push(row);
+        // })
+        // clientEntries.credentials.forEach((row) => {
+        //     const serverData = serverCredentialsMap[row.id];
+        //     if (serverData) {
+        //         if (
+        //             new Date(serverData.lastModifiedAt).getTime() >=
+        //             new Date(row.lastModifiedAt).getTime()
+        //         ) {
+        //             newCredentials.push(serverData)
+        //         }
+        //         else newCredentials.push(row);
+
+        //         delete serverCredentialsMap[row.id];
+        //     }
+        //     else newCredentials.push(row)
+        // })
+
+        // console.log("serverTemplatesMap", serverTemplatesMap, serverCredentialsMap)
+
+        // setIsSyncChangesClicked(false);
+        
+        hideBackdrop();
+    }
 
     const toggleTheme = () => {
         let newTheme = (theme === "light") ? "dark" : "light";
@@ -50,7 +138,6 @@ const Header = (props) => {
 
     const handleHomeButtonClick = () => {
         history.push("/");
-        setPath("/");
     }
 
     const handleOnLogin = async () => {
@@ -89,25 +176,23 @@ const Header = (props) => {
     }
 
     const logout = () => {
-        window.gapi.auth2.getAuthInstance().signOut();
         updateLoginStatus(false);
-        updateLocalStore({ dataFileId: '', encryptedData: '' });
+        updateLocalStore({ dataFileId: '', encryptedData: '', password: '' });
 
         closeAccountMenu();
         setUser({ name: '', email: '', image: '' })
 
+        localStorage.removeItem("access");
         localStorage.removeItem("dataFileId");
         localStorage.removeItem("encryptedData");
         localStorage.removeItem("userData");
 
         history.replace("/");
-        setPath('/');
     }
 
     const handleLockButtonClick = async () => {
         const gotoDashboard = () => {
             history.push("/dashboard");
-            setPath("/dashboard");
         }
 
         if (isLoggedIn) gotoDashboard();
@@ -159,13 +244,17 @@ const Header = (props) => {
 
     useEffect(() => {
         if (!encryptedData && gapi.accessTokenCount) handleOnLogin();
+        else if (isSyncChangesClicked) syncChanges()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [encryptedData, gapi.accessTokenCount]);
 
     useEffect(() => {
         let theme = localStorage.getItem('theme');
 
-        if (theme === null) theme = 'light';
+        if (theme === null) {
+            theme = 'dark';
+            localStorage.setItem('theme', theme);
+        }
         setTheme(theme);
     }, [setTheme]);
 
@@ -173,16 +262,6 @@ const Header = (props) => {
         <Box>
             <AppBar position="static" className="main-header" >
                 <Toolbar style={{ minHeight: "5vh" }} >
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ display: { md: "none" } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-
                     <Box style={{ marginRight: "auto", display: "flex" }}>
                         <img
                             src={"/logo.svg"}
@@ -202,7 +281,16 @@ const Header = (props) => {
                     </Box>
 
                     <Box style={{ display: "flex", alignItems: "center" }}>
-                        <Link to="/test" style={{ color: "white" }}>Test</Link>
+                        {/* <Link to="/test" style={{ color: "white" }}>Test</Link> */}
+
+                        {(history.location.pathname !== '/') && <>
+                            <IconButton size="medium" onClick={() => handleSyncButtonClick("updateServer")}>
+                                <ArrowUpwardIcon style={{ color: "white" }} />
+                            </IconButton>
+                            <IconButton size="medium" onClick={() => handleSyncButtonClick("updateClient")}>
+                                <ArrowDownwardIcon style={{ color: "white" }} />
+                            </IconButton>
+                        </>}
 
                         <IconButton size="medium" onClick={toggleTheme} >
                             {(theme === "light") ?
@@ -211,7 +299,7 @@ const Header = (props) => {
                             }
                         </IconButton>
 
-                        {(path === "/") ? <>
+                        {(history.location.pathname === '/') ? <>
                             <IconButton size="medium" onClick={handleLockButtonClick}>
                                 <AccountCircleIcon style={{ color: "white" }} />
                             </IconButton>

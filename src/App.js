@@ -1,4 +1,4 @@
-import { useEffect, forwardRef, useCallback, useContext } from "react";
+import { useEffect, forwardRef, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -8,8 +8,6 @@ import { GlobalStyles } from './GolbalStyles';
 
 import { Backdrop, CircularProgress, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-
-import { GApiContext } from "./api/GApiProvider";
 
 import Header from './Components/Header';
 import Home from './Components/Home';
@@ -24,7 +22,6 @@ const Alert = forwardRef(function Alert(props, ref) {
 });
 
 function App() {
-    const gapi = useContext(GApiContext);
     const history = useHistory();
     const dispatch = useDispatch();
 

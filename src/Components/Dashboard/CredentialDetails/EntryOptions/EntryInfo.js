@@ -7,11 +7,10 @@ import { darkTheme } from '../../../../Theme';
 import { Box, Grid, Typography, Button, Modal, Paper, InputBase } from "@mui/material";
 
 function EntryInfo(props) {
-    const { password } = props;
-
     const dispatch = useDispatch();
 
     const { theme } = useSelector((state) => state.config);
+    const { password } = useSelector((state) => state.localStore);
     const { entryData, savedEntries, templates } = useSelector((state) => state.entries);
 
     const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);

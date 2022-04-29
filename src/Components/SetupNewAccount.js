@@ -35,7 +35,7 @@ function SetupNewAccount(props) {
     const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
     const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
     const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
-    
+
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const [haveAccess, updateAccess] = useState(true);
@@ -62,43 +62,61 @@ function SetupNewAccount(props) {
         showBackdrop();
 
         let initData = JSON.stringify({
-            config: {
-                timer: 5,
-            },
-            templates: [{
-                id: "t1",
-                name: "Default",
-                data: [
-                    { user: "", password: "", website: "" }
-                ],
-                labels: []
-            }],
+            templates: [
+                {
+                    id: "T1",
+                    user: "",
+                    name: "Password",
+                    category: "Passwords",
+                    data: [
+                        { name: "User", value: "", type: "text" },
+                        { name: "Password", value: "", type: "password" },
+                        { name: "Website", value: "", type: "link" }
+                    ],
+        
+                    createdAt: "Thu Dec 30 2021 22:52:56",
+                    lastModifiedAt: "Thu Dec 30 2021 22:52:56"
+                },
+                {
+                    id: "T2",
+                    user: "",
+                    name: "Card",
+                    category: "Cards",
+                    data: {
+                        network: "",
+                        cardName: "",
+                        cardType: "Debit Card",
+                        cardNo: "",
+                        validThru: "",
+                        cardHolderName: "",
+                        CVV: ""
+                    },
+                    cardTheme: "bluePurple",
+        
+                    createdAt: "Fri Apr 30 1999 00:00:00",
+                    lastModifiedAt: "Fri Apr 30 1999 00:00:00"
+                }
+            ],
             credentials: [
                 {
                     id: "C1",
-                    user: "user1",
-                    name: "Credentials 1",
+                    user: "Sample user",
+                    name: "Credentials",
                     category: "Passwords",
                     data: [
-                        { name: "Password", value: "user1 password", type: "password" },
-                        { name: "Website", value: "https://samplesite.com", type: "link" },
-                        { name: "Temporary Key", value: "sd8h677ifsc67e6", type: "hidden" },
-                    ]
+                        { name: "User", value: "Sample user", type: "text" },
+                        { name: "Password", value: "user password", type: "password" },
+                        { name: "Website", value: "https://www.gsecurelock.ml/", type: "link" },
+                        { name: "Hidden Field", value: "You can hide info like this", type: "hidden" },
+                    ],
+                    
+                    createdAt: "Fri Apr 30 1999 00:00:00",
+                    lastModifiedAt: "Fri Apr 30 1999 00:00:00"
                 },
                 {
                     id: "C2",
-                    user: "user2",
-                    name: "Credentials 2",
-                    category: "Passwords",
-                    data: [
-                        { name: "Password", value: "user2 password", type: "password" },
-                        { name: "Website", value: "https://samplesite.com", type: "link" }
-                    ]
-                },
-                {
-                    id: "C3",
-                    user: "user1",
-                    name: "Card 1",
+                    user: "Sample user",
+                    name: "Card",
                     category: "Cards",
                     data: {
                         network: "VISA",
@@ -108,17 +126,11 @@ function SetupNewAccount(props) {
                         validThru: "10/2031",
                         cardHolderName: "Firstname Lastname",
                         CVV: "000"
-                    }
-                },
-                {
-                    id: "C4",
-                    user: "user1",
-                    name: "Testing 1",
-                    category: "Testing",
-                    data: [
-                        { name: "Password", value: "user1 Testing", type: "password" },
-                        { name: "Website", value: "https://samplesite.com", type: "link" }
-                    ]
+                    },
+                    cardTheme: "bluePurple",
+        
+                    createdAt: "Fri Apr 30 1999 00:00:00",
+                    lastModifiedAt: "Fri Apr 30 1999 00:00:00"
                 }
             ]
         });

@@ -1,4 +1,9 @@
 const cardThemes = {
+    default: {
+        background: "linear-gradient(to right, #4776e6, #8e54e9)",
+        color: "white"
+    },
+
     purpleBlack: {
         background: "linear-gradient(90deg, rgba(0,19,36,1) 0%, rgba(67,9,121,1) 50%, rgba(191,0,255,1) 100%)",
         color: "white"

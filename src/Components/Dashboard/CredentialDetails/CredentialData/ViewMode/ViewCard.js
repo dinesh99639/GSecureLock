@@ -24,11 +24,13 @@ function ViewCard(props) {
         props.saveEntry();
         updateEntryOptionsMode("EntryOptions");
     }
+    
+    const theme = cardThemes[entryData.cardTheme] ?? cardThemes["default"];
 
     return (<Box style={{ overflowY: "auto", height: "83vh" }} >
         <Paper
             style={{
-                ...cardThemes[entryData.cardTheme],
+                ...theme,
                 position: "relative",
                 width: "75%",
                 padding: "20%",

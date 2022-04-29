@@ -114,10 +114,8 @@ function CredentialData(props) {
     const classes = useInputStyles();
     const tableStyles = useTableStyling();
 
-    const { password } = props;
-
     const { theme } = useSelector((state) => state.config);
-    const { dataFileId } = useSelector((state) => state.localStore);
+    const { password, dataFileId } = useSelector((state) => state.localStore);
     const { isEditMode, categories, drafts, entryData, savedEntries, modifiedEntries, selectedEntryIndex, entriesById, selectedEntryId, templates, categoriesCount } = useSelector((state) => state.entries);
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
@@ -272,6 +270,7 @@ function CredentialData(props) {
         newSavedEntries[selectedEntryIndex] = newEntryData;
         newmodifiedEntries[selectedEntryIndex] = newEntryData;
 
+        console.log(password)
         let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
 
         updateLocalStore({ dataFileId, encryptedData });

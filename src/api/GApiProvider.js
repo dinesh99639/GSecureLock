@@ -11,7 +11,7 @@ export function GApiProvider(props) {
 
     const [gapi, updateGapi] = useState(null);
     const [client, updateClient] = useState(null);
-    const [access_token, updateAccessToken] = useState(null);
+    const [access, updateAccess] = useState(null);
     const [accessTokenCount, setAccessTokenCount] = useState(0);
 
     const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
@@ -23,11 +23,14 @@ export function GApiProvider(props) {
             prompt: '',
             callback: (tokenResponse) => {
                 if (tokenResponse?.access_token) {
-                    updateAccessToken(tokenResponse.access_token);
+                    const newAccess = { 
+                        token: tokenResponse.access_token, 
+                        expiresAt: new Date().getTime() + 3000000 
+                    }
+                    updateAccess(newAccess);
+                    localStorage.setItem("access", JSON.stringify(newAccess));
                     updateLoginStatus(true);
-                    setAccessTokenCount(accessTokenCount + 1);
-
-                    console.log(tokenResponse)
+                    setAccessTokenCount((accessTokenCount) => accessTokenCount + 1);
                 }
             }
         });
@@ -62,12 +65,13 @@ export function GApiProvider(props) {
         accessTokenCount: accessTokenCount,
 
         getAccessToken: () => client.requestAccessToken(),
-        revokeToken: () => gapi.accounts.oauth2.revoke(access_token, () => { console.log('access token revoked') }),
+        isAccessTokenValid: () => (!!access) ? access.expiresAt > (new Date().getTime()) : false,
+        revokeToken: () => gapi.accounts.oauth2.revoke(access.token, () => { console.log('access token revoked') }),
 
         getUserData: async () => {
             const url = 'https://www.googleapis.com/drive/v3/about?fields=user';
             const headers = {
-                'Authorization': 'Bearer ' + access_token,
+                'Authorization': 'Bearer ' + access.token,
                 'Accept': 'application/json'
             }
 
@@ -77,7 +81,7 @@ export function GApiProvider(props) {
         getAllFiles: async () => {
             const url = 'https://www.googleapis.com/drive/v3/files?pageSize=100&spaces=appDataFolder';
             const headers = {
-                'Authorization': 'Bearer ' + access_token,
+                'Authorization': 'Bearer ' + access.token,
                 'Accept': 'application/json'
             }
 
@@ -87,7 +91,7 @@ export function GApiProvider(props) {
         createFile: async () => {
             const url = 'https://www.googleapis.com/drive/v3/files?alt=json';
             const headers = {
-                'Authorization': 'Bearer ' + access_token,
+                'Authorization': 'Bearer ' + access.token,
                 'Accept': 'application/json'
             }
             const data = {
@@ -101,7 +105,7 @@ export function GApiProvider(props) {
         removeAllFiles: async function () {
             const url = 'https://www.googleapis.com/drive/v3/files/';
             const headers = {
-                'Authorization': 'Bearer ' + access_token,
+                'Authorization': 'Bearer ' + access.token,
                 'Accept': 'application/json'
             }
             let files = await this.getAllFiles();
@@ -116,7 +120,7 @@ export function GApiProvider(props) {
         updateFile: async (fileId, data) => {
             const url = 'https://www.googleapis.com/upload/drive/v3/files/' + fileId;
             const headers = {
-                'Authorization': 'Bearer ' + access_token,
+                'Authorization': 'Bearer ' + access.token,
                 'Accept': 'application/json'
             }
             const params = { 'uploadType': 'multipart', 'alt': 'json' }
@@ -127,7 +131,7 @@ export function GApiProvider(props) {
         downloadFile: async (fileId) => {
             const url = 'https://www.googleapis.com/drive/v3/files/' + fileId + "/?alt=media";
             const headers = {
-                'Authorization': 'Bearer ' + access_token,
+                'Authorization': 'Bearer ' + access.token,
                 'Accept': 'application/json'
             }
 
@@ -137,6 +141,9 @@ export function GApiProvider(props) {
 
     useEffect(() => {
         loadGoogleApi();
+
+        const access = localStorage.getItem("access");
+        if (access) updateAccess(JSON.parse(access));
     }, [loadGoogleApi])
 
     return (<GApiContext.Provider value={functions}>{props.children}</GApiContext.Provider>);

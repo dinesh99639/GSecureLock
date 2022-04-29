@@ -36,11 +36,12 @@ const RemainingProgress = (props) => {
 function Timebar(props) {
     const dispatch = useDispatch();
 
-    const { updatePassword, updateIsSessionLocked } = props;
+    const { updateIsSessionLocked } = props;
 
     const lockTime = useSelector((state) => state.lockTime);
     const updateLockTime = useCallback((lockTime) => dispatch({ type: "updateLockTime", payload: { lockTime } }), [dispatch]);
-
+    const updatePassword = useCallback((password) => dispatch({ type: "updatePassword", payload: { password } }), [dispatch]);
+    
     const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
     const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
 

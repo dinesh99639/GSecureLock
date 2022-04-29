@@ -18,6 +18,7 @@ const initState = {
     localStore: {
         dataFileId: null,
         encryptedData: '',
+        password: '',
     },
 
     entries: {
@@ -61,7 +62,8 @@ function reducer(state = initState, action) {
         case "updateLockTime": return { ...state, lockTime: { ...props.lockTime } }
 
         // LocalStore
-        case "updateLocalStore": return { ...state, localStore: { ...props.localStore } }
+        case "updateLocalStore": return { ...state, localStore: { ...state.localStore, ...props.localStore } }
+        case "updatePassword": return { ...state, localStore: { ...state.localStore, password: props.password } }
 
         // Entries
         case "updateEditModeStatus": return { ...state, entries: { ...state.entries, isEditMode: props.isEditMode } }
