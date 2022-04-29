@@ -14,6 +14,7 @@ import Home from './Components/Home';
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Account from "./Components/Account/Account";
 import SetupNewAccount from "./Components/SetupNewAccount";
+import PrivacyPolicy from "./Components/PrivacyPolicy";
 import Test from "./Components/Test";
 
 
@@ -72,6 +73,7 @@ function App() {
                     <Route path="/account" component={Account} />
                     <Route path="/setup_account" component={SetupNewAccount} />
                     <Route path="/test" component={Test} />
+                    <Route path="/privacy_policy" component={PrivacyPolicy} />
                     <Route path="/" component={Home} />
                 </Switch>
             </>)}

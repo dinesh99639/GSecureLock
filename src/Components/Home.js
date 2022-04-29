@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import { darkTheme, lightTheme } from '../Theme';
 
@@ -16,7 +17,7 @@ import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
 function Feature(props) {
     const { theme, title, description, Icon } = props
     return (<Grid item xs={3} sx={{ padding: "10px", display: "flex", justifyContent: "center" }} >
-        <Paper 
+        <Paper
             elevation={2}
             sx={{
                 width: "100%",
@@ -35,7 +36,7 @@ function Feature(props) {
                     alignItems: "center",
                     height: "100px"
                 }}
-                >
+            >
                 <Box
                     sx={{
                         backgroundColor: "#1c88f4c9",
@@ -46,12 +47,12 @@ function Feature(props) {
                     <Icon style={{ fontSize: "40px", color: "white" }} />
                 </Box>
             </Box>
-            <Typography 
-                sx={{ 
+            <Typography
+                sx={{
                     textAlign: "center",
                     marginTop: "10px",
                     fontWeight: "bold"
-                }} 
+                }}
             >{title}</Typography>
             <Typography sx={{ padding: "5px 10px", fontSize: "14px", textAlign: "center" }} >{description}</Typography>
         </Paper>
@@ -59,6 +60,7 @@ function Feature(props) {
 }
 
 function Home() {
+    const history = useHistory();
     const isDesktop = window.innerWidth > 760;
 
     const { theme } = useSelector((state) => ({ ...state.config }));
@@ -91,9 +93,9 @@ function Home() {
                                     textAlign: "justify"
                                 }}
                             >
-                                An open source application for managing your Passwords, Cards, Coupons, API Keys at one place. Your entries will be saved in your own Google Drive - App Data. 
+                                An open source application for managing your Passwords, Cards, Coupons, API Keys at one place. Your entries will be saved in your own Google Drive - App Data.
                             </Typography>
-                            
+
                             <Box sx={{ marginLeft: "-8px" }} >
                                 <Tooltip title="Github" arrow>
                                     <IconButton href="https://github.com/dinesh99639/GSecureLock" target="_blank"><GitHubIcon sx={{ color: (theme === "dark") ? "rgba(255, 255, 255, 0.76)" : "" }} /></IconButton>
@@ -161,7 +163,7 @@ function Home() {
                                         alt="logo"
                                         style={{
                                             width: "70px",
-                                            filter: (theme === "dark") ? "brightness(10000%)": "brightness(0%)"
+                                            filter: (theme === "dark") ? "brightness(10000%)" : "brightness(0%)"
                                         }}
                                     />
                                     <Typography
@@ -175,7 +177,7 @@ function Home() {
                         </Box>
                     </Grid>
                 </Grid>
-                
+
                 <Box>
                     <Typography sx={{ textAlign: "center", fontSize: "18px", margin: "15px 0 0 0" }} >Features</Typography>
                     <Grid container sx={{ padding: "0 10px", display: "flex", justifyContent: "center" }} >
@@ -193,6 +195,21 @@ function Home() {
                     <Typography sx={{ textAlign: "center", fontSize: "14px", margin: "15px 0 0 0" }} >List of contributers will appear here.<br />Contributions are most welcome.</Typography>
                 </Box>
 
+                <Box sx={{ textAlign: "center" }}>
+                    <Typography
+                        sx={{
+                            margin: "10px 0 0 0",
+                            fontSize: "13px",
+                            textAlign: "center",
+                            cursor: "pointer",
+
+                            "&&:hover": {
+                                textDecoration: "underline"
+                            }
+                        }}
+                        onClick={() => history.push('/privacy_policy')}
+                    >Privacy Policy</Typography>
+                </Box>
                 <Box sx={{ padding: "20px 0" }} ></Box>
             </Box>
         </> : <>
