@@ -1,6 +1,6 @@
 <p align="center">
  <img width="100px" src="./public/logo.svg" alt="GSecureLock" />
- <p style="font-size: 20.5px" align="center">GSecureLock</p>
+ <h2 align="center">GSecureLock</h2>
  <p align="center">A Secure password Manager</p>
 </p>
   <p align="center">
