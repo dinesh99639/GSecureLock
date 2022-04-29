@@ -27,7 +27,6 @@
 <p align="center">Release on April 30, 2022</p>
 
 ## Features
-<hr />
 
 - Master Password
 - Manage Templates
@@ -37,13 +36,11 @@
 - Export
 
 ## Live site
-<hr />
 
 Application is hosted on vercel
 
 > https://www.gsecurelock.ml/
 
 ## Contributions
-<hr />
 
 Contributions are welcome.
