@@ -7,6 +7,28 @@ import { darkTheme } from "../../../../Theme";
 
 import { Box, Select, MenuItem, Typography, Button } from "@mui/material";
 
+const chooseRandom = (string, length) => {
+    var chars = '';
+    for (var i = 0; i < length; i++) {
+        chars += string.charAt(Math.floor(Math.random() * length));
+    }
+    return chars;
+}
+
+const shuffle = (string) => {
+    var array = string.split('');
+    var tmp, current, top = array.length;
+
+    if (top) while (--top) {
+        current = Math.floor(Math.random() * (top + 1));
+        tmp = array[current];
+        array[current] = array[top];
+        array[top] = tmp;
+    }
+
+    return array.join('');
+};
+
 const useSelectStyles = makeStyles({
     paper: {
         background: props => (props.theme === "dark") ? darkTheme.backgroundColor : "white",
@@ -54,6 +76,9 @@ function FieldOptions(props) {
     const updateSelectedFieldIndex = useCallback((selectedFieldIndex) => dispatch({ type: "updateSelectedFieldIndex", payload: { selectedFieldIndex } }), [dispatch]);
     const updateEntryData = useCallback((entryData) => dispatch({ type: "updateEntryData", payload: { entryData } }), [dispatch]);
 
+    const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
+    const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
+
     const selectStyles = useSelectStyles({ theme });
     const generatePasswordBtnStyles = useGeneratePasswordBtn();
     const removeFieldBtnStyles = useRemoveFieldBtn();
@@ -63,6 +88,26 @@ function FieldOptions(props) {
         newEntryData.data[selectedFieldIndex].type = e.target.value;
 
         updateEntryData(newEntryData);
+    }
+
+    const generatePassword = () => {
+        var specials = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
+        var lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        var uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var numbers = '0123456789';
+
+        var password = '';
+        password += chooseRandom(specials, 3);
+        password += chooseRandom(uppercase, 3);
+        password += chooseRandom(lowercase, 4);
+        password += chooseRandom(numbers, 3);
+        password = shuffle(password);
+
+        let newEntryData = { ...entryData };
+        newEntryData.data[selectedFieldIndex].value = password;
+
+        updateEntryData(newEntryData);
+        showSnack("success", "New password: " + password);
     }
 
     const removeField = () => {
@@ -126,6 +171,7 @@ function FieldOptions(props) {
                     {(entryData.data[selectedFieldIndex].type === "password") ? <>
                         <Button
                             className={generatePasswordBtnStyles.root}
+                            onClick={generatePassword}
                         >Generate Password</Button>
                     </> : null}
 
