@@ -270,7 +270,6 @@ function CredentialData(props) {
         newSavedEntries[selectedEntryIndex] = newEntryData;
         newmodifiedEntries[selectedEntryIndex] = newEntryData;
 
-        console.log(password)
         let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
 
         updateLocalStore({ dataFileId, encryptedData });
@@ -364,25 +363,28 @@ function CredentialData(props) {
                     />
 
                     <Box>
-                        <IconButton
-                            size="small"
-                            style={{
-                                color: "inherit",
-                                margin: "0 5px",
-                                padding: 0
-                            }}
-                            onClick={() => saveEntry()}
-                        ><SaveIcon /></IconButton>
-
-                        <IconButton
-                            size="small"
-                            style={{
-                                color: "red",
-                                margin: "0 5px",
-                                padding: 0
-                            }}
-                            onClick={() => openDeleteConfirmationModal(entryData.name)}
-                        ><DeleteOutlinedIcon /></IconButton>
+                        <Tooltip title={"Save"} placement="bottom" >
+                            <IconButton
+                                size="small"
+                                style={{
+                                    color: "inherit",
+                                    margin: "0 5px",
+                                    padding: 0
+                                }}
+                                onClick={() => saveEntry()}
+                            ><SaveIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title={"Delete"} placement="bottom" >
+                            <IconButton
+                                size="small"
+                                style={{
+                                    color: "red",
+                                    margin: "0 5px",
+                                    padding: 0
+                                }}
+                                onClick={() => openDeleteConfirmationModal(entryData.name)}
+                            ><DeleteOutlinedIcon /></IconButton>
+                        </Tooltip>
                     </Box>
                 </Box>
 
@@ -441,15 +443,19 @@ function CredentialData(props) {
                         <Typography className="noOverflow" style={{ fontWeight: "bold", flex: 1 }} >{entryData.name}</Typography>
                     </Tooltip>
                     <Box>
-                        <IconButton 
-                            size="small" 
-                            style={{ color: "#009dcd", margin: "0 5px", padding: 0 }} 
-                            onClick={() => {
-                                updateEditModeStatus(true);
-                                updateEntryOptionsMode("EntryOptions");
-                            }} 
+                        <Tooltip title={"Edit"} placement="bottom" >
+                            <IconButton
+                                size="small"
+                                style={{ color: "#009dcd", margin: "0 5px", padding: 0 }}
+                                onClick={() => {
+                                    updateEditModeStatus(true);
+                                    updateEntryOptionsMode("EntryOptions");
+                                }}
                             ><EditOutlinedIcon /></IconButton>
-                        <IconButton size="small" onClick={() => openDeleteConfirmationModal(entryData.name)} style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title={"Delete"} placement="bottom" >
+                            <IconButton size="small" onClick={() => openDeleteConfirmationModal(entryData.name)} style={{ color: "red", margin: "0 5px", padding: 0 }} ><DeleteOutlinedIcon /></IconButton>
+                        </Tooltip>
                     </Box>
                 </Box>
 
