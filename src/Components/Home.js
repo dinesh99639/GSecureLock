@@ -213,7 +213,29 @@ function Home() {
                 <Box sx={{ padding: "20px 0" }} ></Box>
             </Box>
         </> : <>
-            Mobile version of the app will be launched soon
+            <Box
+                style={{
+                    height: "100%",
+                    margin: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <img
+                    src={"/logo.svg"}
+                    alt="logo"
+                    style={{
+                        margin: "10px 0",
+                        width: "70px",
+                        filter: (theme === "dark") ? "brightness(10000%)" : "brightness(0%)"
+                    }}
+                />
+                <Typography style={{ fontSize: "25px" }} >GSecureLock</Typography>
+                <Typography style={{ fontSize: "14.5px" }} >A secure password manager</Typography>
+                <Typography style={{ fontSize: "14.5px", margin: "40px 0" }} >Mobile version of the app will be launched soon</Typography>
+            </Box>
         </>}
     </>);
 }

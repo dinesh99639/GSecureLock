@@ -17,6 +17,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 const Header = (props) => {
+    const isDesktop = window.innerWidth > 760;
     const gapi = useContext(GApiContext);
     const history = useHistory();
 
@@ -299,80 +300,82 @@ const Header = (props) => {
                             }
                         </IconButton>
 
-                        {(history.location.pathname === '/') ? <>
-                            <IconButton size="medium" onClick={handleLockButtonClick}>
-                                <AccountCircleIcon style={{ color: "white" }} />
-                            </IconButton>
-                        </> : <>
-                            <IconButton
-                                aria-controls="menu-appbar"
-                                onClick={openAccountMenu}
-                            >
-                                <Avatar alt={user.name} src={user.image} sx={{ width: 25, height: 25, margin: "auto 5px", fontSize: "15px", backgroundColor: "rgba(0, 0, 0, 0.2)" }} />
-                            </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                sx={{
-                                    "& .MuiMenu-paper": {
-                                        width: "200px",
-                                        backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : "white",
-                                        color: "inherit"
-                                    }
-                                }}
-                                anchorEl={accountAnchorEl}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(accountAnchorEl)}
-                                onClose={closeAccountMenu}
-                            >
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center"
-                                    }}
+                        {(isDesktop) && <>
+                            {(history.location.pathname === '/') ? <>
+                                <IconButton size="medium" onClick={handleLockButtonClick}>
+                                    <AccountCircleIcon style={{ color: "white" }} />
+                                </IconButton>
+                            </> : <>
+                                <IconButton
+                                    aria-controls="menu-appbar"
+                                    onClick={openAccountMenu}
                                 >
-                                    <Avatar alt={user.name} src={user.image} sx={{ width: 76, height: 76, margin: "auto 5px", fontSize: "30px", backgroundColor: "rgba(0, 0, 0, 0.2)" }} />
-                                    <Typography sx={{ fontSize: "15px", margin: "5px 0 0 0", textAlign: "center" }} >{user.name}</Typography>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "12px",
-                                            opacity: 0.76,
-                                            textAlign: "center"
-                                        }}
-                                    >@{user.email.split("@")[0]}</Typography>
-                                </Box>
-                                <Divider sx={{ backgroundColor: "inehrit", width: "100%", margin: "3px" }} />
-                                <MenuItem onClick={openAccountSettings}>
-                                    <AccountCircleIcon fontSize='small' />
-                                    <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Account</Typography>
-                                </MenuItem>
-                                <MenuItem onClick={logout}>
-                                    <LogoutIcon fontSize='small' />
-                                    <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Sign out</Typography>
-                                </MenuItem>
-
-                                <Typography
+                                    <Avatar alt={user.name} src={user.image} sx={{ width: 25, height: 25, margin: "auto 5px", fontSize: "15px", backgroundColor: "rgba(0, 0, 0, 0.2)" }} />
+                                </IconButton>
+                                <Menu
+                                    id="menu-appbar"
                                     sx={{
-                                        margin: "10px 0 0 0",
-                                        fontSize: "13px",
-                                        textAlign: "center",
-                                        cursor: "pointer",
-
-                                        "&&:hover": {
-                                            textDecoration: "underline"
+                                        "& .MuiMenu-paper": {
+                                            width: "200px",
+                                            backgroundColor: (theme === "dark") ? darkTheme.backgroundColor : "white",
+                                            color: "inherit"
                                         }
                                     }}
-                                    onClick={openGithubProject}
-                                >Github Project</Typography>
-                            </Menu>
+                                    anchorEl={accountAnchorEl}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={Boolean(accountAnchorEl)}
+                                    onClose={closeAccountMenu}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        <Avatar alt={user.name} src={user.image} sx={{ width: 76, height: 76, margin: "auto 5px", fontSize: "30px", backgroundColor: "rgba(0, 0, 0, 0.2)" }} />
+                                        <Typography sx={{ fontSize: "15px", margin: "5px 0 0 0", textAlign: "center" }} >{user.name}</Typography>
+                                        <Typography
+                                            sx={{
+                                                fontSize: "12px",
+                                                opacity: 0.76,
+                                                textAlign: "center"
+                                            }}
+                                        >@{user.email.split("@")[0]}</Typography>
+                                    </Box>
+                                    <Divider sx={{ backgroundColor: "inehrit", width: "100%", margin: "3px" }} />
+                                    <MenuItem onClick={openAccountSettings}>
+                                        <AccountCircleIcon fontSize='small' />
+                                        <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Account</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={logout}>
+                                        <LogoutIcon fontSize='small' />
+                                        <Typography sx={{ padding: "0 0 0 7px", fontSize: "14px" }} >Sign out</Typography>
+                                    </MenuItem>
+
+                                    <Typography
+                                        sx={{
+                                            margin: "10px 0 0 0",
+                                            fontSize: "13px",
+                                            textAlign: "center",
+                                            cursor: "pointer",
+
+                                            "&&:hover": {
+                                                textDecoration: "underline"
+                                            }
+                                        }}
+                                        onClick={openGithubProject}
+                                    >Github Project</Typography>
+                                </Menu>
+                            </>}
                         </>}
                     </Box>
                 </Toolbar>
