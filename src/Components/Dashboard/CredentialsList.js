@@ -26,12 +26,12 @@ function CredentialsList(props) {
     const updateSavedEntries = useCallback((savedEntries) => dispatch({ type: "updateSavedEntries", payload: { savedEntries } }), [dispatch]);
     const updateModifiedEntries = useCallback((modifiedEntries) => dispatch({ type: "updateModifiedEntries", payload: { modifiedEntries } }), [dispatch]);
     const updateNewEntryId = useCallback((newEntryId) => dispatch({ type: "updateNewEntryId", payload: { newEntryId } }), [dispatch]);
-    
+
     const updateSelectedCategory = useCallback((selectedCategory) => dispatch({ type: "updateSelectedCategory", payload: { selectedCategory } }), [dispatch]);
 
     const updateEditModeStatus = useCallback((isEditMode) => dispatch({ type: "updateEditModeStatus", payload: { isEditMode } }), [dispatch]);
     const updateIsTemplateMode = useCallback((isTemplateMode) => dispatch({ type: "updateIsTemplateMode", payload: { isTemplateMode } }), [dispatch]);
-    
+
     const updateSelectedEntryId = useCallback((selectedEntryId) => dispatch({ type: "updateSelectedEntryId", payload: { selectedEntryId } }), [dispatch]);
 
     const updateSelectedEntryIndex = useCallback((selectedEntryIndex) => dispatch({ type: "updateSelectedEntryIndex", payload: { selectedEntryIndex } }), [dispatch]);
@@ -82,7 +82,7 @@ function CredentialsList(props) {
 
     const addNewEntry = (newEntryData) => {
         let id = "C" + new Date().getTime();
-        
+
         if (!newEntryData) {
             newEntryData = {
                 id,
@@ -90,7 +90,7 @@ function CredentialsList(props) {
                 name: "Untitled",
                 category: (selectedCategory === "All") ? "Passwords" : selectedCategory,
                 data: (selectedCategory === "Cards") ? initData.cardData : [],
-    
+
                 createdAt: new Date().toString().substring(0, 24),
                 lastModifiedAt: new Date().toString().substring(0, 24)
             }
@@ -204,8 +204,10 @@ function CredentialsList(props) {
                     ><HorizontalSplitIcon /></IconButton>
                 </Tooltip>
             </Box>
-
-            <Box style={{ overflowY: "auto", height: "87vh" }} >
+            <Box className="borderBottom" style={{ textAlign: "center", padding: "5px 0" }} >
+                {(isTemplateMode) ? "Templates" : "Entries"}
+            </Box>
+            <Box style={{ overflowY: "auto", height: "83vh" }} >
                 {
                     entries.map((entry, index) => {
                         return <Box
