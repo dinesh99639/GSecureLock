@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from "@mui/styles";
 
 import crypto from '../../Utils/crypto';
+import { GApiContext } from "../../api/GApiProvider";
 
 import { Typography, TextField, Box, Button } from "@mui/material";
 
@@ -18,6 +19,7 @@ const useStyles = makeStyles({
 });
 
 function RemoveAccount(props) {
+    const gapi = useContext(GApiContext);
     const dispatch = useDispatch();
     const history = useHistory();
     const classes = useStyles();
@@ -28,23 +30,43 @@ function RemoveAccount(props) {
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
+    
+    const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
+    const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
+    const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
 
-    const removeAccount = () => {
+    const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
+
+    const setUser = useCallback((user) => dispatch({ type: "setUser", payload: { user } }), [dispatch]);
+
+    const removeAccount = async () => {
+        showBackdrop();
+
         try {
             JSON.parse(crypto.decrypt(encryptedData, sessionPassword));
 
-            // - Remove all files in server
-            // - Remove google session
+            await gapi.removeAllFiles()
+
+            updateLoginStatus(false);
+            updateLocalStore({ dataFileId: '', encryptedData: '', password: '' });
+
+            setUser({ name: '', email: '', image: '' })
+
+            localStorage.removeItem("access");
             localStorage.removeItem("dataFileId");
             localStorage.removeItem("encryptedData");
             localStorage.removeItem("userData");
-            history.push("/");
+
+            history.replace("/");
 
             showSnack("success", "Account removed successfully");
         }
         catch {
             showSnack("error", "Wrong session password");
         }
+
+        hideBackdrop();
     }
 
     return (<>
