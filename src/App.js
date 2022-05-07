@@ -28,10 +28,6 @@ function App() {
 
     const { theme, isLoading, snack, isLoggedIn } = useSelector((state) => ({ ...state.config }));
 
-    const updateLoadingStatus = useCallback((isLoading) => dispatch({ type: "updateLoadingStatus", payload: { isLoading } }), [dispatch]);
-    const showBackdrop = useCallback(() => updateLoadingStatus(true), [updateLoadingStatus]);
-    const hideBackdrop = useCallback(() => updateLoadingStatus(false), [updateLoadingStatus]);
-
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const hideSnack = (event, reason) => (reason !== 'clickaway') ? updateSnack({ open: false }) : null;
 
@@ -54,11 +50,6 @@ function App() {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateLocalStore, updateLoginStatus]);
-
-    useEffect(() => {
-        if (isLoggedIn === null) showBackdrop();
-        else hideBackdrop();
-    }, [isLoggedIn, showBackdrop, hideBackdrop]);
 
 
     return (<>

@@ -24,7 +24,7 @@ const Header = (props) => {
     const dispatch = useDispatch();
 
     const { theme, user, isLoggedIn } = useSelector((state) => state.config);
-    const { dataFileId, encryptedData } = useSelector((state) => state.localStore);
+    const { dataFileId, encryptedData, password } = useSelector((state) => state.localStore);
 
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
     const setUser = useCallback((user) => dispatch({ type: "setUser", payload: { user } }), [dispatch]);
@@ -43,93 +43,82 @@ const Header = (props) => {
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
     const closeAccountMenu = () => setAccountAnchorEl(null);
 
-    const [isSyncChangesClicked, setIsSyncChangesClicked] = useState(false);
-    const [updateType, setUpdateType] = useState(false);
-
-    const handleSyncButtonClick = (updateType) => {
-        showBackdrop();
-
-        if (gapi.isAccessTokenValid()) syncChanges(updateType)
-        else {
-            setUpdateType(updateType)
-            setIsSyncChangesClicked(true);
-            gapi.getAccessToken();
-        }
-    }
-
     const updateServer = async () => {
+        showBackdrop();
         await gapi.updateFile(dataFileId, encryptedData);
-    }
-    
-    const updateClient = async () => {
-        const encryptedData = await gapi.downloadFile(dataFileId);
-        console.log(encryptedData)
-        localStorage.setItem('encryptedData', encryptedData.data);
-        window.location = '';
-    }
-
-    const syncChanges = async (type) => {
-        if (type) {
-            if (type === "updateServer") await updateServer();
-            else if (type === "updateClient") await updateClient();
-        }
-        else {
-            if (updateType === "updateServer") await updateServer();
-            else if (updateType === "updateClient") await updateClient();
-        }
-        // let serverEncryptedData = await gapi.downloadFile(dataFileId);
-        // serverEncryptedData = serverEncryptedData.data;
-        
-        // let serverEntries = JSON.parse(crypto.decrypt(serverEncryptedData, password));
-        // let serverTemplatesMap = {};
-        // let serverCredentialsMap = {};
-        // serverEntries.templates.forEach((row) => {
-        //     serverTemplatesMap[row.id] = row;
-        // })
-        // serverEntries.credentials.forEach((row) => {
-        //     serverCredentialsMap[row.id] = row;
-        // })
-
-        // let clientEntries = JSON.parse(crypto.decrypt(encryptedData, password));
-        // let newTemplates = [];
-        // let newCredentials = [];
-        // clientEntries.templates.forEach((row) => {
-        //     const serverData = serverTemplatesMap[row.id];
-        //     if (serverData) {
-        //         if (
-        //             new Date(serverData.lastModifiedAt).getTime() >=
-        //             new Date(row.lastModifiedAt).getTime()
-        //         ) {
-        //             newTemplates.push(serverData);
-        //         }
-        //         else newTemplates.push(row);
-
-        //         delete serverTemplatesMap[row.id];
-        //     }
-        //     else newTemplates.push(row);
-        // })
-        // clientEntries.credentials.forEach((row) => {
-        //     const serverData = serverCredentialsMap[row.id];
-        //     if (serverData) {
-        //         if (
-        //             new Date(serverData.lastModifiedAt).getTime() >=
-        //             new Date(row.lastModifiedAt).getTime()
-        //         ) {
-        //             newCredentials.push(serverData)
-        //         }
-        //         else newCredentials.push(row);
-
-        //         delete serverCredentialsMap[row.id];
-        //     }
-        //     else newCredentials.push(row)
-        // })
-
-        // console.log("serverTemplatesMap", serverTemplatesMap, serverCredentialsMap)
-
-        // setIsSyncChangesClicked(false);
-        
         hideBackdrop();
     }
+
+    const updateClient = async () => {
+        showBackdrop();
+        const encryptedData = await gapi.downloadFile(dataFileId);
+        localStorage.setItem('encryptedData', encryptedData.data);
+        window.location = '';
+        hideBackdrop();
+    }
+
+    // const syncChanges = async (type) => {
+    //     if (type) {
+    //         if (type === "updateServer") await updateServer();
+    //         else if (type === "updateClient") await updateClient();
+    //     }
+    //     else {
+    //         if (updateType === "updateServer") await updateServer();
+    //         else if (updateType === "updateClient") await updateClient();
+    //     }
+    //     // let serverEncryptedData = await gapi.downloadFile(dataFileId);
+    //     // serverEncryptedData = serverEncryptedData.data;
+
+    //     // let serverEntries = JSON.parse(crypto.decrypt(serverEncryptedData, password));
+    //     // let serverTemplatesMap = {};
+    //     // let serverCredentialsMap = {};
+    //     // serverEntries.templates.forEach((row) => {
+    //     //     serverTemplatesMap[row.id] = row;
+    //     // })
+    //     // serverEntries.credentials.forEach((row) => {
+    //     //     serverCredentialsMap[row.id] = row;
+    //     // })
+
+    //     // let clientEntries = JSON.parse(crypto.decrypt(encryptedData, password));
+    //     // let newTemplates = [];
+    //     // let newCredentials = [];
+    //     // clientEntries.templates.forEach((row) => {
+    //     //     const serverData = serverTemplatesMap[row.id];
+    //     //     if (serverData) {
+    //     //         if (
+    //     //             new Date(serverData.lastModifiedAt).getTime() >=
+    //     //             new Date(row.lastModifiedAt).getTime()
+    //     //         ) {
+    //     //             newTemplates.push(serverData);
+    //     //         }
+    //     //         else newTemplates.push(row);
+
+    //     //         delete serverTemplatesMap[row.id];
+    //     //     }
+    //     //     else newTemplates.push(row);
+    //     // })
+    //     // clientEntries.credentials.forEach((row) => {
+    //     //     const serverData = serverCredentialsMap[row.id];
+    //     //     if (serverData) {
+    //     //         if (
+    //     //             new Date(serverData.lastModifiedAt).getTime() >=
+    //     //             new Date(row.lastModifiedAt).getTime()
+    //     //         ) {
+    //     //             newCredentials.push(serverData)
+    //     //         }
+    //     //         else newCredentials.push(row);
+
+    //     //         delete serverCredentialsMap[row.id];
+    //     //     }
+    //     //     else newCredentials.push(row)
+    //     // })
+
+    //     // console.log("serverTemplatesMap", serverTemplatesMap, serverCredentialsMap)
+
+    //     // setIsSyncChangesClicked(false);
+
+    //     hideBackdrop();
+    // }
 
     const toggleTheme = () => {
         let newTheme = (theme === "light") ? "dark" : "light";
@@ -146,9 +135,9 @@ const Header = (props) => {
 
         let dataFileId = null;
         let encryptedData = '';
-
+        
         let res = await gapi.getAllFiles();
-
+        
         if (res.success) {
             if (res.data.files.length === 0) {
                 res = await gapi.createFile()
@@ -162,7 +151,7 @@ const Header = (props) => {
             encryptedData = res.data;
 
             updateLoginStatus(true);
-            updateLocalStore({ dataFileId, encryptedData });
+            updateLocalStore({ dataFileId, encryptedData, password });
             localStorage.setItem('encryptedData', encryptedData);
 
             if (!encryptedData) history.push("/setup_account");
@@ -171,7 +160,7 @@ const Header = (props) => {
         else {
             showSnack("error", "Unable to get data, please refresh");
         }
-
+        
         hideBackdrop();
         return true;
     }
@@ -192,12 +181,8 @@ const Header = (props) => {
     }
 
     const handleLockButtonClick = async () => {
-        const gotoDashboard = () => {
-            history.push("/dashboard");
-        }
-
-        if (isLoggedIn) gotoDashboard();
-        else gapi.getAccessToken()
+        if (isLoggedIn) history.push("/dashboard");
+        else handleOnLogin();
     }
 
     const openAccountSettings = () => {
@@ -244,12 +229,6 @@ const Header = (props) => {
     }, [isLoggedIn, setUser]);
 
     useEffect(() => {
-        if (!encryptedData && gapi.accessTokenCount) handleOnLogin();
-        else if (isSyncChangesClicked) syncChanges()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [encryptedData, gapi.accessTokenCount]);
-
-    useEffect(() => {
         let theme = localStorage.getItem('theme');
 
         if (theme === null) {
@@ -285,10 +264,10 @@ const Header = (props) => {
                         {/* <Link to="/test" style={{ color: "white" }}>Test</Link> */}
 
                         {(history.location.pathname !== '/') && <>
-                            <IconButton size="medium" onClick={() => handleSyncButtonClick("updateServer")}>
+                            <IconButton size="medium" onClick={updateServer}>
                                 <ArrowUpwardIcon style={{ color: "white" }} />
                             </IconButton>
-                            <IconButton size="medium" onClick={() => handleSyncButtonClick("updateClient")}>
+                            <IconButton size="medium" onClick={updateClient}>
                                 <ArrowDownwardIcon style={{ color: "white" }} />
                             </IconButton>
                         </>}
