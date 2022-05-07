@@ -1,12 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import { GApiProvider } from './api/GApiProvider';
 import StoreProvider from './Store/StoreProvider';
 import App from './App';
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
     <BrowserRouter>
         <StoreProvider>
             <GApiProvider>
@@ -14,5 +15,4 @@ ReactDOM.render(
             </GApiProvider>
         </StoreProvider>
     </BrowserRouter>
-    , document.getElementById('root')
 );

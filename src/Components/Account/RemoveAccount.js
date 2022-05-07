@@ -1,9 +1,8 @@
 import { useState, useCallback, useContext } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from "@mui/styles";
 
-import crypto from '../../Utils/crypto';
 import { GApiContext } from "../../api/GApiProvider";
 
 import { Typography, TextField, Box, Button } from "@mui/material";
@@ -24,9 +23,7 @@ function RemoveAccount(props) {
     const history = useHistory();
     const classes = useStyles();
 
-    const [sessionPassword, updateSessionPassword] = useState("");
-
-    const { encryptedData } = useSelector((state) => state.localStore);
+    const [deleteMessage, setDeleteMessage] = useState("");
 
     const updateSnack = useCallback((snack) => dispatch({ type: "updateSnack", payload: { snack } }), [dispatch]);
     const showSnack = (type, message) => updateSnack({ open: true, type, message, key: new Date().getTime() });
@@ -43,9 +40,7 @@ function RemoveAccount(props) {
     const removeAccount = async () => {
         showBackdrop();
 
-        try {
-            JSON.parse(crypto.decrypt(encryptedData, sessionPassword));
-
+        if (deleteMessage.trim() === "DELETE") {
             await gapi.removeAllFiles()
 
             updateLoginStatus(false);
@@ -62,8 +57,8 @@ function RemoveAccount(props) {
 
             showSnack("success", "Account removed successfully");
         }
-        catch {
-            showSnack("error", "Wrong session password");
+        else {
+            showSnack("error", "Enter \"DELETE\" without quotes");
         }
 
         hideBackdrop();
@@ -86,8 +81,8 @@ function RemoveAccount(props) {
             </Typography>
             <TextField
                 variant="standard"
-                placeholder="Session Password"
-                type="password"
+                placeholder="Type DELETE"
+                type="text"
                 className={classes.root}
                 InputProps={{
                     className: classes.input
@@ -97,8 +92,8 @@ function RemoveAccount(props) {
                     style: { color: 'inherit' },
                 }}
                 style={{ margin: "20px 5px 15px 5px" }}
-                value={sessionPassword}
-                onChange={(e) => updateSessionPassword(e.target.value)}
+                value={deleteMessage}
+                onChange={(e) => setDeleteMessage(e.target.value)}
             />
             <Button
                 variant="contained"
