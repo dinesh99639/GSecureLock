@@ -74,8 +74,8 @@ function SetupNewAccount(props) {
                         { name: "Website", value: "", type: "link" }
                     ],
         
-                    createdAt: "Fri Apr 30 1999 20:55:02",
-                    lastModifiedAt: "Fri Apr 30 1999 20:55:02"
+                    createdAt: "Fri Apr 30 1999 20:55:01",
+                    lastModifiedAt: "Fri Apr 30 1999 20:55:01"
                 },
                 {
                     id: "T2",
@@ -93,8 +93,8 @@ function SetupNewAccount(props) {
                     },
                     cardTheme: "bluePurple",
         
-                    createdAt: "Fri Apr 30 1999 20:55:02",
-                    lastModifiedAt: "Fri Apr 30 1999 20:55:02"
+                    createdAt: "Fri Apr 30 1999 20:55:01",
+                    lastModifiedAt: "Fri Apr 30 1999 20:55:01"
                 }
             ],
             credentials: [
@@ -110,8 +110,8 @@ function SetupNewAccount(props) {
                         { name: "Hidden Field", value: "You can hide info like this", type: "hidden" },
                     ],
                     
-                    createdAt: "Fri Apr 30 1999 20:55:02",
-                    lastModifiedAt: "Fri Apr 30 1999 20:55:02"
+                    createdAt: "Fri Apr 30 1999 20:55:01",
+                    lastModifiedAt: "Fri Apr 30 1999 20:55:01"
                 },
                 {
                     id: "C2",
@@ -129,8 +129,8 @@ function SetupNewAccount(props) {
                     },
                     cardTheme: "bluePurple",
         
-                    createdAt: "Fri Apr 30 1999 20:55:02",
-                    lastModifiedAt: "Fri Apr 30 1999 20:55:02"
+                    createdAt: "Fri Apr 30 1999 20:55:01",
+                    lastModifiedAt: "Fri Apr 30 1999 20:55:01"
                 }
             ]
         });
