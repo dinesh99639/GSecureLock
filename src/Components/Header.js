@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 
 import { darkTheme } from '../Theme';
@@ -19,7 +19,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 const Header = (props) => {
     const isDesktop = window.innerWidth > 760;
     const gapi = useContext(GApiContext);
-    const history = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const dispatch = useDispatch();
 
@@ -127,7 +128,7 @@ const Header = (props) => {
     }
 
     const handleHomeButtonClick = () => {
-        history.push("/");
+        navigate("/");
     }
 
     const handleOnLogin = async () => {
@@ -135,9 +136,9 @@ const Header = (props) => {
 
         let dataFileId = null;
         let encryptedData = '';
-        
+
         let res = await gapi.getAllFiles();
-        
+
         if (res.success) {
             if (res.data.files.length === 0) {
                 res = await gapi.createFile()
@@ -154,13 +155,13 @@ const Header = (props) => {
             updateLocalStore({ dataFileId, encryptedData, password });
             localStorage.setItem('encryptedData', encryptedData);
 
-            if (!encryptedData) history.push("/setup_account");
-            else history.push("/dashboard");
+            if (!encryptedData) navigate("/setup_account");
+            else navigate("/dashboard");
         }
         else {
             showSnack("error", "Unable to get data, please refresh");
         }
-        
+
         hideBackdrop();
         return true;
     }
@@ -177,16 +178,16 @@ const Header = (props) => {
         localStorage.removeItem("encryptedData");
         localStorage.removeItem("userData");
 
-        history.replace("/");
+        navigate("/", { replace: true });
     }
 
     const handleLockButtonClick = async () => {
-        if (isLoggedIn) history.push("/dashboard");
+        if (isLoggedIn) navigate("/dashboard");
         else handleOnLogin();
     }
 
     const openAccountSettings = () => {
-        history.push("/account/profile");
+        navigate("/account/profile");
         closeAccountMenu();
     }
 
@@ -263,7 +264,7 @@ const Header = (props) => {
                     <Box style={{ display: "flex", alignItems: "center" }}>
                         {/* <Link to="/test" style={{ color: "white" }}>Test</Link> */}
 
-                        {(history.location.pathname !== '/') && <>
+                        {(location.pathname !== '/') && <>
                             <IconButton size="medium" onClick={updateServer}>
                                 <ArrowUpwardIcon style={{ color: "white" }} />
                             </IconButton>
@@ -280,7 +281,7 @@ const Header = (props) => {
                         </IconButton>
 
                         {(isDesktop) && <>
-                            {(history.location.pathname === '/') ? <>
+                            {(location.pathname === '/') ? <>
                                 <IconButton size="medium" onClick={handleLockButtonClick}>
                                     <AccountCircleIcon style={{ color: "white" }} />
                                 </IconButton>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouteMatch, Route, Switch, useHistory } from 'react-router-dom';
+import { useLocation, Route, Routes, useNavigate } from 'react-router-dom';
 
 import Profile from "./Profile";
 import ImportExport from "./importExport";
@@ -16,14 +16,14 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function Account(props) {
-    const history = useHistory();
-    let { path, url } = useRouteMatch();
-    
-    const [selectedOption, updateSelectedOption] = useState(history.location.pathname.split("/").at(-1));
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const [selectedOption, updateSelectedOption] = useState(location.pathname.split("/").at(-1));
 
     const changeOption = (to) => {
         updateSelectedOption(to);
-        history.push(`${url}/${to}`);
+        navigate(`/account/${to}`);
     }
 
     const sidebarOptions = [
@@ -33,7 +33,7 @@ function Account(props) {
         { name: "Remove Account", icon: <PersonRemoveIcon fontSize="small" />, to: "removeAccount", component: <RemoveAccount /> }
     ]
 
-    const goToDashboard = () => history.push("/dashboard");
+    const goToDashboard = () => navigate("/dashboard");
 
     return (<>
         <Box style={{ display: "flex", flex: 1 }} >
@@ -93,9 +93,13 @@ function Account(props) {
                     }
                 </Grid>
                 <Grid item xs={9}>
-                    <Switch>
-                        {sidebarOptions.map((option) => <Route key={option.to} path={`${path}/${option.to}`} >{option.component}</Route>)}
-                    </Switch>
+                    <Routes>
+                        {sidebarOptions.map((option) => <Route
+                            key={option.to}
+                            path={`/${option.to}`}
+                            element={option.component}
+                        />)}
+                    </Routes>
                 </Grid>
             </Grid>
         </Box>

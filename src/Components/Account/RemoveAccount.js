@@ -1,6 +1,6 @@
 import { useState, useCallback, useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { makeStyles } from "@mui/styles";
 
 import { GApiContext } from "../../api/GApiProvider";
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 function RemoveAccount(props) {
     const gapi = useContext(GApiContext);
     const dispatch = useDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
     const classes = useStyles();
 
     const [deleteMessage, setDeleteMessage] = useState("");
@@ -53,7 +53,7 @@ function RemoveAccount(props) {
             localStorage.removeItem("encryptedData");
             localStorage.removeItem("userData");
 
-            history.replace("/");
+            navigate("/", { replace: true });
 
             showSnack("success", "Account removed successfully");
         }

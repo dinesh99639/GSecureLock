@@ -1,6 +1,6 @@
 import { useState, useCallback, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { makeStyles } from "@mui/styles";
 
 import crypto from '../Utils/crypto';
@@ -24,7 +24,7 @@ function SetupNewAccount(props) {
     const gapi = useContext(GApiContext);
     const dispatch = useDispatch();
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const classes = useStyles();
 
     const { dataFileId, encryptedData } = useSelector((state) => state.localStore);
@@ -140,7 +140,7 @@ function SetupNewAccount(props) {
         await gapi.updateFile(localStorage.getItem('dataFileId'), encryptedData);
         updateLocalStore({ dataFileId, encryptedData })
 
-        history.push('/dashboard');
+        navigate('/dashboard');
         hideBackdrop();
     }
 

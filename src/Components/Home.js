@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { darkTheme, lightTheme } from '../Theme';
 
@@ -60,7 +60,7 @@ function Feature(props) {
 }
 
 function Home() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const isDesktop = window.innerWidth > 760;
 
     const { theme } = useSelector((state) => ({ ...state.config }));
@@ -207,7 +207,7 @@ function Home() {
                                 textDecoration: "underline"
                             }
                         }}
-                        onClick={() => history.push('/privacy_policy')}
+                        onClick={() => navigate('/privacy_policy')}
                     >Privacy Policy</Typography>
                 </Box>
                 <Box sx={{ padding: "20px 0" }} ></Box>

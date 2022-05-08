@@ -1,6 +1,6 @@
 import { useEffect, forwardRef, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import { lightTheme, darkTheme } from './Theme';
@@ -23,7 +23,7 @@ const Alert = forwardRef(function Alert(props, ref) {
 });
 
 function App() {
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const { theme, isLoading, snack, isLoggedIn } = useSelector((state) => ({ ...state.config }));
@@ -45,7 +45,7 @@ function App() {
         }
         else {
             updateLoginStatus(false);
-            history.push("/");
+            navigate("/");
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,14 +59,14 @@ function App() {
             {(isLoggedIn !== null) && (<>
                 <Header />
 
-                <Switch>
-                    <Route path="/dashboard" component={Dashboard} />
-                    <Route path="/account" component={Account} />
-                    <Route path="/setup_account" component={SetupNewAccount} />
-                    <Route path="/test" component={Test} />
-                    <Route path="/privacy_policy" component={PrivacyPolicy} />
-                    <Route path="/" component={Home} />
-                </Switch>
+                <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/account/*" element={<Account />} />
+                    <Route path="/setup_account" element={<SetupNewAccount />} />
+                    <Route path="/privacy_policy" element={<PrivacyPolicy />} />
+                    <Route path="/test" element={<Test />} />
+                    <Route path="/" element={<Home />} />
+                </Routes>
             </>)}
 
             <Snackbar
