@@ -142,7 +142,12 @@ function CredentialsList(props) {
         }
         updateTemplates(newTemplates);
 
-        let encryptedData = crypto.encrypt(JSON.stringify({ templates: newTemplates, credentials: savedEntries }), password);
+        let encryptedData = crypto.encrypt(JSON.stringify({ 
+            lastModifiedAt: new Date().toString().substring(0, 24),
+            templates: newTemplates, 
+            credentials: savedEntries 
+        }), password);
+        
         updateLocalStore({ dataFileId, encryptedData });
         localStorage.setItem("encryptedData", encryptedData);
 

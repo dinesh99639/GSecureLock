@@ -15,6 +15,7 @@ function EntryInfo(props) {
 
     const updateEntryOptionsMode = useCallback((entryOptionsMode) => dispatch({ type: "updateEntryOptionsMode", payload: { entryOptionsMode } }), [dispatch]);
     const updateTemplates = useCallback((templates) => dispatch({ type: "updateTemplates", payload: { templates } }), [dispatch]);
+    const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
 
     const [createdAt, updateCreatedAt] = useState("");
     const [lastModifiedAt, updateLastModifiedAt] = useState("");
@@ -41,9 +42,14 @@ function EntryInfo(props) {
         newTemplate.data = newData;
 
         let newTemplates = [...templates, newTemplate];
-        let encryptedData = crypto.encrypt(JSON.stringify({ templates: newTemplates, credentials: savedEntries }), password);
+        let encryptedData = crypto.encrypt(JSON.stringify({ 
+            lastModifiedAt: new Date().toString().substring(0, 24),
+            templates: newTemplates, 
+            credentials: savedEntries 
+        }), password);
         localStorage.setItem("encryptedData", encryptedData);
 
+        updateLocalStore({ encryptedData })        
         updateTemplates(newTemplates);
         toggleCreateTemplateDialog();
     }

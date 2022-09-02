@@ -104,6 +104,10 @@ function ImportExport(props, fileType) {
             else entries.credentials.push(credential);
         });
 
+        entries = {
+            lastModifiedAt: entries.lastModifiedAt || new Date().toString().substring(0, 24),
+            ...entries,
+        }
         let encryptedData = crypto.encrypt(JSON.stringify(entries), sessionPassword);
         
         // -Update server 

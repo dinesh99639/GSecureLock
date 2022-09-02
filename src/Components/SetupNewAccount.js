@@ -62,6 +62,7 @@ function SetupNewAccount(props) {
         showBackdrop();
 
         let initData = JSON.stringify({
+            lastModifiedAt: new Date().toString().substring(0, 24),
             templates: [
                 {
                     id: "T1",

@@ -4,13 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 
 import { darkTheme } from '../Theme';
+import crypto from '../Utils/crypto';
 import { GApiContext } from "../api/GApiProvider";
 
 import { AppBar, Box, Toolbar, IconButton, Typography, Avatar, Menu, MenuItem, Divider } from '@mui/material';
 
-// import SyncIcon from '@mui/icons-material/Sync';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import SyncIcon from '@mui/icons-material/Sync';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import NightlightRoundIcon from '@mui/icons-material/NightlightRound';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -24,7 +23,7 @@ const Header = (props) => {
 
     const dispatch = useDispatch();
 
-    const { theme, user, isLoggedIn } = useSelector((state) => state.config);
+    const { theme, user, isLoggedIn, isSessionLocked } = useSelector((state) => state.config);
     const { dataFileId, encryptedData, password } = useSelector((state) => state.localStore);
 
     const setTheme = useCallback((theme) => dispatch({ type: "setTheme", payload: { theme } }), [dispatch]);
@@ -39,87 +38,128 @@ const Header = (props) => {
 
     const updateLoginStatus = useCallback((isLoggedIn) => dispatch({ type: "updateLoginStatus", payload: { isLoggedIn } }), [dispatch]);
     const updateLocalStore = useCallback((localStore) => dispatch({ type: "updateLocalStore", payload: { localStore } }), [dispatch]);
+    
+    const updateAllEntryAttributes = useCallback((entries) => dispatch({ type: "updateAllEntryAttributes", payload: entries }), [dispatch]);
 
     const [accountAnchorEl, setAccountAnchorEl] = useState(null);
     const openAccountMenu = (event) => setAccountAnchorEl(event.currentTarget);
     const closeAccountMenu = () => setAccountAnchorEl(null);
 
-    const updateServer = async () => {
-        showBackdrop();
-        await gapi.updateFile(dataFileId, encryptedData);
-        hideBackdrop();
+    const updateWithLatestEntires = (serverEntries, clientEntries, config) => {
+        let isServerUpdated = false;
+        const clientEntriesHash = {};
+        const entries = [];
+
+        clientEntries.map((entry) => clientEntriesHash[entry.id] = entry);
+
+        serverEntries.forEach((entry) => {
+            if (clientEntriesHash[entry.id]) { // If entry exists in both client and server
+                if (clientEntriesHash[entry.id].lastModifiedAt > entry.lastModifiedAt) {
+                    entries.push(clientEntriesHash[entry.id]);
+                    isServerUpdated = true;
+                }
+                else {
+                    entries.push(entry);
+                }
+
+                delete clientEntriesHash[entry.id];
+            }
+            else { // If entry exists only in server
+                if (config.clientLastModifiedAt > config.serverLastModifiedAt) isServerUpdated = true;
+                else entries.push(entry);
+            }
+        })
+
+        // Entires present only in client
+        for (let clientEntryId in clientEntriesHash) {
+            const entry = clientEntriesHash[clientEntryId];
+
+            if (config.clientLastModifiedAt > config.serverLastModifiedAt) {
+                entries.push(entry);
+                isServerUpdated = true;
+            }
+        }
+
+        return { isServerUpdated, entries }
     }
 
-    const updateClient = async () => {
+    const syncWithServer  = async () => {
         showBackdrop();
-        const encryptedData = await gapi.downloadFile(dataFileId);
-        localStorage.setItem('encryptedData', encryptedData.data);
-        window.location = '';
+
+        const serverEncryptedData = await gapi.downloadFile(dataFileId);
+        let serverData = JSON.parse(crypto.decrypt(serverEncryptedData.data, password));
+        const serverLastModifiedAt = serverData.lastModifiedAt && new Date(serverData.lastModifiedAt).getTime();
+
+        let clientData = JSON.parse(crypto.decrypt(encryptedData, password));
+        const clientLastModifiedAt = clientData.lastModifiedAt && new Date(clientData.lastModifiedAt).getTime();
+
+        if (!!serverLastModifiedAt && serverLastModifiedAt === clientLastModifiedAt) {
+            showSnack("success", "Data upto date");
+        }
+        else {
+            let newData = {};
+            let isServerUpdated = false;
+            const config = { serverLastModifiedAt, clientLastModifiedAt };
+            
+            if (serverLastModifiedAt === undefined) {
+                isServerUpdated = true;
+
+                newData = {
+                    ...serverData,
+                    lastModifiedAt: new Date().toString().substring(0, 24),
+                    templates: serverData.templates,
+                    credentials: serverData.credentials
+                }
+            }
+            else {
+                const {  
+                    isServerUpdated: isServerTemplatesUpdated,
+                    entries: templates
+                } = updateWithLatestEntires(serverData.templates, clientData.templates, config);
+
+                const {  
+                    isServerUpdated: isServerCredentialsUpdated,
+                    entries: credentials
+                } = updateWithLatestEntires(serverData.credentials, clientData.credentials, config);
+
+                isServerUpdated = isServerTemplatesUpdated || isServerCredentialsUpdated;
+                newData = {
+                    lastModifiedAt: new Date().toString().substring(0, 24),
+                    templates: templates,
+                    credentials: credentials
+                }
+            }
+            
+            const newEncryptedData = crypto.encrypt(JSON.stringify(newData), password)
+            
+            if (isServerUpdated) await gapi.updateFile(dataFileId, newEncryptedData);
+            localStorage.setItem('encryptedData', newEncryptedData);
+
+            updateAllEntryAttributes({
+                isEditMode: false,
+                isTemplateMode: false,
+
+                selectedCategory: "All",
+
+                selectedEntryId: '',
+                newEntryId: '',
+
+                selectedEntryIndex: -1,
+                selectedFieldIndex: 0,
+
+                drafts: {},
+                entryData: null,
+
+                savedEntries: newData.credentials,
+                modifiedEntries: newData.credentials,
+                templates: newData.templates
+            })
+
+            showSnack("success", "Data updated");
+        }
+
         hideBackdrop();
     }
-
-    // const syncChanges = async (type) => {
-    //     if (type) {
-    //         if (type === "updateServer") await updateServer();
-    //         else if (type === "updateClient") await updateClient();
-    //     }
-    //     else {
-    //         if (updateType === "updateServer") await updateServer();
-    //         else if (updateType === "updateClient") await updateClient();
-    //     }
-    //     // let serverEncryptedData = await gapi.downloadFile(dataFileId);
-    //     // serverEncryptedData = serverEncryptedData.data;
-
-    //     // let serverEntries = JSON.parse(crypto.decrypt(serverEncryptedData, password));
-    //     // let serverTemplatesMap = {};
-    //     // let serverCredentialsMap = {};
-    //     // serverEntries.templates.forEach((row) => {
-    //     //     serverTemplatesMap[row.id] = row;
-    //     // })
-    //     // serverEntries.credentials.forEach((row) => {
-    //     //     serverCredentialsMap[row.id] = row;
-    //     // })
-
-    //     // let clientEntries = JSON.parse(crypto.decrypt(encryptedData, password));
-    //     // let newTemplates = [];
-    //     // let newCredentials = [];
-    //     // clientEntries.templates.forEach((row) => {
-    //     //     const serverData = serverTemplatesMap[row.id];
-    //     //     if (serverData) {
-    //     //         if (
-    //     //             new Date(serverData.lastModifiedAt).getTime() >=
-    //     //             new Date(row.lastModifiedAt).getTime()
-    //     //         ) {
-    //     //             newTemplates.push(serverData);
-    //     //         }
-    //     //         else newTemplates.push(row);
-
-    //     //         delete serverTemplatesMap[row.id];
-    //     //     }
-    //     //     else newTemplates.push(row);
-    //     // })
-    //     // clientEntries.credentials.forEach((row) => {
-    //     //     const serverData = serverCredentialsMap[row.id];
-    //     //     if (serverData) {
-    //     //         if (
-    //     //             new Date(serverData.lastModifiedAt).getTime() >=
-    //     //             new Date(row.lastModifiedAt).getTime()
-    //     //         ) {
-    //     //             newCredentials.push(serverData)
-    //     //         }
-    //     //         else newCredentials.push(row);
-
-    //     //         delete serverCredentialsMap[row.id];
-    //     //     }
-    //     //     else newCredentials.push(row)
-    //     // })
-
-    //     // console.log("serverTemplatesMap", serverTemplatesMap, serverCredentialsMap)
-
-    //     // setIsSyncChangesClicked(false);
-
-    //     hideBackdrop();
-    // }
 
     const toggleTheme = () => {
         let newTheme = (theme === "light") ? "dark" : "light";
@@ -264,12 +304,9 @@ const Header = (props) => {
                     <Box style={{ display: "flex", alignItems: "center" }}>
                         {/* <Link to="/test" style={{ color: "white" }}>Test</Link> */}
 
-                        {(location.pathname !== '/') && <>
-                            <IconButton size="medium" onClick={updateServer}>
-                                <ArrowUpwardIcon style={{ color: "white" }} />
-                            </IconButton>
-                            <IconButton size="medium" onClick={updateClient}>
-                                <ArrowDownwardIcon style={{ color: "white" }} />
+                        {(location.pathname !== '/' && !isSessionLocked) && <>
+                            <IconButton size="medium" onClick={syncWithServer}>
+                                <SyncIcon style={{ color: "white" }} />
                             </IconButton>
                         </>}
 

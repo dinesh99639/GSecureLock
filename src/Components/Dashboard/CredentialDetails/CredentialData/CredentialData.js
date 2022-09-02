@@ -270,7 +270,11 @@ function CredentialData(props) {
         newSavedEntries[selectedEntryIndex] = newEntryData;
         newmodifiedEntries[selectedEntryIndex] = newEntryData;
 
-        let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
+        let encryptedData = crypto.encrypt(JSON.stringify({ 
+            lastModifiedAt: new Date().toString().substring(0, 24),
+            templates, 
+            credentials: newSavedEntries 
+        }), password);
 
         updateLocalStore({ dataFileId, encryptedData });
         updateEntryData(newEntryData);
@@ -315,7 +319,11 @@ function CredentialData(props) {
         newSavedEntries.splice(selectedEntryIndex, 1);
         newmodifiedEntries.splice(selectedEntryIndex, 1);
 
-        let encryptedData = crypto.encrypt(JSON.stringify({ templates, credentials: newSavedEntries }), password);
+        let encryptedData = crypto.encrypt(JSON.stringify({ 
+            lastModifiedAt: new Date().toString().substring(0, 24),
+            templates, 
+            credentials: newSavedEntries 
+        }), password);
 
         updateLocalStore({ dataFileId, encryptedData });
         updateSavedEntries(newSavedEntries);

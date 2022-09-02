@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import initData from '../../initData';
@@ -17,12 +17,10 @@ function Dashboard(props) {
     const isDesktop = window.innerWidth > 760;
     const dispatch = useDispatch();
 
-    const [isSessionLocked, updateIsSessionLocked] = useState(true);
-
     const lockTime = useSelector((state) => state.lockTime);
     const updateLockTime = useCallback((lockTime) => dispatch({ type: "updateLockTime", payload: { lockTime } }), [dispatch]);
 
-    const { theme } = useSelector((state) => state.config);
+    const { theme, isSessionLocked } = useSelector((state) => state.config);
 
     const { entriesById, selectedEntryId, newEntryId, savedEntries, templates, drafts, isTemplateMode } = useSelector((state) => state.entries);
 
@@ -89,9 +87,7 @@ function Dashboard(props) {
             {(!isSessionLocked) ? <>
                 <Grid container style={{ display: "flex", flex: 1 }} >
                     <Grid item xs={0.46} >
-                        <Timebar
-                            updateIsSessionLocked={updateIsSessionLocked}
-                        />
+                        <Timebar />
                     </Grid>
                     <Grid item xs={1.7} >
                         <Categories />
@@ -134,9 +130,7 @@ function Dashboard(props) {
             Mobile View
         </>}
 
-        {(isSessionLocked) && <LockScreen
-            updateIsSessionLocked={updateIsSessionLocked}
-        />}
+        {(isSessionLocked) && <LockScreen />}
 
         {((lockTime.m === 0) && (lockTime.s <= 10) && (lockTime.s > 0) && (Object.keys(drafts).length > 0)) && <>
             <Modal
