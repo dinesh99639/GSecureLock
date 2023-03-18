@@ -37,7 +37,7 @@
 
 ## Live site
 
-Application is hosted on vercel
+Application is hosted on render
 
 > https://www.gsecurelock.ml/
 
