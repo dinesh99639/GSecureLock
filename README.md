@@ -17,7 +17,7 @@
   </p>
 
   <p align="center">
-    <a href="https://www.gsecurelock.ml/">Live Site</a>
+    <a href="https://gsecurelock.onrender.com">Live Site</a>
     ·
     <a href="https://github.com/dinesh99639/GSecureLock/issues/new/choose">Report Bug</a>
     ·
@@ -39,7 +39,7 @@
 
 Application is hosted on render
 
-> https://www.gsecurelock.ml/
+> https://gsecurelock.onrender.com
 
 ## Contributions
 
